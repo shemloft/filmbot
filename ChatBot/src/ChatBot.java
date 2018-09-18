@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class ChatBot {
 	
-	static String help_text = "..."; // я не знаю правил именования
+	static String help_text = "..."; // СЏ РЅРµ Р·РЅР°СЋ РїСЂР°РІРёР» РёРјРµРЅРѕРІР°РЅРёСЏ
 	
 	public static void main(String[] args) {
 		System.out.println(help_text);
@@ -20,7 +20,7 @@ public class ChatBot {
 		if ("/help".equals(req)){
 			System.out.println(help_text);			
 		}		
-		// ну и всё. сидим пердим придумываем суть
+		// РЅСѓ Рё РІСЃС‘. СЃРёРґРёРј РїРµСЂРґРёРј РїСЂРёРґСѓРјС‹РІР°РµРј СЃСѓС‚СЊ
 	}
 
 }

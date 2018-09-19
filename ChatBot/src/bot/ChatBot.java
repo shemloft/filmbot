@@ -5,21 +5,21 @@ import java.util.Scanner;
 public class ChatBot {
 	
 	public static void main(String[] args) {
-		// считать базу пользователей 
+		// СЃС‡РёС‚Р°С‚СЊ Р±Р°Р·Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ 
 		
 		Scanner scan = new Scanner(System.in);
 		System.out.println(bot.Dialog.HELLO_TEXT);
 		String name = scan.nextLine();
 		bot.Dialog dialog = null;
 		if (false) // name in base		
-			dialog = null; // извлекаем диалог из базы		
+			dialog = null; // РёР·РІР»РµРєР°РµРј РґРёР°Р»РѕРі РёР· Р±Р°Р·С‹		
 		else 
 			dialog = new bot.Dialog();
 		System.out.println(dialog.startDialog(name));
 		while (true) {
 			String req = scan.nextLine();
 			dialog.startDialog(req);
-			if ("/exit".equals(req)) // <- добавить сохранение диалог-лога в файл
+			if ("/exit".equals(req)) // <- РґРѕР±Р°РІРёС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёРµ РґРёР°Р»РѕРі-Р»РѕРіР° РІ С„Р°Р№Р»
 				break;
 			String answer = dialog.processInput(req);
 			System.out.println(answer);

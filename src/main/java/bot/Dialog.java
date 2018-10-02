@@ -1,18 +1,11 @@
 package bot;
 
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class Dialog 
 {
-	/* тут будет информация о конкретном диалоге для удобства ведения нескольких диалогов
-	 * 
-	 * метод связи с внешним миром, возвращения ответа
-	 * 
-	 * метод обработки введенных данных, проверка соответсвия формату
-	 * 
-	 * метод получения информации
-	 * 
-	 * */
-	
+
 	static String HELLO_TEXT = "Назовите себя, пожалуйста";
 	
 	static String HELP_TEXT = "Этот бот кидает кино по вашим запросам.\n"
@@ -31,6 +24,14 @@ public class Dialog
 	
 	private String sCurrentOpt = null;
 	
+	private bot.ChatBot chatBot;
+	private bot.User user;
+	
+	public Dialog (bot.ChatBot chatBot)
+	{
+		this.chatBot = chatBot;	
+	}
+	
 	
 	public String startDialog(String name)
 	{//типа должна быть база, если имя в ней, то продолжать
@@ -38,7 +39,9 @@ public class Dialog
 		if (name.equals(sName))
 			return String.format("Давно не виделись, %s.", name);
 		sName = name;
-		return String.format("Добро пожаловать, %s.\n%s", name, HELP_TEXT);
+		user = new bot.User(sName);
+//		return String.format("Добро пожаловать, %s.\n%s", name, HELP_TEXT);
+		return "meh";
 	}
 	
 	
@@ -62,7 +65,7 @@ public class Dialog
 			return getNextYear(input);
 			
 		case "/c ":
-			return getNextCountry();
+			return getNextCountry(input);
 		
 		default:	
 			return "Неизвестная команда, загляни, пожалуйста, в справку";
@@ -71,32 +74,88 @@ public class Dialog
  	
  	private String getNextYear(String input) 
  	{
+ 		int year;
  		try {
-			int year = Integer.parseInt(input.substring(3).trim());
+			year = Integer.parseInt(input.substring(3).trim());
 		} catch (NumberFormatException e) {
 		     return "Ну как так, год должен быть числом";
 		}
 		sCurrentOpt = "year";
-		return "";
-		// фильм по году или сообщение что по этому году фильмов в базе нет
+		if (chatBot.filmsByYear.containsKey(year))
+		{
+			iYear = year;
+			ArrayList<Film> films = chatBot.filmsByYear.get(year);
+			ArrayList<Film> savedFilms = user.getSavedFilmsYear(year);			
+			for (Film film : films)
+			{
+				if (savedFilms == null || !savedFilms.contains(film)) 
+				{
+					user.addFilmByYear(film);
+					return film.getTitle();			
+				}
+			}
+			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
+		}					
+		return "В базе нет фильмов, снятых в этот год :с";
+		
  	}
  	
- 	private String getNextCountry()
+ 	private String getNextCountry(String input)
  	{
  		sCurrentOpt = "country";
-		return "";
-		// фильм по стране или сообщение что по стране фильмов в базе нет
+ 		String country = input.substring(3).trim();
+		if (chatBot.filmsByCountry.containsKey(country))
+		{
+			sCountry = country;
+			ArrayList<Film> films = chatBot.filmsByCountry.get(country);
+			ArrayList<Film> savedFilms = user.getSavedFilmsCountry(country);			
+			for (Film film : films)
+			{
+				if (savedFilms == null || !savedFilms.contains(film)) 
+				{
+					user.addFilmByCountry(film);
+					return film.getTitle();			
+				}
+			}
+			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
+		}					
+		return "В базе нет фильмов, снятых в этой стране :с";		
  	}
  	
  	private String tryGetNextFilm(){
  		if (sCurrentOpt == null)
 			return "Дружок, сначала выбери опцию, а потом проси фильм";
-		if (sCurrentOpt == "year")
-			return "";
+		if (sCurrentOpt == "year") 
+		{
+			int year = iYear;
+			ArrayList<Film> films = chatBot.filmsByYear.get(year);
+			ArrayList<Film> savedFilms = user.getSavedFilmsYear(year);			
+			for (Film film : films)
+			{				
+				if (savedFilms == null || !savedFilms.contains(film)) 
+				{
+					user.addFilmByYear(film);
+					return film.getTitle();
+				}
+			}
+			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
+		}			
 		if (sCurrentOpt == "country")
-			return "";
-		return ""; // ну вот тут как то из базы извлекается след. фильм	
-		// и выдать сообщение если фильмы кончились
+		{
+			String country = sCountry;
+			ArrayList<Film> films = chatBot.filmsByCountry.get(country);
+			ArrayList<Film> savedFilms = user.getSavedFilmsCountry(country);			
+			for (Film film : films)
+			{
+				if (savedFilms == null || !savedFilms.contains(film)) 
+				{
+					user.addFilmByCountry(film);
+					return film.getTitle();			
+				}
+			}
+			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
+		}
+		return "";
  		
  	}
 

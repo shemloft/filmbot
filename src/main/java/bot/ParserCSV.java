@@ -12,47 +12,65 @@ import au.com.bytecode.opencsv.CSVReader;
 public class ParserCSV {
 	@SuppressWarnings("resource")//не уверена, нужно ли это
 
-	public static Map<Integer, ArrayList<String>> getFilmsByYear(String fileName) throws Exception // "Database.csv"
-	// словарь со списками фильмов по годам
+	private String sFileName;
+	private List<Film> filmList = new ArrayList<Film>();
+	
+	
+	public ParserCSV(String inputFileName) throws Exception
 	{
-		Map<Integer, ArrayList<String>> filmsByYear = new HashMap<Integer, ArrayList<String>>();
-		List<String[]> Database = extractData(fileName);
-		for (String[] row : Database) {
+		sFileName = inputFileName;
+		getFilmsList();
+	}
+	
+	private void getFilmsList() throws Exception
+	{
+		List<String[]> Database = extractData(sFileName);
+		for (String[] row : Database) {			
 			String[] filmData = row[0].split(";");
 			String name = filmData[0];
+			String country = filmData[1];
 			Integer year = Integer.parseInt(filmData[2]);
+			Film film = new bot.Film(name, year, country);
+			filmList.add(film);		
+		}		
+	}
+	
+	
+	public Map<Integer, ArrayList<Film>> getFilmsByYear() throws Exception // "Database.csv"
+	// словарь со списками фильмов по годам
+	{
+		Map<Integer, ArrayList<Film>> filmsByYear = new HashMap<Integer, ArrayList<Film>>();
+		for (Film film : filmList) {
+			Integer year = film.getYear();
 			if (!filmsByYear.containsKey(year)) {
-				ArrayList<String> filmList = new ArrayList<String>();
-				filmList.add(name);
+				ArrayList<Film> filmList = new ArrayList<Film>();
+				filmList.add(film);
 				filmsByYear.put(year, filmList);
 			} else {
-				filmsByYear.get(year).add(name);
+				filmsByYear.get(year).add(film);
 			}
 		}
 		return filmsByYear;
 	}
 
-	public static Map<String, ArrayList<String>> getFilmsByCountry(String fileName) throws Exception // "Database.csv"
+	public Map<String, ArrayList<Film>> getFilmsByCountry() throws Exception // "Database.csv"
 	// словарь со списками фильмов по странам
 	{
-		Map<String, ArrayList<String>> filmsByCountry = new HashMap<String, ArrayList<String>>();
-		List<String[]> Database = extractData(fileName);
-		for (String[] row : Database) {
-			String[] filmData = row[0].split(";");
-			String name = filmData[0];
-			String country = filmData[1];
+		Map<String, ArrayList<Film>> filmsByCountry = new HashMap<String, ArrayList<Film>>();
+		for (Film film: filmList) {			
+			String country = film.getCountry();
 			if (!filmsByCountry.containsKey(country)) {
-				ArrayList<String> filmList = new ArrayList<String>();
-				filmList.add(name);
+				ArrayList<Film> filmList = new ArrayList<Film>();
+				filmList.add(film);
 				filmsByCountry.put(country, filmList);
 			} else {
-				filmsByCountry.get(country).add(name);
+				filmsByCountry.get(country).add(film);
 			}
 		}
 		return filmsByCountry;
 	}
 
-	public static List<String[]> extractData(String fileName) throws Exception {
+	private List<String[]> extractData(String fileName) throws Exception {
 		List<String[]> allRows = new ArrayList<String[]>();
 		try {
 			CSVReader reader = new CSVReader(new FileReader(fileName), ',', '"', 1);

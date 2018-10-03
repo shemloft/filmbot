@@ -1,57 +1,47 @@
 package bot;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class User 
 {
 	public String Name;
-	private Map<String, ArrayList<Film>> savedFilmsByYear;
-	private Map<String, ArrayList<Film>> savedFilmsByCountry;
-	
-	public User(String name) {
+	public ArrayList<Film> savedFilms;
+
+	public User(String name) 
+	{
 		Name = name;
-		savedFilmsByYear = new HashMap<String, ArrayList<Film>>();
-		savedFilmsByCountry = new HashMap<String, ArrayList<Film>>(); 		
+		savedFilms = new ArrayList<Film>();
 	}
-	
-	public ArrayList<Film> getSavedFilmsYear(String year)
-	{
-		if (!savedFilmsByYear.containsKey(year))
-			return null;
-		return savedFilmsByYear.get(year);		
+
+	public void createUserInfo() throws IOException {
+		CSVWriter writer = new CSVWriter(new FileWriter(Name + ".csv", true));
+		writer.close();
 	}
-	
-	public ArrayList<Film> getSavedFilmsCountry(String country)
-	{
-		if (!savedFilmsByCountry.containsKey(country))
-			return null;
-		return savedFilmsByCountry.get(country);		
-	}
-	
-	public void addFilmByYear(Film film)
-	{
-		String year = film.getYear();
-		if (!savedFilmsByYear.containsKey(year)) {
-			ArrayList<Film> filmList = new ArrayList<Film>();
-			filmList.add(film);
-			savedFilmsByYear.put(year, filmList);
-		} else {
-			savedFilmsByYear.get(year).add(film);
+
+	public void addInfo() throws IOException {
+
+		CSVWriter writer = new CSVWriter(new FileWriter(Name + ".csv", true));
+		for (Film film : savedFilms) {
+			String[] record = { film.getTitle(), film.getCountry(), film.getYear() };
+			writer.writeNext(record);
 		}
+		writer.close();
 	}
-	
-	public void addFilmByCountry(Film film)
+
+	public void ReadInfo() throws Exception 
 	{
-		String country = film.getCountry();
-		if (!savedFilmsByCountry.containsKey(country)) {
-			ArrayList<Film> filmList = new ArrayList<Film>();
-			filmList.add(film);
-			savedFilmsByCountry.put(country, filmList);
-		} else {
-			savedFilmsByCountry.get(country).add(film);
-		}
+		ParserCSV parser = new ParserCSV(Name + ".csv");
+		savedFilms = parser.filmList;
+	}
+
+	public void addFilm(Film film) 
+	{
+		savedFilms.add(film);
 	}
 
 }

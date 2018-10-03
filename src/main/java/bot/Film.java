@@ -22,8 +22,7 @@ public class Film
 		fields.add("country");
 		fields.add("year");
 		fields.add("title");
-		return fields;
-		
+		return fields;		
 	}
 	
 	public String getField(String fieldName) throws KeyException
@@ -52,6 +51,40 @@ public class Film
 	{
 		return m_sTitle;
 	}
+	
+    @Override
+    public boolean equals(Object obj) 
+    {
+    	if (obj == this)    	
+    		return true;
+    		
+    	if (obj == null || obj.getClass() != this.getClass()) 
+    		return false;
+    	
+    	Film other = (Film) obj;
+    	Boolean titleEquals = 
+    			m_sTitle == other.m_sTitle || 
+    			(m_sTitle != null && m_sTitle.equals(other.getTitle()));
+    	Boolean yearEquals = 
+    			m_sYear == other.m_sYear || 
+    			(m_sYear != null && m_sYear.equals(other.getYear()));
+    	Boolean countryEquals = 
+    			m_sCountry == other.m_sCountry || 
+    			(m_sCountry != null && m_sCountry.equals(other.getCountry()));
+    	
+    	return titleEquals && yearEquals && countryEquals;
+    }
+    
+    @Override
+    public int hashCode() 
+    {
+    	final int prime = 31;
+    	int result = 1;
+    	result = prime * result + ((m_sTitle == null) ? 0 : m_sTitle.hashCode());             
+    	result = prime * result + ((m_sYear == null) ? 0 : m_sYear.hashCode()); 
+    	result = prime * result + ((m_sCountry == null) ? 0 : m_sCountry.hashCode()); 
+    	return result;
+    }
 	
 
 }

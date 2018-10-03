@@ -1,25 +1,14 @@
 package bot;
 
+import java.security.KeyException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
+import java.util.Map;
 
 public class Dialog 
 {
-
-	static String HELLO_TEXT = "Назовите себя, пожалуйста";
 	
-	static String HELP_TEXT = "Этот бот кидает кино по вашим запросам.\n"
-			+ "Формат ввода:\n"
-			+ "/y год\n"
-			+ "/c страна\n"
-			+ "\n"
-			+ "Может быть выбрана только одна опция\n"
-			+ "/next для следующего фильма\n"			
-			+ "Вызов справки: /help\n"
-			+ "Корректный выход из бота с сохранением: /exit\n";
-	
-	private String sYear = null;
-	private String sCountry = null;
+	private String m_sYear = null;
+	private String m_sCountry = null;
 	private String sName = null;
 	
 	private String sCurrentOpt = null;
@@ -34,33 +23,27 @@ public class Dialog
 	
 	
 	public String startDialog(String name)
-	{//типа должна быть база, если имя в ней, то продолжать
-		//прикол в том, что в базе помимо имени должны храниться списки фильмов, которые уже порекомендованы (совместно? по годам и по странам)
+	{
 		if (name.equals(sName))
 			return String.format("Давно не виделись, %s.", name);
 		sName = name;
 		user = new bot.User(sName);
-//		return String.format("Добро пожаловать, %s.\n%s", name, HELP_TEXT);
-		return "meh";
+		return String.format("Добро пожаловать, %s.\n%s", name, Phrases.HELP);		
 	}
 	
-	
-	
- 	public String processInput(String input)
-	{
-		/*можно разбить на подметоды, это пока база*/
-		
+ 	public String processInput(String input) throws KeyException
+	{		
 		if (input.equals("/help"))
-			return HELP_TEXT;
+			return Phrases.HELP;
 		
 		if (input.equals("/next")) 		
 			return tryGetNextFilm();			
 		
 		if (input.length() < 3)
-			return "Слишком короткая команда, не могу понять :с";
+			return Phrases.SHORT_COMMAND;
 		
 		String option = input.substring(0, 3);
-		String data = input.substring(3);
+		String data = input.substring(3).trim();
 		switch (option) {
 		case "/y ":
 			return getNextYear(data);
@@ -69,102 +52,81 @@ public class Dialog
 			return getNextCountry(data);
 		
 		default:	
-			return "Неизвестная команда, загляни, пожалуйста, в справку";
+			return Phrases.UNKNOWN_COMMAND;
 		}
 	}
  	
- 	private String getNextYear(String input) 
+ 	private String getNextFilm(
+ 			String key, 
+ 			String option, 
+ 			Map<String, String> phrases) throws KeyException
  	{
- 		int iYear;
- 		try {
-			iYear = Integer.parseInt(input.trim());
-		} catch (NumberFormatException e) {
-		     return "Ну как так, год должен быть числом";
+ 		sCurrentOpt = option;
+ 		Map<String, ArrayList<Film>> filmsDict = 
+ 				chatBot.filmsStructure.getFilmsByKey(option);
+ 		
+ 		if (!filmsDict.containsKey(key))
+ 			return phrases.get("no_films");
+ 		
+ 		ArrayList<Film> films = filmsDict.get(key);
+ 		ArrayList<Film> savedFilms = user.savedFilms;
+ 		for (Film film : films)
+ 		{
+ 			if (savedFilms.contains(film))
+ 				continue;
+ 			user.addFilm(film);
+ 			return film.getTitle(); 			
+ 		}
+ 		return phrases.get("all_films");	
+ 	}
+ 	
+ 	private String getNextYear(String sYear) throws KeyException 
+ 	{
+ 		try	{
+ 			int iYear = Integer.parseInt(sYear);
+ 		} catch (NumberFormatException e) {
+		     return Phrases.YEAR_NAN;
 		}
- 		String year = input.trim();
-		sCurrentOpt = "year";
-		if (chatBot.filmsByYear.containsKey(year))
-		{
-			sYear = year;
-			ArrayList<Film> films = chatBot.filmsByYear.get(year);
-			ArrayList<Film> savedFilms = user.getSavedFilmsYear(year);			
-			for (Film film : films)
-			{
-				if (savedFilms == null || !savedFilms.contains(film)) 
-				{
-					user.addFilmByYear(film);
-					return film.getTitle();			
-				}
-			}
-			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
-		}					
-		return "В базе нет фильмов, снятых в этот год :с";
+ 		
+ 		String option = "year";
+ 		m_sYear = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sYear) ? 
+ 				sYear : null;
+ 		return getNextFilm(sYear, option, chatBot.phrases.yearPhrases);
 		
  	}
  	
- 	private String getNextCountry(String input)
+ 	private String getNextCountry(String sCountry) throws KeyException
  	{
- 		sCurrentOpt = "country";
- 		String country = input.substring(3).trim();
-		if (chatBot.filmsByCountry.containsKey(country))
-		{
-			sCountry = country;
-			ArrayList<Film> films = chatBot.filmsByCountry.get(country);
-			ArrayList<Film> savedFilms = user.getSavedFilmsCountry(country);			
-			for (Film film : films)
-			{
-				if (savedFilms == null || !savedFilms.contains(film)) 
-				{
-					user.addFilmByCountry(film);
-					return film.getTitle();			
-				}
-			}
-			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
-		}					
-		return "В базе нет фильмов, снятых в этой стране :с";		
- 	}
+ 		String option = "country";
+ 		m_sCountry = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sCountry) ? 
+ 				sCountry : null;
+ 		return getNextFilm(sCountry, option, chatBot.phrases.countryPhrases);	
+ 	}	
  	
-
- 	
- 	private String tryGetNextFilm(){
+ 	private String tryGetNextFilm() throws KeyException{
  		if (sCurrentOpt == null)
-			return "Дружок, сначала выбери опцию, а потом проси фильм";
- 		if (!Film.getPossibleFields().contains(sCountry))
+			return Phrases.NEXT_WITHOUT_OPT;
+ 		if (!Film.getPossibleFields().contains(sCurrentOpt))
  			return "";
- 		String key;
- 		ArrayList<Film> films = new ArrayList<Film>();
- 		ArrayList<Film> savedFilms = new ArrayList<Film>();
- 		if (sCurrentOpt == "year")  
- 		{
- 			key = sYear;
- 			films = chatBot.filmsByYear.get(key);
- 			savedFilms = user.getSavedFilmsYear(key);
- 		}
- 		
+ 		String key = null;
+ 		if (sCurrentOpt == "year")
+ 			key = m_sYear;
  		if (sCurrentOpt == "country")
- 		{
- 			key = sCountry;
- 			films = chatBot.filmsByCountry.get(key);
- 			savedFilms = user.getSavedFilmsCountry(key);
- 		}
- 		
- 		for (Film film : films)
- 		{
- 			if (savedFilms == null || !savedFilms.contains(film)) 
-			{
-				user.addFilmByYear(film);
-				return film.getTitle();
-			}
- 		}
- 		if (sCurrentOpt == "year") 
- 			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
- 		if (sCurrentOpt == "country")
- 			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
- 		return "";
+ 			key = m_sCountry;
 
- 		
- 		
-	
+ 		ArrayList<Film> films = 
+ 				chatBot.filmsStructure.getFilmsByKey(sCurrentOpt).get(key);
+ 		ArrayList<Film> savedFilms = user.savedFilms;
+
+ 		for (Film film : films)
+ 		{ 			
+ 			if (savedFilms.contains(film))
+ 				continue;
+ 			
+			user.addFilm(film);
+			return film.getTitle();			
+ 		}
+ 		return chatBot.phrases.getDictByKey(sCurrentOpt).get("all_films");
  		
  	}
 

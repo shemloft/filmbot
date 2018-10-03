@@ -1,22 +1,21 @@
 package bot;
 
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Map;
-import java.util.ArrayList;
 
 
-public class ChatBot {
 
-	public Map<String, ArrayList<Film>> filmsByCountry;
-	public Map<String, ArrayList<Film>> filmsByYear;
+public class ChatBot 
+{	
+	public FilmsStructure filmsStructure;
+	public Phrases phrases;
 	
 	public void startChat() throws Exception {
 		// считать базу пользователей 
 		
 		ParserCSV parser = new bot.ParserCSV("Database.csv");
-		filmsByCountry = parser.getFilmsByCountry();
-		filmsByYear = parser.getFilmsByYear();
+		filmsStructure = new bot.FilmsStructure(parser.filmList);
+		phrases = new Phrases();
+		
 		
 		Scanner scan = new Scanner(System.in);
 //		System.out.println(bot.Dialog.HELLO_TEXT);
@@ -35,6 +34,7 @@ public class ChatBot {
 			String answer = dialog.processInput(req);
 			System.out.println(answer);
 		}
+		scan.close();
 	}
 
 }

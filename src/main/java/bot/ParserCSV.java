@@ -2,6 +2,7 @@ package bot;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.security.KeyException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -29,46 +30,39 @@ public class ParserCSV {
 			String[] filmData = row[0].split(";");
 			String name = filmData[0];
 			String country = filmData[1];
-			Integer year = Integer.parseInt(filmData[2]);
+			String year = filmData[2];
 			Film film = new bot.Film(name, year, country);
 			filmList.add(film);		
 		}		
 	}
 	
 	
-	public Map<Integer, ArrayList<Film>> getFilmsByYear() throws Exception // "Database.csv"
-	// словарь со списками фильмов по годам
+	public Map<String, ArrayList<Film>> getFilmsByYear() throws Exception 
 	{
-		Map<Integer, ArrayList<Film>> filmsByYear = new HashMap<Integer, ArrayList<Film>>();
-		for (Film film : filmList) {
-			Integer year = film.getYear();
-			if (!filmsByYear.containsKey(year)) {
-				ArrayList<Film> filmList = new ArrayList<Film>();
-				filmList.add(film);
-				filmsByYear.put(year, filmList);
-			} else {
-				filmsByYear.get(year).add(film);
-			}
-		}
-		return filmsByYear;
+		return getDictionary("year");
 	}
 
-	public Map<String, ArrayList<Film>> getFilmsByCountry() throws Exception // "Database.csv"
-	// словарь со списками фильмов по странам
+	public Map<String, ArrayList<Film>> getFilmsByCountry() throws Exception
 	{
-		Map<String, ArrayList<Film>> filmsByCountry = new HashMap<String, ArrayList<Film>>();
+		return getDictionary("country");
+	}
+	
+ 	private Map<String, ArrayList<Film>> getDictionary(String keyName) throws KeyException
+ 	{
+ 		Map<String, ArrayList<Film>> filmsDictionary = new HashMap<String, ArrayList<Film>>();
 		for (Film film: filmList) {			
-			String country = film.getCountry();
-			if (!filmsByCountry.containsKey(country)) {
-				ArrayList<Film> filmList = new ArrayList<Film>();
-				filmList.add(film);
-				filmsByCountry.put(country, filmList);
+			String key = film.getField(keyName);
+			if (!filmsDictionary.containsKey(key)) {
+				ArrayList<Film> filmListByKey = new ArrayList<Film>();
+				filmListByKey.add(film);
+				filmsDictionary.put(key, filmListByKey);
 			} else {
-				filmsByCountry.get(country).add(film);
+				filmsDictionary.get(key).add(film);
 			}
 		}
-		return filmsByCountry;
-	}
+		return filmsDictionary;
+ 	}	
+	
 
 	private List<String[]> extractData(String fileName) throws Exception {
 		List<String[]> allRows = new ArrayList<String[]>();

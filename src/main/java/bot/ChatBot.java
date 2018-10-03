@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ChatBot {
 
 	public Map<String, ArrayList<Film>> filmsByCountry;
-	public Map<Integer, ArrayList<Film>> filmsByYear;
+	public Map<String, ArrayList<Film>> filmsByYear;
 	
 	public void startChat() throws Exception {
 		// считать базу пользователей 

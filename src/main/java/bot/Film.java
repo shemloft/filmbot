@@ -1,26 +1,46 @@
 package bot;
 
+import java.security.KeyException;
+import java.util.ArrayList;
+
 public class Film 
 {
 	private String m_sTitle;
-	private int m_iYear;
+	private String m_sYear;
 	private String m_sCountry;
 	
-	public Film(String sTitle, int iYear, String sCountry)
+	public Film(String sTitle, String sYear, String sCountry)
 	{
 		m_sTitle = sTitle;
-		m_iYear = iYear;
+		m_sYear = sYear;
 		m_sCountry = sCountry;
 	}
 	
-	public String getFilmInfo()
+	public static ArrayList<String> getPossibleFields()
 	{
-		return String.format("title: %s, country: %s, year: %d", m_sTitle, m_sCountry, m_iYear);
+		ArrayList<String> fields = new ArrayList<String>();
+		fields.add("country");
+		fields.add("year");
+		fields.add("title");
+		return fields;
+		
 	}
 	
-	public int getYear() 
+	public String getField(String fieldName) throws KeyException
 	{
-		return m_iYear;
+		if (fieldName.equals("country"))
+			return getCountry();
+		if (fieldName.equals("year"))
+			return getYear();
+		if (fieldName.equals("title"))
+			return getTitle();
+		throw new KeyException("Неизвестный ключ");
+		
+	}
+	
+	public String getYear() 
+	{
+		return m_sYear;
 	}
 	
 	public String getCountry()

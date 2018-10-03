@@ -18,7 +18,7 @@ public class Dialog
 			+ "Вызов справки: /help\n"
 			+ "Корректный выход из бота с сохранением: /exit\n";
 	
-	private int iYear = 0;
+	private String sYear = null;
 	private String sCountry = null;
 	private String sName = null;
 	
@@ -60,12 +60,13 @@ public class Dialog
 			return "Слишком короткая команда, не могу понять :с";
 		
 		String option = input.substring(0, 3);
+		String data = input.substring(3);
 		switch (option) {
 		case "/y ":
-			return getNextYear(input);
+			return getNextYear(data);
 			
 		case "/c ":
-			return getNextCountry(input);
+			return getNextCountry(data);
 		
 		default:	
 			return "Неизвестная команда, загляни, пожалуйста, в справку";
@@ -74,16 +75,17 @@ public class Dialog
  	
  	private String getNextYear(String input) 
  	{
- 		int year;
+ 		int iYear;
  		try {
-			year = Integer.parseInt(input.substring(3).trim());
+			iYear = Integer.parseInt(input.trim());
 		} catch (NumberFormatException e) {
 		     return "Ну как так, год должен быть числом";
 		}
+ 		String year = input.trim();
 		sCurrentOpt = "year";
 		if (chatBot.filmsByYear.containsKey(year))
 		{
-			iYear = year;
+			sYear = year;
 			ArrayList<Film> films = chatBot.filmsByYear.get(year);
 			ArrayList<Film> savedFilms = user.getSavedFilmsYear(year);			
 			for (Film film : films)
@@ -122,40 +124,47 @@ public class Dialog
 		return "В базе нет фильмов, снятых в этой стране :с";		
  	}
  	
+
+ 	
  	private String tryGetNextFilm(){
  		if (sCurrentOpt == null)
 			return "Дружок, сначала выбери опцию, а потом проси фильм";
-		if (sCurrentOpt == "year") 
-		{
-			int year = iYear;
-			ArrayList<Film> films = chatBot.filmsByYear.get(year);
-			ArrayList<Film> savedFilms = user.getSavedFilmsYear(year);			
-			for (Film film : films)
-			{				
-				if (savedFilms == null || !savedFilms.contains(film)) 
-				{
-					user.addFilmByYear(film);
-					return film.getTitle();
-				}
-			}
-			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
-		}			
-		if (sCurrentOpt == "country")
-		{
-			String country = sCountry;
-			ArrayList<Film> films = chatBot.filmsByCountry.get(country);
-			ArrayList<Film> savedFilms = user.getSavedFilmsCountry(country);			
-			for (Film film : films)
+ 		if (!Film.getPossibleFields().contains(sCountry))
+ 			return "";
+ 		String key;
+ 		ArrayList<Film> films = new ArrayList<Film>();
+ 		ArrayList<Film> savedFilms = new ArrayList<Film>();
+ 		if (sCurrentOpt == "year")  
+ 		{
+ 			key = sYear;
+ 			films = chatBot.filmsByYear.get(key);
+ 			savedFilms = user.getSavedFilmsYear(key);
+ 		}
+ 		
+ 		if (sCurrentOpt == "country")
+ 		{
+ 			key = sCountry;
+ 			films = chatBot.filmsByCountry.get(key);
+ 			savedFilms = user.getSavedFilmsCountry(key);
+ 		}
+ 		
+ 		for (Film film : films)
+ 		{
+ 			if (savedFilms == null || !savedFilms.contains(film)) 
 			{
-				if (savedFilms == null || !savedFilms.contains(film)) 
-				{
-					user.addFilmByCountry(film);
-					return film.getTitle();			
-				}
+				user.addFilmByYear(film);
+				return film.getTitle();
 			}
-			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
-		}
-		return "";
+ 		}
+ 		if (sCurrentOpt == "year") 
+ 			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";
+ 		if (sCurrentOpt == "country")
+ 			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
+ 		return "";
+
+ 		
+ 		
+	
  		
  	}
 

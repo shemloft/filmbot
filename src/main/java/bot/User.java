@@ -7,16 +7,16 @@ import java.util.Map;
 public class User 
 {
 	public String Name;
-	private Map<Integer, ArrayList<Film>> savedFilmsByYear;
+	private Map<String, ArrayList<Film>> savedFilmsByYear;
 	private Map<String, ArrayList<Film>> savedFilmsByCountry;
 	
 	public User(String name) {
 		Name = name;
-		savedFilmsByYear = new HashMap<Integer, ArrayList<Film>>();
+		savedFilmsByYear = new HashMap<String, ArrayList<Film>>();
 		savedFilmsByCountry = new HashMap<String, ArrayList<Film>>(); 		
 	}
 	
-	public ArrayList<Film> getSavedFilmsYear(int year)
+	public ArrayList<Film> getSavedFilmsYear(String year)
 	{
 		if (!savedFilmsByYear.containsKey(year))
 			return null;
@@ -32,7 +32,7 @@ public class User
 	
 	public void addFilmByYear(Film film)
 	{
-		int year = film.getYear();
+		String year = film.getYear();
 		if (!savedFilmsByYear.containsKey(year)) {
 			ArrayList<Film> filmList = new ArrayList<Film>();
 			filmList.add(film);

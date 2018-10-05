@@ -12,7 +12,7 @@ public class ChatBot
 	public void startChat() throws Exception {
 		// считать базу пользователей 
 		
-		ParserCSV parser = new bot.ParserCSV("Database.csv");
+		HelperCSV parser = new bot.HelperCSV("Database.csv");
 		filmsStructure = new bot.FilmsStructure(parser.filmList);
 		phrases = new Phrases();
 		

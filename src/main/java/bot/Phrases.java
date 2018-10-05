@@ -41,7 +41,7 @@ public class Phrases
 				"all_films", 
 				"Все фильмы этого года, имеющиеся в базе, были предоставлены");
 		countryPhrases = new HashMap<String, String>();
-		countryPhrases.put("no_films", "В базе нет фильмов, снятых в этой стране:с");
+		countryPhrases.put("no_films", "В базе нет фильмов, снятых в этой стране :с");
 		countryPhrases.put(
 				"all_films", 
 				"Все фильмы этой страны, имеющиеся в базе, были предоставлены");

@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class Dialog {
 
-	private String m_sYear = null;
-	private String m_sCountry = null;
+	private String year = null;
+	private String country = null;
 
-	private String sCurrentOpt = null;
+	private String currentOpt = null;
 
 	private ChatBot chatBot;
 	private User user;
@@ -56,30 +56,30 @@ public class Dialog {
 		}
 
 		String option = "year";
-		m_sYear = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sYear) ? sYear : null;
+		year = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sYear) ? sYear : null;
 		return getFilm(sYear, option, chatBot.phrases.yearPhrases);
 
 	}
 
 	private String getNextCountry(String sCountry) {
 		String option = "country";
-		m_sCountry = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sCountry) ? sCountry : null;
+		country = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sCountry) ? sCountry : null;
 		return getFilm(sCountry, option, chatBot.phrases.countryPhrases);
 	}
 
 	private String tryGetNextFilm() {
-		if (sCurrentOpt == null)
+		if (currentOpt == null)
 			return Phrases.NEXT_WITHOUT_OPT;
 
 		String key = getCurrentKey();
 
-		String film = tryGetUnusedFilm(chatBot.filmsStructure.getFilmsByKey(sCurrentOpt).get(key));
+		String film = tryGetUnusedFilm(chatBot.filmsStructure.getFilmsByKey(currentOpt).get(key));
 
-		return film != null ? film : chatBot.phrases.getDictByKey(sCurrentOpt).get("all_films");
+		return film != null ? film : chatBot.phrases.getDictByKey(currentOpt).get("all_films");
 	}
 
 	private String getFilm(String key, String option, Map<String, String> phrases) {
-		sCurrentOpt = option;
+		currentOpt = option;
 		Map<String, ArrayList<Film>> filmsDict = chatBot.filmsStructure.getFilmsByKey(option);
 
 		if (!filmsDict.containsKey(key))
@@ -100,10 +100,10 @@ public class Dialog {
 	}
 
 	private String getCurrentKey() {
-		if (sCurrentOpt == "year")
-			return m_sYear;
-		return m_sCountry;
-		
+		if (currentOpt == "year")
+			return year;
+		return country;
+
 	}
 
 }

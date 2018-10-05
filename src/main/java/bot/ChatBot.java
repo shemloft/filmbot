@@ -7,12 +7,12 @@ public class ChatBot {
 	public FilmsStructure filmsStructure;
 	public Phrases phrases;
 
-	public ChatBot(ArrayList<Film> filmList) throws Exception {		
+	public ChatBot(ArrayList<Film> filmList) throws Exception {
 		filmsStructure = new FilmsStructure(filmList);
 		phrases = new Phrases();
 	}
-	
-	public void startChat() throws Exception {		
+
+	public void startChat() throws Exception {
 
 		Scanner scan = new Scanner(System.in);
 		System.out.println(Phrases.HELLO);
@@ -51,6 +51,7 @@ public class ChatBot {
 		try {
 			HelperCSV.createFile(user.name);
 		} catch (Exception e) {
+			throw new Exception("Ошибочка при сохранении пользователя");
 		}
 
 		HelperCSV.addInfo(user.name, user.savedFilms);

@@ -3,7 +3,6 @@ package bot;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import java.security.KeyException;
 import java.util.ArrayList;
 
 import bot.Film;

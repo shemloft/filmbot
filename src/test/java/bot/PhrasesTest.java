@@ -13,7 +13,7 @@ public class PhrasesTest extends TestCase {
 		Assert.assertEquals(phrases.yearPhrases.size(), 2);
 		Assert.assertTrue(phrases.yearPhrases.containsKey("all_films"));
 	}
-	
+
 	public void testGetDictByKey() {
 		Phrases phrases = new Phrases();
 		Assert.assertEquals(2, phrases.getDictByKey("year").size());

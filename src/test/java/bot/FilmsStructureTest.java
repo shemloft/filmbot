@@ -10,7 +10,7 @@ import bot.Film;
 import bot.FilmsStructure;
 
 public class FilmsStructureTest extends TestCase {
-	public void testFilmsByYear() throws Exception{
+	public void testFilmsByYear() throws Exception {
 		Map<String, ArrayList<Film>> filmsByYear = new HashMap<String, ArrayList<Film>>();
 		filmsByYear.put("2006", new ArrayList<Film>());
 		filmsByYear.get("2006").add(new Film("Престиж", "2006", "США"));
@@ -23,8 +23,8 @@ public class FilmsStructureTest extends TestCase {
 		FilmsStructure filmsStruct2 = new FilmsStructure(filmsByYear.get("1994"));
 		Assert.assertEquals(filmsByYear, filmsStruct2.getFilmsByKey("year"));
 	}
-	
-	public void testFilmsByCountry() throws Exception{
+
+	public void testFilmsByCountry() throws Exception {
 		Map<String, ArrayList<Film>> filmsByCountry = new HashMap<String, ArrayList<Film>>();
 		filmsByCountry.put("США", new ArrayList<Film>());
 		filmsByCountry.get("США").add(new Film("Престиж", "2006", "США"));

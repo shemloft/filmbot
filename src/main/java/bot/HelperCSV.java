@@ -59,7 +59,7 @@ public class HelperCSV {
 			allRows = reader.readAll();
 			reader.close();
 		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException("Ошибочка с базой данных, перепроверьте её");
+			throw new FileNotFoundException(bot.Phrases.DATABASE_ERROR);
 		}
 		return allRows;
 	}

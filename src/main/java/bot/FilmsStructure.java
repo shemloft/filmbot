@@ -18,16 +18,16 @@ public class FilmsStructure
 		filmsByCountry = createDictionary("country");
 	}
 	
-	public Map<String, ArrayList<Film>> getFilmsByKey(String keyName) throws KeyException
+	public Map<String, ArrayList<Film>> getFilmsByKey(String keyName)
 	{
 		if (keyName.equals("year"))
 			return filmsByYear;
 		if (keyName.equals("country"))
 			return filmsByCountry;
-		throw new KeyException("Неизвестный ключ");
+		return null;
 	}
 	
- 	private Map<String, ArrayList<Film>> createDictionary(String keyName) throws KeyException
+ 	private Map<String, ArrayList<Film>> createDictionary(String keyName)
  	{
  		Map<String, ArrayList<Film>> filmsDictionary = new HashMap<String, ArrayList<Film>>();
 		for (Film film: filmList) {			

@@ -1,6 +1,5 @@
 package bot;
 
-import java.security.KeyException;
 import java.util.ArrayList;
 
 public class Film {
@@ -22,14 +21,14 @@ public class Film {
 		return fields;
 	}
 
-	public String getField(String fieldName) throws KeyException {
+	public String getField(String fieldName) {
 		if (fieldName.equals("country"))
 			return getCountry();
 		if (fieldName.equals("year"))
 			return getYear();
 		if (fieldName.equals("title"))
 			return getTitle();
-		throw new KeyException("Неизвестный ключ");
+		return null;
 
 	}
 
@@ -70,7 +69,7 @@ public class Film {
 		result ^= m_sCountry.hashCode();
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Название: " + m_sTitle + ", год: " + m_sYear + ", страна: " + m_sCountry;

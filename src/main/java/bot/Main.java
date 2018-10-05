@@ -4,7 +4,8 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		
-		bot.ChatBot chatBot = new bot.ChatBot();
+		HelperCSV parser = new HelperCSV("Database.csv");
+		ChatBot chatBot = new ChatBot(parser.filmList);
 		chatBot.startChat();
 	}
 

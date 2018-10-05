@@ -1,6 +1,5 @@
 package bot;
 
-import java.security.KeyException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +29,9 @@ public class Phrases
 	public static final String NEXT_WITHOUT_OPT = 
 			"Дружок, сначала выбери опцию, а потом проси фильм";
 	
+	public static final String DATABASE_ERROR =
+			"Ошибочка с базой данных, перепроверьте её";
+	
 	public Map<String, String> yearPhrases;
 	public Map<String, String> countryPhrases;
 	
@@ -47,13 +49,13 @@ public class Phrases
 				"Все фильмы этой страны, имеющиеся в базе, были предоставлены");
 	}
 	
-	public Map<String, String> getDictByKey(String keyName) throws KeyException
+	public Map<String, String> getDictByKey(String keyName)
 	{
 		if (keyName.equals("year"))
 			return yearPhrases;
 		if (keyName.equals("country"))
-			return yearPhrases;
-		throw new KeyException("Неизвестный ключ");
+			return countryPhrases;
+		return null;
 	}
 
 }

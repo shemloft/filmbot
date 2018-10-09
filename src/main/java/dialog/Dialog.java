@@ -1,7 +1,11 @@
-package bot;
+package dialog;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import bot.ChatBot;
+import logic.Film;
+import logic.User;
 
 public class Dialog {
 

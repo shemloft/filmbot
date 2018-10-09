@@ -1,9 +1,11 @@
-package bot;
+package storage;
 
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import logic.Film;
 
 public class FilmsStructure 
 {

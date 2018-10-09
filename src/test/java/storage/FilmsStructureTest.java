@@ -1,15 +1,18 @@
-package bot;
+package storage;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import logic.Film;
+import storage.FilmsStructure;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import bot.Film;
-import bot.FilmsStructure;
+import org.junit.Test;
 
 public class FilmsStructureTest extends TestCase {
+	@Test
 	public void testFilmsByYear() throws Exception {
 		Map<String, ArrayList<Film>> filmsByYear = new HashMap<String, ArrayList<Film>>();
 		filmsByYear.put("2006", new ArrayList<Film>());
@@ -23,7 +26,8 @@ public class FilmsStructureTest extends TestCase {
 		FilmsStructure filmsStruct2 = new FilmsStructure(filmsByYear.get("1994"));
 		Assert.assertEquals(filmsByYear, filmsStruct2.getFilmsByKey("year"));
 	}
-
+	
+	@Test
 	public void testFilmsByCountry() throws Exception {
 		Map<String, ArrayList<Film>> filmsByCountry = new HashMap<String, ArrayList<Film>>();
 		filmsByCountry.put("США", new ArrayList<Film>());

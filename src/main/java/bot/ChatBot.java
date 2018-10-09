@@ -3,6 +3,13 @@ package bot;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import dialog.Dialog;
+import dialog.Phrases;
+import logic.Film;
+import logic.User;
+import storage.FilmsStructure;
+import storage.HelperCSV;
+
 public class ChatBot {
 	public FilmsStructure filmsStructure;
 	public Phrases phrases;

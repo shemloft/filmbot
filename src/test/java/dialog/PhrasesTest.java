@@ -1,11 +1,14 @@
-package bot;
+package dialog;
 
+import org.junit.Test;
+
+import dialog.Phrases;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import bot.Phrases;
-
 public class PhrasesTest extends TestCase {
+	
+	@Test
 	public void testPhrasesConstructor() {
 		Phrases phrases = new Phrases();
 		Assert.assertEquals("В базе нет фильмов, снятых в этот год :с", phrases.yearPhrases.get("no_films"));
@@ -14,6 +17,7 @@ public class PhrasesTest extends TestCase {
 		Assert.assertTrue(phrases.yearPhrases.containsKey("all_films"));
 	}
 
+	@Test
 	public void testGetDictByKey() {
 		Phrases phrases = new Phrases();
 		Assert.assertEquals(2, phrases.getDictByKey("year").size());

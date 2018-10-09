@@ -1,4 +1,4 @@
-package bot;
+package storage;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +9,7 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import logic.Film;
 
 public class HelperCSV {
 
@@ -47,7 +48,7 @@ public class HelperCSV {
 			String name = row[0];
 			String country = row[1];
 			String year = row[2];
-			Film film = new bot.Film(name, year, country);
+			Film film = new logic.Film(name, year, country);
 			filmList.add(film);
 		}
 	}
@@ -59,7 +60,7 @@ public class HelperCSV {
 			allRows = reader.readAll();
 			reader.close();
 		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException(bot.Phrases.DATABASE_ERROR);
+			throw new FileNotFoundException(dialog.Phrases.DATABASE_ERROR);
 		}
 		return allRows;
 	}

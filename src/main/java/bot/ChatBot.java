@@ -1,5 +1,8 @@
 package bot;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,11 +22,11 @@ public class ChatBot {
 		phrases = new Phrases();
 	}
 
-	public void startChat() throws Exception {
+	public void startChat(InputStream inputStream) throws Exception {
 
-		Scanner scan = new Scanner(System.in);
-		System.out.println(Phrases.HELLO);
-
+		Scanner scan = new Scanner(inputStream);
+		System.out.println(Phrases.HELLO);	
+		
 		String name = scan.nextLine();
 		ArrayList<Film> userFilms = tryGetUserFilmList(name);
 

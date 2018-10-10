@@ -1,5 +1,7 @@
 package bot;
 
+import java.io.StringReader;
+
 import storage.HelperCSV;
 
 public class Main {
@@ -8,7 +10,8 @@ public class Main {
 		
 		HelperCSV parser = new HelperCSV("Database.csv");
 		ChatBot chatBot = new ChatBot(parser.filmList);
-		chatBot.startChat();
+		chatBot.startChat(System.in);
+	
 	}
 
 }

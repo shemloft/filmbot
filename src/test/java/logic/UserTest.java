@@ -2,8 +2,8 @@ package logic;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import logic.Film;
-import logic.User;
+import structures.Film;
+import structures.User;
 
 import java.util.ArrayList;
 

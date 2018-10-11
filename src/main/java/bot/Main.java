@@ -1,17 +1,15 @@
 package bot;
 
-import java.io.StringReader;
-
 import storage.HelperCSV;
+import storage.FilmParser;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		
-		HelperCSV parser = new HelperCSV("Database.csv");
-		ChatBot chatBot = new ChatBot(parser.filmList);
-		chatBot.startChat(System.in);
-	
+		HelperCSV helperCSV = new HelperCSV("Database.csv");
+		FilmParser parser = new FilmParser(helperCSV);		
+		ChatBot chatBot = new ChatBot(parser.getFilmList());
+		chatBot.startChat(System.in, System.out);	
 	}
 
 }

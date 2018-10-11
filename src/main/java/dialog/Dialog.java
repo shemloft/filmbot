@@ -1,25 +1,29 @@
 package dialog;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import bot.ChatBot;
-import logic.Film;
-import logic.User;
+import structures.Film;
+import structures.Field;
+import structures.FilmsStructure;
+import structures.User;
 
 public class Dialog {
 
-	private String year = null;
-	private String country = null;
+	private Map<Field, String> currentOptions;
+	private Field currentField;
 
-	private String currentOpt = null;
-
-	private ChatBot chatBot;
 	private User user;
+	private FilmsStructure filmsStructure;
 
-	public Dialog(ChatBot chatBot, User user) {
-		this.chatBot = chatBot;
+	public Dialog(User user, FilmsStructure filmsStructure) {
 		this.user = user;
+		this.filmsStructure = filmsStructure;
+		currentField = null;
+		currentOptions = new HashMap<Field, String>();
+		for (Field field : Field.values())
+			currentOptions.put(field, null);
 	}
 
 	public String startDialog() {
@@ -33,81 +37,53 @@ public class Dialog {
 			return Phrases.HELP;
 
 		if (input.equals("/next"))
-			return tryGetNextFilm();
+			return getNextFilm();
 
 		if (input.length() < 3)
 			return Phrases.SHORT_COMMAND;
 
-		String command = input.substring(0, 3);
+		String command = input.substring(0, 3).trim();
 		String request = input.substring(3).trim();
-		switch (command) {
-		case "/y ":
-			return getNextYear(request);
 
-		case "/c ":
-			return getNextCountry(request);
-
-		default:
-			return Phrases.UNKNOWN_COMMAND;
+		for (Field field : Field.values()) {
+			if (command.equals(field.shortCut())) {
+				currentOptions.put(currentField, null);
+				currentField = null;
+				return getFilmByRequest(field, request);
+			}
 		}
+		return Phrases.UNKNOWN_COMMAND;
 	}
 
-	private String getNextYear(String sYear) {
-		try {
-			Integer.parseInt(sYear);
-		} catch (NumberFormatException e) {
-			return Phrases.YEAR_NAN;
-		}
-
-		String option = "year";
-		year = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sYear) ? sYear : null;
-		return getFilm(sYear, option, chatBot.phrases.yearPhrases);
-
-	}
-
-	private String getNextCountry(String sCountry) {
-		String option = "country";
-		country = chatBot.filmsStructure.getFilmsByKey(option).containsKey(sCountry) ? sCountry : null;
-		return getFilm(sCountry, option, chatBot.phrases.countryPhrases);
-	}
-
-	private String tryGetNextFilm() {
-		if (currentOpt == null)
+	private String getNextFilm() {
+		if (currentField == null)
 			return Phrases.NEXT_WITHOUT_OPT;
 
-		String key = getCurrentKey();
-
-		String film = tryGetUnusedFilm(chatBot.filmsStructure.getFilmsByKey(currentOpt).get(key));
-
-		return film != null ? film : chatBot.phrases.getDictByKey(currentOpt).get("all_films");
+		Map<String, List<Film>> filmsDict = filmsStructure.getFilmsByField(currentField);
+		String film = getUnshownFilm(filmsDict.get(currentOptions.get(currentField)));
+		return film != null ? film : currentField.noFilmsLeft();
 	}
 
-	private String getFilm(String key, String option, Map<String, String> phrases) {
-		currentOpt = option;
-		Map<String, ArrayList<Film>> filmsDict = chatBot.filmsStructure.getFilmsByKey(option);
+	private String getFilmByRequest(Field field, String key) {
+		Map<String, List<Film>> filmsDict = filmsStructure.getFilmsByField(field);
 
 		if (!filmsDict.containsKey(key))
-			return phrases.get("no_films");
+			return field.noFilmsAtAll();
 
-		String film = tryGetUnusedFilm(filmsDict.get(key));
-		return film != null ? film : phrases.get("all_films");
+		currentField = field;
+		currentOptions.put(field, key);
+
+		String film = getUnshownFilm(filmsDict.get(key));
+		return film != null ? film : field.noFilmsLeft();
 	}
 
-	private String tryGetUnusedFilm(ArrayList<Film> films) {
+	private String getUnshownFilm(List<Film> films) {
 		for (Film film : films) {
 			if (user.savedFilms.contains(film))
 				continue;
 			user.addFilm(film);
-			return film.getTitle();
+			return film.title;
 		}
 		return null;
 	}
-
-	private String getCurrentKey() {
-		if (currentOpt == "year")
-			return year;
-		return country;
-
-	}
-
 }

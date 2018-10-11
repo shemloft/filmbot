@@ -9,16 +9,17 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import logic.Film;
+import structures.Field;
+import structures.Film;
 
-public class HelperCSV {
+public class HelperCSV implements DatabaseHelper {
+	/*очень сумбурный класс, может как то разбить или что то такое
+	 * потому что вот есть у нас в конструкторе инпут, а есть еще куча рандомных статтических метожов и так далее*/
 
 	private String sFileName;
-	public ArrayList<Film> filmList = new ArrayList<Film>();
 
 	public HelperCSV(String inputFileName) throws Exception {
 		sFileName = inputFileName;
-		getFilmsList();
 	}
 
 	public static void createFile(String s_name) throws IOException {
@@ -28,35 +29,26 @@ public class HelperCSV {
 		writer.close();
 	}
 
-	public static void addInfo(String s_name, ArrayList<Film> savedFilms) throws IOException {
+	public static void addInfo(String s_name, List<Film> savedFilms) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(s_name + ".csv", true), ';', '"');
 		for (Film film : savedFilms) {
-			String[] record = { film.getTitle(), film.getCountry(), film.getYear() };
+			String[] record = { film.title, film.getField(Field.COUNTRY), film.getField(Field.YEAR)};
 			writer.writeNext(record);
 		}
 		writer.close();
 	}
 
-	public ArrayList<Film> readInfo(String s_name) throws Exception {
-		HelperCSV parser = new HelperCSV(s_name + ".csv");
-		return parser.filmList;
-	}
+//	public List<Film> readInfo(String s_name) throws Exception {
+//		HelperCSV parser = new HelperCSV(s_name + ".csv"); // погоди, почему тут хелпер в хелпере, глупость какая то
+//		return parser.filmList;
+//	}
 
-	private void getFilmsList() throws Exception {
-		List<String[]> Database = extractData(sFileName);
-		for (String[] row : Database) {
-			String name = row[0];
-			String country = row[1];
-			String year = row[2];
-			Film film = new logic.Film(name, year, country);
-			filmList.add(film);
-		}
-	}
 
-	public static List<String[]> extractData(String fileName) throws Exception {
+
+	public List<String[]> extractData() throws Exception {
 		List<String[]> allRows = new ArrayList<String[]>();
 		try {
-			CSVReader reader = new CSVReader(new FileReader(fileName), ';', '"', 1);
+			CSVReader reader = new CSVReader(new FileReader(sFileName), ';', '"', 1);
 			allRows = reader.readAll();
 			reader.close();
 		} catch (FileNotFoundException e) {

@@ -1,17 +1,14 @@
 package structures;
 
 import java.util.Map;
-import java.util.HashMap;
 
 public class Film {
 	public String title;
 	private Map<Field, String> filmData;
 
-	public Film(String title, String year, String country) {
+	public Film(String title, Map<Field, String> filmData) {
 		this.title = title;
-		filmData = new HashMap<Field, String>();
-		filmData.put(Field.YEAR, year);
-		filmData.put(Field.COUNTRY, country);
+		this.filmData = filmData;
 	}
 
 	public String getField(Field field) {

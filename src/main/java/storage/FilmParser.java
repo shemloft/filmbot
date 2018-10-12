@@ -2,34 +2,48 @@ package storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 
 import structures.Film;
+import structures.Field;
+
 
 public class FilmParser {
 	
-	DatabaseHelper databaseHelper;
-	private List<Film> filmList;
-	
+	DatabaseHelper databaseHelper;	
 	
 	public FilmParser(DatabaseHelper databaseHelper) throws Exception {
 		this.databaseHelper = databaseHelper;	
-		filmList = new ArrayList<Film>();
-		extractFilmList();
 	}
 	
-	private void extractFilmList() throws Exception {
+	public List<Film> getFilmList() throws Exception {
+		List<Film> filmList = new ArrayList<Film>();
 		List<String[]> Database = databaseHelper.extractData();
 		for (String[] row : Database) {
-			String name = row[0];
-			String country = row[1];
-			String year = row[2];
-			Film film = new structures.Film(name, year, country);
+			String title = row[0];
+			Map<Field, String> filmData = new HashMap<Field, String>();
+			for (Field field : Field.values()) 
+				filmData.put(field, row[field.ordinal() + 1]);
+			Film film = new structures.Film(title, filmData);
 			filmList.add(film);
 		}
+		return filmList;
 	}
 	
-	public List<Film> getFilmList() {
-		return filmList;
+	
+	public void saveFilms(List<Film> filmList) throws Exception {
+		int rowLength = Field.values().length + 1;		
+		List<String[]> rowList = new ArrayList<String[]>();
+		for (Film film : filmList) {
+			String[] filmRow = new String[rowLength];
+			filmRow[0] = film.title;
+			for (Field field : Field.values())
+				filmRow[field.ordinal() + 1] = film.getField(field);
+			rowList.add(filmRow);
+		}
+		databaseHelper.saveData(rowList);	
 	}
 
 }

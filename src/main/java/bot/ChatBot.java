@@ -24,8 +24,7 @@ public class ChatBot {
 	public void startChat(InputStream inputStream, OutputStream outputStream) throws Exception {
 
 		Scanner scan = new Scanner(inputStream);
-		PrintStream printStream = new PrintStream(outputStream);
-		
+		PrintStream printStream = new PrintStream(outputStream);		
 		
 		printStream.println(Phrases.HELLO);			
 		String name = scan.nextLine();
@@ -48,25 +47,26 @@ public class ChatBot {
 		scan.close();
 	}
 
-	private List<Film> tryGetUserFilmList(String name) {
-		FilmParser parser = null;
-		try {
-			HelperCSV helperCSV = new HelperCSV(String.format("%s.csv", name));
-			parser = new FilmParser(helperCSV);
-			
+	private List<Film> tryGetUserFilmList(String name) throws Exception {
+		List<Film> userFilms = null;
+		HelperCSV helperCSV = new HelperCSV(name);
+		FilmParser parser = new FilmParser(helperCSV);
+		try {			
+			userFilms = parser.getFilmList();
 		} catch (Exception e) {
 			return null;
 		}
-		return parser.getFilmList();
+		return userFilms;
 	}
 
 	private void saveUser(User user) throws Exception {
 		try {
-			HelperCSV.createFile(user.name);
+			HelperCSV helperCSV = new HelperCSV(user.name);
+			FilmParser parser = new FilmParser(helperCSV);
+			parser.saveFilms(user.savedFilms);
+			
 		} catch (Exception e) {
 			throw new Exception("Ошибочка при сохранении пользователя");
 		}
-
-		HelperCSV.addInfo(user.name, user.savedFilms);
 	}
 }

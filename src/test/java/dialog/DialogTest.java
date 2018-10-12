@@ -1,126 +1,128 @@
-//package dialog;
-//
-//import junit.framework.Assert;
-//import junit.framework.TestCase;
-//import logic.User;
-//import structures.Film;
-//
-//import java.util.ArrayList;
-//
-//import org.junit.Before;
-//import org.junit.Test;
-//
-//import bot.ChatBot;
-//import dialog.Dialog;
-//import dialog.Phrases;
-//
-//public class DialogTest extends TestCase {
-//	private ChatBot bot;
-//	private User user;
-//	private Dialog dialog;
-//
-//	@Before
-//	protected void setUp() throws Exception {
-//		ArrayList<Film> filmList = new ArrayList<Film>();
-//		filmList.add(new Film("Престиж", "2006", "США"));
-//		filmList.add(new Film("Крестный отец", "1972", "США"));
-//		filmList.add(new Film("Жизнь прекрасна", "1997", "Италия"));
-//		filmList.add(new Film("Достучаться до небес", "1997", "Германия"));
-//		filmList.add(new Film("Леон", "1994", "Франция"));
-//		ArrayList<Film> userList = new ArrayList<Film>();
-//		userList.add(new Film("Леон", "1994", "Франция"));
-//		bot = new ChatBot(filmList);
-//		user = new User("name", userList);
-//		dialog = new Dialog(bot, user);
-//	}
-//
-//	@Test
-//	public void testStartDialogFirstTime() throws Exception {
-//		user = new User("name", null);
-//		dialog = new Dialog(bot, user);
-//		Assert.assertEquals(String.format("Добро пожаловать, name.\n%s", Phrases.HELP), dialog.startDialog());
-//	}
-//
-//	@Test
-//	public void testStartDialogNotFirstTime() {
-//		Assert.assertEquals("Давно не виделись, name.", dialog.startDialog());
-//	}
-//
-//	@Test
-//	public void testProcessInputHelp() {
-//		Assert.assertEquals(Phrases.HELP, dialog.processInput("/help"));
-//	}
-//
-//	@Test
-//	public void testProcessInputShort() {
-//		Assert.assertEquals(Phrases.SHORT_COMMAND, dialog.processInput("c:"));
-//	}
-//
-//	@Test
-//	public void testGetCountry() {
-//		Assert.assertEquals("Престиж", dialog.processInput("/c США"));
-//	}
-//
-//	@Test
-//	public void testGetNextCountry() {
-//		Assert.assertEquals("Престиж", dialog.processInput("/c США"));
-//		Assert.assertEquals("Крестный отец", dialog.processInput("/next"));
-//	}
-//
-//	@Test
-//	public void testGetYear() {
-//		Assert.assertEquals("Жизнь прекрасна", dialog.processInput("/y 1997"));
-//	}
-//
-//	@Test
-//	public void testGetNextYear() {
-//		Assert.assertEquals("Жизнь прекрасна", dialog.processInput("/y 1997"));
-//		Assert.assertEquals("Достучаться до небес", dialog.processInput("/next"));
-//	}
-//
-//	@Test
-//	public void testUnknownCommand() {
-//		Assert.assertEquals(Phrases.UNKNOWN_COMMAND, dialog.processInput("/p lol"));
-//	}
-//
-//	@Test
-//	public void testYearNan() {
-//		Assert.assertEquals(Phrases.YEAR_NAN, dialog.processInput("/y year"));
-//	}
-//
-//	@Test
-//	public void testGetYearWhichNotInFilmList() {
-//		Assert.assertEquals("В базе нет фильмов, снятых в этот год :с", dialog.processInput("/y 900"));
-//	}
-//
-//	@Test
-//	public void testGetCountryWhichNotInFilmList() {
-//		Assert.assertEquals("В базе нет фильмов, снятых в этой стране :с", dialog.processInput("/c Нарния"));
-//	}
-//
-//	@Test
-//	public void testNextWithoutOption() {
-//		Assert.assertEquals(Phrases.NEXT_WITHOUT_OPT, dialog.processInput("/next"));
-//	}
-//
-//	@Test
-//	public void testNoNextFilmYear() {
-//		Assert.assertEquals("Престиж", dialog.processInput("/y 2006"));
-//		Assert.assertEquals("Все фильмы этого года, имеющиеся в базе, были предоставлены",
-//				dialog.processInput("/next"));
-//	}
-//
-//	@Test
-//	public void testNoNextFilmCountry() {
-//		Assert.assertEquals("Достучаться до небес", dialog.processInput("/c Германия"));
-//		Assert.assertEquals("Все фильмы этой страны, имеющиеся в базе, были предоставлены",
-//				dialog.processInput("/next"));
-//	}
-//
-//	@Test
-//	public void testsUserSeenFilmCountry() {
-//		Assert.assertEquals("Все фильмы этой страны, имеющиеся в базе, были предоставлены",
-//				dialog.processInput("/c Франция"));
-//	}
-//
-//}
+package dialog;
+
+import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import dialog.Dialog;
+import dialog.Phrases;
+import structures.User;
+import structures.FilmsStructure;
+import structures.Film;
+import structures.Field;
+
+public class DialogTest extends TestCase {
+	private FilmsStructure filmsStruct;
+	private User user;
+	private Dialog dialog;
+
+	private Film getFilm(String title, String country, String year) {
+		Map<Field, String> filmData = new HashMap<Field, String>();
+		filmData.put(Field.COUNTRY, country);
+		filmData.put(Field.YEAR, year);
+		return new structures.Film(title, filmData);
+	}	
+	
+	@Before
+	protected void setUp() throws Exception {
+		List<Film> filmList = new ArrayList<Film>();
+		filmList.add(getFilm("Бойцовский клуб", "США", "1999"));
+		filmList.add(getFilm("Леон", "Франция", "1994"));
+		filmList.add(getFilm("Криминальное чтиво", "США", "1994"));
+		filmList.add(getFilm("Крестный отец", "США", "1972"));
+		
+		ArrayList<Film> userList = new ArrayList<Film>();
+		userList.add(getFilm("Крестный отец", "США", "1972"));
+		filmsStruct = new FilmsStructure(filmList);
+		user = new User("name", userList);
+		dialog = new Dialog(user, filmsStruct);
+	}
+
+	@Test
+	public void testStartDialogFirstTime() throws Exception {
+		user = new User("name", null);
+		dialog = new Dialog(user, filmsStruct);
+		assertEquals(String.format("Добро пожаловать, name.\n%s", Phrases.HELP), dialog.startDialog());
+	}
+
+	@Test
+	public void testStartDialogNotFirstTime() {
+		assertEquals("Давно не виделись, name.", dialog.startDialog());
+	}
+
+	@Test
+	public void testProcessInputHelp() {
+		assertEquals(Phrases.HELP, dialog.processInput("/help"));
+	}
+
+	@Test
+	public void testProcessInputShort() {
+		assertEquals(Phrases.SHORT_COMMAND, dialog.processInput("c:"));
+	}
+
+	@Test
+	public void testGetCountry() {
+		assertEquals("Бойцовский клуб", dialog.processInput("/c США"));
+	}
+
+	@Test
+	public void testGetNextCountry() {
+		assertEquals("Бойцовский клуб", dialog.processInput("/c США"));
+		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
+	}
+
+	@Test
+	public void testGetYear() {
+		assertEquals("Леон", dialog.processInput("/y 1994"));
+	}
+
+	@Test
+	public void testGetNextYear() {
+		assertEquals("Леон", dialog.processInput("/y 1994"));
+		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
+	}
+
+	@Test
+	public void testUnknownCommand() {
+		assertEquals(Phrases.UNKNOWN_COMMAND, dialog.processInput("/p lol"));
+	}
+
+	@Test
+	public void testGetYearWhichNotInFilmList() {
+		assertEquals(Field.YEAR.noFilmsAtAll(), dialog.processInput("/y 900"));
+	}
+
+	@Test
+	public void testGetCountryWhichNotInFilmList() {
+		assertEquals(Field.COUNTRY.noFilmsAtAll(), dialog.processInput("/c Нарния"));
+	}
+
+	@Test
+	public void testNextWithoutOption() {
+		assertEquals(Phrases.NEXT_WITHOUT_OPT, dialog.processInput("/next"));
+	}
+
+	@Test
+	public void testNoNextFilmYear() {
+		assertEquals("Бойцовский клуб", dialog.processInput("/y 1999"));
+		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/next"));
+	}
+
+	@Test
+	public void testNoNextFilmCountry() {
+		assertEquals("Леон", dialog.processInput("/c Франция"));
+		assertEquals(Field.COUNTRY.noFilmsLeft(), dialog.processInput("/next"));
+	}
+
+	@Test
+	public void testsUserSeenFilmYear() {
+		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/y 1972"));
+	}
+
+}

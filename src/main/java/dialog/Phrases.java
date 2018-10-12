@@ -3,9 +3,9 @@ package dialog;
 public class Phrases {
 	public static final String HELLO = "Назовите себя, пожалуйста";
 
-	public static final String HELP = "Этот бот кидает кино по вашим запросам.\n" + "Формат ввода:\n" + "/y год\n"
+	public static final String HELP = "\nЭтот бот кидает кино по вашим запросам.\n" + "Формат ввода:\n" + "/y год\n"
 			+ "/c страна\n" + "\n" + "Может быть выбрана только одна опция\n" + "/next для следующего фильма\n"
-			+ "Вызов справки: /help\n" + "Корректный выход из бота с сохранением: /exit\n";
+			+ "Вызов справки: /help\n" + "Корректный выход из бота с сохранением: /exit";
 
 	public static final String UNKNOWN_COMMAND = "Неизвестная команда, загляни, пожалуйста, в справку";
 

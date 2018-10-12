@@ -28,7 +28,7 @@ public class Dialog {
 
 	public String startDialog() {
 		if (user.firstTime)
-			return String.format("Добро пожаловать, %s.\n%s", user.name, Phrases.HELP);
+			return String.format("Добро пожаловать, %s.%s", user.name, Phrases.HELP);
 		return String.format("Давно не виделись, %s.", user.name);
 	}
 

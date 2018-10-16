@@ -1,39 +1,39 @@
 package bot;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.List;
 import java.util.Scanner;
 
 import dialog.Dialog;
 import dialog.Phrases;
-import logic.Film;
-import logic.User;
-import storage.FilmsStructure;
+import storage.FilmParser;
 import storage.HelperCSV;
+import structures.Film;
+import structures.FilmsStructure;
+import structures.User;
 
 public class ChatBot {
 	public FilmsStructure filmsStructure;
-	public Phrases phrases;
 
-	public ChatBot(ArrayList<Film> filmList) throws Exception {
+	public ChatBot(List<Film> filmList) throws Exception {
 		filmsStructure = new FilmsStructure(filmList);
-		phrases = new Phrases();
 	}
 
-	public void startChat(InputStream inputStream) throws Exception {
+	public void startChat(InputStream inputStream, OutputStream outputStream) throws Exception {
 
 		Scanner scan = new Scanner(inputStream);
-		System.out.println(Phrases.HELLO);	
+		PrintStream printStream = new PrintStream(outputStream);		
 		
+		printStream.println(Phrases.HELLO);			
 		String name = scan.nextLine();
-		ArrayList<Film> userFilms = tryGetUserFilmList(name);
+		List<Film> userFilms = tryGetUserFilmList(name);
 
 		User user = new User(name, userFilms);
-		Dialog dialog = new Dialog(this, user);
+		Dialog dialog = new Dialog(user, filmsStructure);
 
-		System.out.println(dialog.startDialog());
+		printStream.println(dialog.startDialog());
 		while (true) {
 			String req = scan.nextLine();
 			if ("/exit".equals(req)) {
@@ -42,28 +42,31 @@ public class ChatBot {
 			}
 
 			String answer = dialog.processInput(req);
-			System.out.println(answer);
+			printStream.println(answer);
 		}
 		scan.close();
 	}
 
-	private ArrayList<Film> tryGetUserFilmList(String name) {
-		HelperCSV parser = null;
-		try {
-			parser = new HelperCSV(String.format("%s.csv", name));
+	private List<Film> tryGetUserFilmList(String name) throws Exception {
+		List<Film> userFilms = null;
+		HelperCSV helperCSV = new HelperCSV(name);
+		FilmParser parser = new FilmParser(helperCSV);
+		try {			
+			userFilms = parser.getFilmList();
 		} catch (Exception e) {
 			return null;
 		}
-		return parser.filmList;
+		return userFilms;
 	}
 
 	private void saveUser(User user) throws Exception {
 		try {
-			HelperCSV.createFile(user.name);
+			HelperCSV helperCSV = new HelperCSV(user.name);
+			FilmParser parser = new FilmParser(helperCSV);
+			parser.saveFilms(user.savedFilms);
+			
 		} catch (Exception e) {
 			throw new Exception("Ошибочка при сохранении пользователя");
 		}
-
-		HelperCSV.addInfo(user.name, user.savedFilms);
 	}
 }

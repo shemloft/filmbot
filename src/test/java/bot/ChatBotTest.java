@@ -2,6 +2,8 @@ package bot;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import structures.Field;
+import structures.Film;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,12 +12,14 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.Film;
 import dialog.Phrases;
 
 
@@ -28,7 +32,7 @@ public class ChatBotTest extends TestCase {
 	protected final String dialogStartFirst = "Назовите себя, пожалуйста\r\n" + 
 		    "Добро пожаловать, test_name.";
 	protected final String dialogStartSecond = "Назовите себя, пожалуйста\r\n" + 
-		    "Давно не виделись, test_name.";
+		    "Давно не виделись, test_name.\r\n";
 	
 	private InputStream getInput(String[] commands) throws UnsupportedEncodingException {
 		StringBuilder builder = new StringBuilder();
@@ -39,33 +43,36 @@ public class ChatBotTest extends TestCase {
 		return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
 	}
 
-	private ArrayList<Film> getFilms() {
-		ArrayList<Film> filmList = new ArrayList<Film>();
-		filmList.add(new Film("Престиж", "2006", "США"));
-		filmList.add(new Film("Крестный отец", "1972", "США"));
-		filmList.add(new Film("Жизнь прекрасна", "1997", "Италия"));
-		filmList.add(new Film("Достучаться до небес", "1997", "Германия"));
-		filmList.add(new Film("Леон", "1994", "Франция"));
+	private Film getFilm(String title, String country, String year) {
+		Map<Field, String> filmData = new HashMap<Field, String>();
+		filmData.put(Field.COUNTRY, country);
+		filmData.put(Field.YEAR, year);
+		return new structures.Film(title, filmData);
+	}	
+	
+	private List<Film> getFilms() {
+		List<Film> filmList = new ArrayList<Film>();
+		filmList.add(getFilm("Бойцовский клуб", "США", "1999"));
+		filmList.add(getFilm("Леон", "Франция", "1994"));
+		filmList.add(getFilm("Криминальное чтиво", "США", "1994"));
+		filmList.add(getFilm("Крестный отец", "США", "1972"));
 		return filmList;
 	}
 	
 	private void tryToDeleteSavedFile() {
 		File userFile = new File(name + ".csv");
 		userFile.delete();
-	}
-	
+	}	
 
 	@Before
 	public void setUp() {
-		System.setOut(new PrintStream(output));
 		tryToDeleteSavedFile();
 	}
 
 	@Test
 	public void testStartDialogFirstTime() throws Exception {
-		ChatBot bot = new ChatBot(getFilms());
 		String[] commands = { name, "/exit" };
-		bot.startChat(getInput(commands));
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
 		Assert.assertEquals(
 				dialogStartFirst, 
 			    output.toString().substring(0, dialogStartFirst.length()));	
@@ -73,46 +80,40 @@ public class ChatBotTest extends TestCase {
 	
 	@Test
 	public void testStartDialogSecondTime() throws Exception {
-		ChatBot bot = new ChatBot(getFilms());
 		String[] commands = { name, "/exit" };
-		bot.startChat(getInput(commands));
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
 		output.reset();
-		ChatBot botSecondTime = new ChatBot(getFilms());
-		bot.startChat(getInput(commands));
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
 		Assert.assertEquals(
 				dialogStartSecond, 
 			    output.toString().substring(0, dialogStartSecond.length()));			
 	}
 	
-//	@Test
-//	public void testStartDialogGetFilm() throws Exception {
-//		ChatBot bot = new ChatBot(getFilms());
-//		String[] commands = { name, "/y 2006", "/exit" };
-//		bot.startChat(getInput(commands));
-//		String film = "Престиж";
-//		Assert.assertEquals(
-//				film, 
-//			    output.toString().substring(dialogStartFirst.length() + Phrases.HELP.length(), 58 + Phrases.HELP.length() + 7));			
-//	}
+	@Test
+	public void testStartDialogGetFilm() throws Exception {
+		String[] commands = { name, "/y 1999", "/exit" };
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
+		String film = "Бойцовский клуб";
+		int startIndex = dialogStartFirst.length() + Phrases.HELP.length() + "\r\n".length();
+		Assert.assertEquals(
+				film, output.toString().substring(startIndex, startIndex + film.length()));			
+	}
 	
 	@Test
 	public void testStartDialogGetFilmSecondTime() throws Exception {
-		ChatBot bot = new ChatBot(getFilms());
-		String[] commands = { name, "/y 2006", "/exit" };
-		bot.startChat(getInput(commands));
+		String[] commands = { name, "/y 1999", "/exit" };
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
 		output.reset();
-		ChatBot botSecondTime = new ChatBot(getFilms());
-		bot.startChat(getInput(commands));
+		new ChatBot(getFilms()).startChat(getInput(commands), output);
 		String answer = "Все фильмы этого года, имеющиеся в базе, были предоставлены";
 		Assert.assertEquals(
 				answer, 
-			    output.toString().substring(58, 58 + answer.length()));			
+			    output.toString().substring(dialogStartSecond.length(), dialogStartSecond.length() + answer.length()));			
 	}
 
 
 	@After
 	public void tearDown() {
-		System.setOut(null);
 		tryToDeleteSavedFile();
 	}
 

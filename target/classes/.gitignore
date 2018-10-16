@@ -1,6 +1,4 @@
-/structures/
-/logic/
-/storage/
-/dialog/
 /bot/
-/META-INF/
+/dialog/
+/storage/
+/structures/

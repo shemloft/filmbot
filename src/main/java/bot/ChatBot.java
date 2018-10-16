@@ -64,7 +64,6 @@ public class ChatBot {
 			HelperCSV helperCSV = new HelperCSV(user.name);
 			FilmParser parser = new FilmParser(helperCSV);
 			parser.saveFilms(user.savedFilms);
-			
 		} catch (Exception e) {
 			throw new Exception("Ошибочка при сохранении пользователя");
 		}

@@ -10,18 +10,16 @@ import java.util.List;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class HelperCSV implements DatabaseHelper {
+public class CSVHandler implements Database {
 
 	private String fileName;
 
-	public HelperCSV(String fileName) {
+	public CSVHandler(String fileName) {
 		this.fileName = fileName;
 	}
 
 	public void saveData(List<String[]> rows) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"), ';', '"');
-		String[] firstRecord = { "Фильм", "Страна", "Год" };
-		writer.writeNext(firstRecord);
 		for (String[] record : rows)
 			writer.writeNext(record);
 		writer.close();
@@ -30,7 +28,7 @@ public class HelperCSV implements DatabaseHelper {
 	public List<String[]> extractData() throws IOException {
 		List<String[]> allRows = new ArrayList<String[]>();
 		try {
-			CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"), ';', '"', 1);
+			CSVReader reader = new CSVReader(new FileReader(fileName + ".csv"), ';', '"');
 			allRows = reader.readAll();
 			reader.close();
 		} catch (FileNotFoundException e) {

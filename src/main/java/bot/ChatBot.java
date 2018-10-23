@@ -4,21 +4,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import dialog.Dialog;
 import dialog.Phrases;
-import storage.FilmParser;
-import storage.HelperCSV;
+import storage.DatabaseFilmHandler;
+import storage.CSVHandler;
+import structures.Field;
 import structures.Film;
-import structures.FilmsStructure;
 import structures.User;
+import utils.FilmUtils;
 
 public class ChatBot {
-	public FilmsStructure filmsStructure;
+	private Map<Field, Map<String, List<Film>>> filmMapsByField;
 
 	public ChatBot(List<Film> filmList) throws Exception {
-		filmsStructure = new FilmsStructure(filmList);
+		filmMapsByField = FilmUtils.getFilmMapsByField(filmList);
 	}
 
 	public void startChat(InputStream inputStream, OutputStream outputStream) throws Exception {
@@ -31,7 +33,7 @@ public class ChatBot {
 		List<Film> userFilms = tryGetUserFilmList(name);
 
 		User user = new User(name, userFilms);
-		Dialog dialog = new Dialog(user, filmsStructure);
+		Dialog dialog = new Dialog(user, filmMapsByField);
 
 		printStream.println(dialog.startDialog());
 		while (true) {
@@ -49,8 +51,8 @@ public class ChatBot {
 
 	private List<Film> tryGetUserFilmList(String name) throws Exception {
 		List<Film> userFilms = null;
-		HelperCSV helperCSV = new HelperCSV(name);
-		FilmParser parser = new FilmParser(helperCSV);
+		CSVHandler helperCSV = new CSVHandler(name);
+		DatabaseFilmHandler parser = new DatabaseFilmHandler(helperCSV);
 		try {			
 			userFilms = parser.getFilmList();
 		} catch (Exception e) {
@@ -61,8 +63,8 @@ public class ChatBot {
 
 	private void saveUser(User user) throws Exception {
 		try {
-			HelperCSV helperCSV = new HelperCSV(user.name);
-			FilmParser parser = new FilmParser(helperCSV);
+			CSVHandler helperCSV = new CSVHandler(user.name);
+			DatabaseFilmHandler parser = new DatabaseFilmHandler(helperCSV);
 			parser.saveFilms(user.savedFilms);
 		} catch (Exception e) {
 			throw new Exception("Ошибочка при сохранении пользователя");

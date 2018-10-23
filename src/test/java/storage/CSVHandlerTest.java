@@ -1,6 +1,6 @@
 package storage;
 
-import storage.HelperCSV;
+import storage.CSVHandler;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,17 +12,17 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class HelperCSVTest {
+public class CSVHandlerTest {
 
 	@Test(expected = FileNotFoundException.class)
 	public void testExtractEmptyData() throws Exception {
-		new HelperCSV("").extractData();
+		new CSVHandler("").extractData();
 	}
 
 	@Test
 	public void testExtractWrongData() throws Exception {
 		try {
-			new HelperCSV("Kek").extractData();
+			new CSVHandler("Kek").extractData();
 		} catch (FileNotFoundException e) {
 			assertEquals("Ошибочка с базой данных, перепроверьте её", e.getMessage());
 		}
@@ -31,7 +31,7 @@ public class HelperCSVTest {
 	@Test
 	public void testExtractRightData() throws Exception {
 		List<String[]> data = new ArrayList<String[]>();
-		data = new HelperCSV("testDatabase").extractData();
+		data = new CSVHandler("testDatabase").extractData();
 		assertEquals(4, data.size());
 		assertEquals("Операция «Ы» и другие приключения Шурика", data.get(0)[0]);
 		assertEquals("СССР", data.get(0)[1]);
@@ -40,7 +40,7 @@ public class HelperCSVTest {
 
 	@Test
 	public void testCreateFile() throws IOException {
-		new HelperCSV("Vika").saveData(new ArrayList<String[]>());
+		new CSVHandler("Vika").saveData(new ArrayList<String[]>());
 		File file = new File("Vika.csv");
 		assertEquals(true, file.isFile());
 		file.delete();
@@ -51,9 +51,9 @@ public class HelperCSVTest {
 		List<String[]> savedFilms = new ArrayList<String[]>();
 		String[] row = { "Леон", "Франция", "1994" };
 		savedFilms.add(row);
-		new HelperCSV("test").saveData(savedFilms);
+		new CSVHandler("test").saveData(savedFilms);
 		File file = new File("test.csv");
-		List<String[]> newSavedFilms = new HelperCSV("test").extractData();
+		List<String[]> newSavedFilms = new CSVHandler("test").extractData();
 		String[] readRow = newSavedFilms.get(0);
 		for (int i = 0; i < row.length; i++)
 			assertEquals(row[i], readRow[i]);

@@ -4,11 +4,13 @@ import java.util.Map;
 
 public class Film {
 	public String title;
+	public String ID;
 	private Map<Field, String> filmData;
 
-	public Film(String title, Map<Field, String> filmData) {
+	public Film(String ID, String title, Map<Field, String> filmData) {
 		this.title = title;
 		this.filmData = filmData;
+		this.ID = ID;
 	}
 
 	public String getField(Field field) {
@@ -25,16 +27,7 @@ public class Film {
 
 		Film other = (Film) obj;
 		
-		if(!title.equals(other.title))
-			return false;
-
-		for (Field field : Field.values()) {
-			String fieldValueThis = getField(field);
-			String fieldValueOther = other.getField(field);
-			if (!fieldValueThis.equals(fieldValueOther))
-				return false;
-		}
-		return true;
+		return ID.equals(other.ID);
 	}
 
 	@Override

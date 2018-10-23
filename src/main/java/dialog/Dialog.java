@@ -6,7 +6,6 @@ import java.util.Map;
 
 import structures.Film;
 import structures.Field;
-import structures.FilmsStructure;
 import structures.User;
 
 public class Dialog {
@@ -15,11 +14,11 @@ public class Dialog {
 	private Field currentField;
 
 	private User user;
-	private FilmsStructure filmsStructure;
+	Map<Field, Map<String, List<Film>>> filmMapsByField;
 
-	public Dialog(User user, FilmsStructure filmsStructure) {
+	public Dialog(User user, Map<Field, Map<String, List<Film>>> filmMapsByField) {
 		this.user = user;
-		this.filmsStructure = filmsStructure;
+		this.filmMapsByField = filmMapsByField;
 		currentField = null;
 		currentOptions = new HashMap<Field, String>();
 		for (Field field : Field.values())
@@ -37,7 +36,7 @@ public class Dialog {
 			return Phrases.HELP;
 
 		if (input.equals("/next"))
-			return getNextFilm();
+			return getFilm(currentField, null);
 
 		if (input.length() < 3)
 			return Phrases.SHORT_COMMAND;
@@ -47,35 +46,31 @@ public class Dialog {
 
 		for (Field field : Field.values()) {
 			if (command.equals(field.shortCut())) {
-				currentOptions.put(currentField, null);
-				currentField = null;
-				return getFilmByRequest(field, request);
+				currentField = field;
+				return getFilm(field, request);
 			}
 		}
 		return Phrases.UNKNOWN_COMMAND;
 	}
 
-	private String getNextFilm() {
-		if (currentField == null)
+	private String getFilm(Field field, String key) {
+		if (field == null)
 			return Phrases.NEXT_WITHOUT_OPT;
 
-		Map<String, List<Film>> filmsDict = filmsStructure.getFilmsByField(currentField);
-		String film = getUnshownFilm(filmsDict.get(currentOptions.get(currentField)));
-		return film != null ? film : currentField.noFilmsLeft();
-	}
+		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
 
-	private String getFilmByRequest(Field field, String key) {
-		Map<String, List<Film>> filmsDict = filmsStructure.getFilmsByField(field);
-
-		if (!filmsDict.containsKey(key))
+		if (key != null && !filmsDict.containsKey(key)) {
+			currentField = null;
 			return field.noFilmsAtAll();
-
-		currentField = field;
-		currentOptions.put(field, key);
-
-		String film = getUnshownFilm(filmsDict.get(key));
+		}
+		
+		if (key != null)
+			currentOptions.put(field, key);
+		
+		String film = getUnshownFilm(filmsDict.get(currentOptions.get(field)));		
 		return film != null ? film : field.noFilmsLeft();
 	}
+
 
 	private String getUnshownFilm(List<Film> films) {
 		for (Film film : films) {

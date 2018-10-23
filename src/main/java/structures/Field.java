@@ -1,35 +1,33 @@
 package structures;
 
 public enum Field {
-	COUNTRY {
-		public String noFilmsLeft() {
-			return "Все фильмы этой страны, имеющиеся в базе, были предоставлены";
-		};
+	COUNTRY("/c", 
+			"Все фильмы этой страны, имеющиеся в базе, были предоставлены",
+			"В базе нет фильмов, снятых в этой стране :с"),
+	YEAR("/y", 
+		 "Все фильмы этого года, имеющиеся в базе, были предоставлены",
+		 "В базе нет фильмов, снятых в этот год :с");
 
-		public String noFilmsAtAll() {
-			return "В базе нет фильмов, снятых в этой стране :с";
-		}
-		
-		public String shortCut() {
-			return "/c";
-		}
-	},
-	YEAR {
-		public String noFilmsLeft() {
-			return "Все фильмы этого года, имеющиеся в базе, были предоставлены";			
-		};
+	String shortCut;
+	String noFilmsLeft;
+	String noFilmsAtAll;
 
-		public String noFilmsAtAll() {			
-			return "В базе нет фильмов, снятых в этот год :с";
-		}
-		
-		public String shortCut() {
-			return "/y";
-		}
-	};
-	
-	public abstract String noFilmsLeft();
-	public abstract String noFilmsAtAll();
-	public abstract String shortCut();
+	Field(String shortCut, String noFilmsLeft, String noFilmsAtAll) {
+		this.shortCut = shortCut;
+		this.noFilmsLeft = noFilmsLeft;
+		this.noFilmsAtAll = noFilmsAtAll;
+	}
+
+	public String noFilmsLeft() {
+		return noFilmsLeft;
+	}
+
+	public String noFilmsAtAll() {
+		return noFilmsAtAll;
+	}
+
+	public String shortCut() {
+		return shortCut;
+	}
 
 }

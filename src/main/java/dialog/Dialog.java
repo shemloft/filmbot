@@ -14,7 +14,7 @@ public class Dialog {
 	private Field currentField;
 
 	private User user;
-	Map<Field, Map<String, List<Film>>> filmMapsByField;
+	private Map<Field, Map<String, List<Film>>> filmMapsByField;
 
 	public Dialog(User user, Map<Field, Map<String, List<Film>>> filmMapsByField) {
 		this.user = user;
@@ -35,8 +35,12 @@ public class Dialog {
 		if (input.equals("/help"))
 			return Phrases.HELP;
 
-		if (input.equals("/next"))
-			return getFilm(currentField, null);
+		if (input.equals("/next")) {
+			if (currentField == null)
+				return Phrases.NEXT_WITHOUT_OPT;
+			
+			return getFilm(currentField, currentOptions.get(currentField));
+		}
 
 		if (input.length() < 3)
 			return Phrases.SHORT_COMMAND;
@@ -54,23 +58,19 @@ public class Dialog {
 	}
 
 	private String getFilm(Field field, String key) {
-		if (field == null)
-			return Phrases.NEXT_WITHOUT_OPT;
-
+		
 		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
 
-		if (key != null && !filmsDict.containsKey(key)) {
+		if (!filmsDict.containsKey(key)) {
 			currentField = null;
 			return field.noFilmsAtAll();
 		}
-		
-		if (key != null)
-			currentOptions.put(field, key);
-		
-		String film = getUnshownFilm(filmsDict.get(currentOptions.get(field)));		
+
+		currentOptions.put(field, key);
+
+		String film = getUnshownFilm(filmsDict.get(currentOptions.get(field)));
 		return film != null ? film : field.noFilmsLeft();
 	}
-
 
 	private String getUnshownFilm(List<Film> films) {
 		for (Film film : films) {

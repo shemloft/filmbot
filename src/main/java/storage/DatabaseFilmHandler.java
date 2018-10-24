@@ -11,7 +11,7 @@ public class DatabaseFilmHandler implements FilmHandler {
 	private Database database;
 	private String[] header = { "ID", "Фильм", "Страна", "Год" };
 
-	public DatabaseFilmHandler(Database database) throws Exception {
+	public DatabaseFilmHandler(Database database) {
 		this.database = database;
 	}
 

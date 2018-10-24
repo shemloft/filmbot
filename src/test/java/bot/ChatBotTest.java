@@ -116,5 +116,4 @@ public class ChatBotTest extends TestCase {
 		tryToDeleteSavedFile();
 	}
 
-}
-*/
+}*/

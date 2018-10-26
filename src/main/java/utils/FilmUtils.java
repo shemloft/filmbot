@@ -18,7 +18,7 @@ public class FilmUtils {
 			Map<Field, String> filmData = new HashMap<Field, String>();
 			for (Field field : Field.values())
 				filmData.put(field, row[field.ordinal() + 2]);
-			Film film = new structures.Film(ID, title, filmData);
+			Film film = new Film(ID, title, filmData);
 			filmList.add(film);
 		}
 		return filmList;
@@ -38,25 +38,35 @@ public class FilmUtils {
 		return rowList;
 	}
 
-	public static Map<Field, Map<String, List<Film>>> getFilmMapsByField(List<Film> filmList){
+	public static Map<Field, Map<String, List<Film>>> getFilmMapsByField(List<Film> filmList) {
 		Map<Field, Map<String, List<Film>>> filmMapsByField = new HashMap<Field, Map<String, List<Film>>>();
-		for (Field field : Field.values()) 
-			filmMapsByField.put(field, createMap(filmList, field));	
+		for (Field field : Field.values())
+			filmMapsByField.put(field, createMap(filmList, field));
 		return filmMapsByField;
 	}
 
 	public static Map<String, List<Film>> createMap(List<Film> filmList, Field field) {
 		Map<String, List<Film>> filmsMap = new HashMap<String, List<Film>>();
 		for (Film film : filmList) {
-			String key = film.getField(field);
-			if (!filmsMap.containsKey(key)) {
-				List<Film> filmListByKey = new ArrayList<Film>();
-				filmListByKey.add(film);
-				filmsMap.put(key, filmListByKey);
-			} else {
-				filmsMap.get(key).add(film);
+			String[] keys = film.getField(field).split(", ");
+			for (String key : keys) {
+				if (!filmsMap.containsKey(key)) {
+					List<Film> filmListByKey = new ArrayList<Film>();
+					filmListByKey.add(film);
+					filmsMap.put(key, filmListByKey);
+				} else {
+					filmsMap.get(key).add(film);
+				}
 			}
 		}
 		return filmsMap;
+	}
+
+	public static Film getFilm(String id, String title, String country, String year, String genre) {
+		Map<Field, String> filmData = new HashMap<Field, String>();
+		filmData.put(Field.COUNTRY, country);
+		filmData.put(Field.YEAR, year);
+		filmData.put(Field.GENRE, genre);
+		return new Film(id, title, filmData);
 	}
 }

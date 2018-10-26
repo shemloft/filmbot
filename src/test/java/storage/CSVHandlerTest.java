@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
+
+import dialog.Phrases;
 
 public class CSVHandlerTest {
 
@@ -24,7 +27,7 @@ public class CSVHandlerTest {
 		try {
 			new CSVHandler("Kek").extractData();
 		} catch (FileNotFoundException e) {
-			assertEquals("Ошибочка с базой данных, перепроверьте её", e.getMessage());
+			assertEquals(Phrases.DATABASE_ERROR, e.getMessage());
 		}
 	}
 
@@ -32,10 +35,13 @@ public class CSVHandlerTest {
 	public void testExtractRightData() throws Exception {
 		List<String[]> data = new ArrayList<String[]>();
 		data = new CSVHandler("testDatabase").extractData();
-		assertEquals(4, data.size());
-		assertEquals("Операция «Ы» и другие приключения Шурика", data.get(0)[0]);
-		assertEquals("СССР", data.get(0)[1]);
-		assertEquals("1965", data.get(0)[2]);
+		String[] filmData = data.get(1);
+		assertEquals(6, data.size());
+		assertEquals("0", filmData[0]);
+		assertEquals("Побег из Шоушенка", filmData[1]);
+		assertEquals("США", filmData[2]);
+		assertEquals("1994", filmData[3]);
+		assertEquals("драма", filmData[4]);
 	}
 
 	@Test
@@ -49,14 +55,20 @@ public class CSVHandlerTest {
 	@Test
 	public void testAddAndReadInfo() throws Exception {
 		List<String[]> savedFilms = new ArrayList<String[]>();
-		String[] row = { "Леон", "Франция", "1994" };
+		String[] header = { "ID", "Фильм", "Страна", "Год", "Жанр" };
+		String[] row = { "5", "Леон", "Франция", "1994", "триллер, драма, криминал" };
+		savedFilms.add(header);
 		savedFilms.add(row);
 		new CSVHandler("test").saveData(savedFilms);
-		File file = new File("test.csv");
 		List<String[]> newSavedFilms = new CSVHandler("test").extractData();
-		String[] readRow = newSavedFilms.get(0);
+		String[] readRow = newSavedFilms.get(1);
 		for (int i = 0; i < row.length; i++)
 			assertEquals(row[i], readRow[i]);
+	}
+
+	@After
+	public void deleteFile() {
+		File file = new File("test.csv");
 		file.delete();
 	}
 

@@ -26,7 +26,7 @@ public class Film {
 			return false;
 
 		Film other = (Film) obj;
-		
+
 		return ID.equals(other.ID);
 	}
 
@@ -40,6 +40,7 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "Название: " + title + ", год: " + getField(Field.YEAR) + ", страна: " + getField(Field.COUNTRY);
+		return "Название: " + title + ", год: " + getField(Field.YEAR) + ", страна: " + getField(Field.COUNTRY)
+				+ ", жанр: " + getField(Field.GENRE);
 	}
 }

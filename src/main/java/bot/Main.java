@@ -9,9 +9,9 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		Database database = new CSVHandler("Database");
-		FilmHandler filmHandler = new DatabaseFilmHandler(database);		
+		FilmHandler filmHandler = new DatabaseFilmHandler(database);
 		ChatBot chatBot = new ChatBot(filmHandler.getFilmList());
-		chatBot.startChat(System.in, System.out);	
+		chatBot.startChat(System.in, System.out);
 	}
 
 }

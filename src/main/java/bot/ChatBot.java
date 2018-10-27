@@ -25,9 +25,9 @@ public class ChatBot {
 	public void startChat(InputStream inputStream, OutputStream outputStream) throws Exception {
 
 		Scanner scan = new Scanner(inputStream);
-		PrintStream printStream = new PrintStream(outputStream);		
-		
-		printStream.println(Phrases.HELLO);			
+		PrintStream printStream = new PrintStream(outputStream);
+
+		printStream.println(Phrases.HELLO);
 		String name = scan.nextLine();
 		List<Film> userFilms = DatabaseUtils.tryGetUserFilmList(name);
 
@@ -35,7 +35,7 @@ public class ChatBot {
 		Dialog dialog = new Dialog(user, filmMapsByField);
 
 		printStream.println(dialog.startDialog());
-		
+
 		while (true) {
 			String req = scan.nextLine();
 			if ("/exit".equals(req)) {
@@ -46,7 +46,7 @@ public class ChatBot {
 			String answer = dialog.processInput(req);
 			printStream.println(answer);
 		}
-		
+
 		scan.close();
 	}
 

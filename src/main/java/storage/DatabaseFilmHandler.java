@@ -9,18 +9,18 @@ import utils.FilmUtils;
 public class DatabaseFilmHandler implements FilmHandler {
 
 	private Database database;
-	private String[] header = { "ID", "Фильм", "Страна", "Год" };
+	private String[] header = { "ID", "Фильм", "Страна", "Год", "Жанр" };
 
 	public DatabaseFilmHandler(Database database) {
 		this.database = database;
 	}
 
-	public List<Film> getFilmList() throws Exception {	
+	public List<Film> getFilmList() throws Exception {
 		List<String[]> extractedList = database.extractData();
 		extractedList.remove(0);
 		return FilmUtils.stringListToFilmList(extractedList);
 	}
-	
+
 	public void saveFilms(List<Film> filmList) throws Exception {
 		List<String[]> rowList = FilmUtils.filmListToStringList(filmList);
 		rowList.add(0, header);

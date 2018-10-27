@@ -35,10 +35,16 @@ public class Dialog {
 		if (input.equals("/help"))
 			return Phrases.HELP;
 
+		if (input.equals("/countries"))
+			return Phrases.AVAILAIBLE_COUNTRIES;
+
+		if (input.equals("/genres"))
+			return Phrases.AVAILAIBLE_GENRES;
+
 		if (input.equals("/next")) {
 			if (currentField == null)
 				return Phrases.NEXT_WITHOUT_OPT;
-			
+
 			return getFilm(currentField, currentOptions.get(currentField));
 		}
 
@@ -58,7 +64,7 @@ public class Dialog {
 	}
 
 	private String getFilm(Field field, String key) {
-		
+
 		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
 
 		if (!filmsDict.containsKey(key)) {

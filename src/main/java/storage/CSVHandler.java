@@ -12,16 +12,20 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVHandler implements Database {
 
-	private String fileName;
+	public String fileName;
 
 	public CSVHandler(String fileName) {
 		this.fileName = fileName;
 	}
+	
+	public String getFileName() {
+		return fileName;
+	}
 
 	public void saveData(List<String[]> rows) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"), ';', '"');
-		for (String[] record : rows)
-			writer.writeNext(record);
+		for (String[] record : rows) 			
+			writer.writeNext(record);		
 		writer.close();
 	}
 

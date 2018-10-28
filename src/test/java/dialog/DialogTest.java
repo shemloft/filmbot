@@ -29,16 +29,16 @@ public class DialogTest extends TestCase {
 		filmList.add(FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал"));
 		filmList.add(FilmUtils.getFilm("12", "Крестный отец", "США", "1972", "драма, криминал"));
 
-		ArrayList<Film> userList = new ArrayList<Film>();
-		userList.add(FilmUtils.getFilm("12", "Крестный отец", "США", "1972", "драма, криминал"));
-		user = new User("name", userList);
+		List<String> userList = new ArrayList<String>();
+		userList.add("12");
+		user = new User("name", "name",  userList, null, null);
 		filmsData = FilmUtils.getFilmMapsByField(filmList);
 		dialog = new Dialog(user, filmsData);
 	}
 
 	@Test
 	public void testStartDialogFirstTime() throws Exception {
-		user = new User("name", null);
+		user = new User("name", "name", null, null, null);
 		dialog = new Dialog(user, filmsData);
 		assertEquals(String.format("Добро пожаловать, name.%s", Phrases.HELP), dialog.startDialog());
 	}
@@ -79,6 +79,17 @@ public class DialogTest extends TestCase {
 		assertEquals("Леон", dialog.processInput("/y 1994"));
 		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
 	}
+	
+	@Test
+	public void testGetGenre() {
+		assertEquals("Бойцовский клуб", dialog.processInput("/g триллер"));
+	}
+
+	@Test
+	public void testGetNextGenre() {
+		assertEquals("Бойцовский клуб", dialog.processInput("/g триллер"));
+		assertEquals("Леон", dialog.processInput("/g триллер"));
+	}
 
 	@Test
 	public void testUnknownCommand() {
@@ -93,6 +104,11 @@ public class DialogTest extends TestCase {
 	@Test
 	public void testGetCountryWhichNotInFilmList() {
 		assertEquals(Field.COUNTRY.noFilmsAtAll(), dialog.processInput("/c Нарния"));
+	}
+	
+	@Test
+	public void testGetGenreWhichNotInFilmList() {
+		assertEquals(Field.GENRE.noFilmsAtAll(), dialog.processInput("/g телепузик"));
 	}
 
 	@Test
@@ -111,10 +127,25 @@ public class DialogTest extends TestCase {
 		assertEquals("Леон", dialog.processInput("/c Франция"));
 		assertEquals(Field.COUNTRY.noFilmsLeft(), dialog.processInput("/next"));
 	}
+	
+	@Test
+	public void testNoNextFilmGenre() {
+		assertEquals("Криминальное чтиво", dialog.processInput("/g комедия"));
+		assertEquals(Field.GENRE.noFilmsLeft(), dialog.processInput("/next"));
+	}
 
 	@Test
 	public void testsUserSeenFilmYear() {
 		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/y 1972"));
+	}
+	
+	@Test
+	public void testsUserNextWithCurrentField() {
+		List<String> userList = new ArrayList<String>();
+		userList.add("5");
+		user = new User("name", "name",  userList, "YEAR", "1994");
+		dialog = new Dialog(user, filmsData);
+		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
 	}
 
 }

@@ -1,6 +1,5 @@
 package dialog;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,21 +7,14 @@ import structures.Film;
 import structures.Field;
 import structures.User;
 
-public class Dialog {
-
-	private Map<Field, String> currentOptions;
-	private Field currentField;
+public class Dialog {	
 
 	private User user;
 	private Map<Field, Map<String, List<Film>>> filmMapsByField;
 
 	public Dialog(User user, Map<Field, Map<String, List<Film>>> filmMapsByField) {
 		this.user = user;
-		this.filmMapsByField = filmMapsByField;
-		currentField = null;
-		currentOptions = new HashMap<Field, String>();
-		for (Field field : Field.values())
-			currentOptions.put(field, null);
+		this.filmMapsByField = filmMapsByField;		
 	}
 
 	public String startDialog() {
@@ -42,21 +34,22 @@ public class Dialog {
 			return Phrases.AVAILAIBLE_GENRES;
 
 		if (input.equals("/next")) {
-			if (currentField == null)
+			if (user.currentField == null)
 				return Phrases.NEXT_WITHOUT_OPT;
 
-			return getFilm(currentField, currentOptions.get(currentField));
+			return getFilm(user.currentField, user.currentOptions.get(user.currentField));
 		}
 
 		if (input.length() < 3)
 			return Phrases.SHORT_COMMAND;
+		
+		System.out.println(input);
 
 		String command = input.substring(0, 3).trim();
 		String request = input.substring(3).trim();
 
 		for (Field field : Field.values()) {
 			if (command.equals(field.shortCut())) {
-				currentField = field;
 				return getFilm(field, request);
 			}
 		}
@@ -68,20 +61,20 @@ public class Dialog {
 		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
 
 		if (!filmsDict.containsKey(key)) {
-			currentField = null;
+			user.clearCurrentField();
 			return field.noFilmsAtAll();
 		}
-
-		currentOptions.put(field, key);
-
-		String film = getUnshownFilm(filmsDict.get(currentOptions.get(field)));
+		
+		user.changeCurrentOption(field, key);	
+		
+		String film = getUnshownFilm(filmsDict.get(user.getCurrentKey()));
 		return film != null ? film : field.noFilmsLeft();
 	}
 
 	private String getUnshownFilm(List<Film> films) {
 		for (Film film : films) {
-			if (user.savedFilms.contains(film))
-				continue;
+			if (user.savedFilmsIDs.contains(film.ID))
+				continue;			
 			user.addFilm(film);
 			return film.title;
 		}

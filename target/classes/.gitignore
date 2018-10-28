@@ -1,5 +1,7 @@
-/utils/
-/bot/
-/storage/
-/structures/
 /dialog/
+/bot/
+/connection/
+/telegram/
+/structures/
+/storage/
+/utils/

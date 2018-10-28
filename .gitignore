@@ -54,3 +54,5 @@ out/
 bin/
 src/.project
 src/.classpath
+
+botAndProxySettings.txt

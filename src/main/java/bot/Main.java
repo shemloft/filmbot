@@ -20,10 +20,7 @@ public class Main {
 		Database database = new CSVHandler("Database");
 		FilmHandler filmHandler = new DatabaseFilmHandler(database);
 		filmMapsByField = FilmUtils.getFilmMapsByField(filmHandler.getFilmList());
-		
 		startTelegramBot();
-
-
 	}
 
 	public static void startTelegramBot() throws Exception {

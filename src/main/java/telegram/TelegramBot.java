@@ -54,20 +54,20 @@ public class TelegramBot extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 
 		Message inputMessage = update.getMessage();
-		String text = inputMessage.getText();
+		String inputCommand = inputMessage.getText();
 		String id = inputMessage.getChatId().toString();
 		SendMessage message = new SendMessage();
 
 		System.out.println(inputMessage.getFrom().getFirstName() + ": " + inputMessage.getText());
 
-		if (Arrays.toString(Field.values()).contains(text)) {
-			Field field = Field.valueOf(text);
+		if (Arrays.toString(Field.values()).contains(inputCommand)) {
+			Field field = Field.valueOf(inputCommand);
 			idFieldMap.put(id, field);
 			message.setReplyMarkup(getFieldsKeyboard(field));
 			message.setText("Теперь ето");
 		} else if (idFieldMap.containsKey(id) && idFieldMap.get(id) != null
-				&& Arrays.asList(idFieldMap.get(id).avaliableFields()).contains(text)) {
-			String command = idFieldMap.get(id).shortCut() + " " + text;
+				&& Arrays.asList(idFieldMap.get(id).avaliableFields()).contains(inputCommand)) {
+			String command = idFieldMap.get(id).shortCut() + " " + inputCommand;
 			idFieldMap.put(id, null);
 			message.setReplyMarkup(getStartKeyboard());
 			String answer = "";

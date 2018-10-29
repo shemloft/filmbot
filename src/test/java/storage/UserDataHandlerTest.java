@@ -68,10 +68,10 @@ public class UserDataHandlerTest extends TestCase {
 	public void testSaveUserWithCurrentOption() throws Exception {
 		List<String> IDList = new ArrayList<String>();
 		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");	
-		List<String[]> data = new ArrayList<String[]>();		
+		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");
+		List<String[]> data = new ArrayList<String[]>();
 		initializeUserDataHandler(data);
-		
+
 		String[] expectedIDRow = { "8" };
 		String[] expectedOptionRow = { "COUNTRY", "США" };
 
@@ -93,8 +93,8 @@ public class UserDataHandlerTest extends TestCase {
 		User user = new User("Даша", "Даша", IDList, null, null);
 		List<String[]> data = new ArrayList<String[]>();
 		initializeUserDataHandler(data);
-		
-		String[] expectedIDRow = { "8" };		
+
+		String[] expectedIDRow = { "8" };
 
 		userDataHandler.saveUser(user);
 		TestDatabase testDatabase = (TestDatabase) database;

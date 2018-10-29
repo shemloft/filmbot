@@ -31,7 +31,7 @@ public class DialogTest extends TestCase {
 
 		List<String> userList = new ArrayList<String>();
 		userList.add("12");
-		user = new User("name", "name",  userList, null, null);
+		user = new User("name", "name", userList, null, null);
 		filmsData = FilmUtils.getFilmMapsByField(filmList);
 		dialog = new Dialog(user, filmsData);
 	}
@@ -79,7 +79,7 @@ public class DialogTest extends TestCase {
 		assertEquals("Леон", dialog.processInput("/y 1994"));
 		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
 	}
-	
+
 	@Test
 	public void testGetGenre() {
 		assertEquals("Бойцовский клуб", dialog.processInput("/g триллер"));
@@ -105,7 +105,7 @@ public class DialogTest extends TestCase {
 	public void testGetCountryWhichNotInFilmList() {
 		assertEquals(Field.COUNTRY.noFilmsAtAll(), dialog.processInput("/c Нарния"));
 	}
-	
+
 	@Test
 	public void testGetGenreWhichNotInFilmList() {
 		assertEquals(Field.GENRE.noFilmsAtAll(), dialog.processInput("/g телепузик"));
@@ -127,7 +127,7 @@ public class DialogTest extends TestCase {
 		assertEquals("Леон", dialog.processInput("/c Франция"));
 		assertEquals(Field.COUNTRY.noFilmsLeft(), dialog.processInput("/next"));
 	}
-	
+
 	@Test
 	public void testNoNextFilmGenre() {
 		assertEquals("Криминальное чтиво", dialog.processInput("/g комедия"));
@@ -138,12 +138,12 @@ public class DialogTest extends TestCase {
 	public void testsUserSeenFilmYear() {
 		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/y 1972"));
 	}
-	
+
 	@Test
 	public void testsUserNextWithCurrentField() {
 		List<String> userList = new ArrayList<String>();
 		userList.add("5");
-		user = new User("name", "name",  userList, "YEAR", "1994");
+		user = new User("name", "name", userList, "YEAR", "1994");
 		dialog = new Dialog(user, filmsData);
 		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
 	}

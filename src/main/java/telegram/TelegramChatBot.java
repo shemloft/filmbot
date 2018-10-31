@@ -58,7 +58,7 @@ public class TelegramChatBot {
 		try {
 			telegramBotsApi.registerBot(bot);
 		} catch (TelegramApiException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

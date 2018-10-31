@@ -29,6 +29,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 	Map<Field, Map<String, List<Film>>> filmMapsByField;
 	private Map<String, Field> idFieldMap;
 
+	public TelegramBot(Map<Field, Map<String, List<Film>>> filmMapsByField, String username, String token) {
+		this.bot_username = username;
+		this.bot_token = token;
+		this.filmMapsByField = filmMapsByField;
+		idFieldMap = new HashMap<String, Field>();
+	}
+	
 	public TelegramBot(Map<Field, Map<String, List<Film>>> filmMapsByField, String username, String token,
 			DefaultBotOptions options) {
 		super(options);
@@ -38,8 +45,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 		idFieldMap = new HashMap<String, Field>();
 	}
 
-	private String processInput(String input, String username, Long chatId) throws Exception {
-		User user = UserUtils.getUser(username, chatId.toString());
+	private String processInput(String input, String username, String chatId) throws Exception {
+		User user = UserUtils.getUser(username, chatId);
 		Dialog dialog = new Dialog(user, filmMapsByField);
 		String answer;
 		if (input.equals("/start"))
@@ -56,46 +63,49 @@ public class TelegramBot extends TelegramLongPollingBot {
 		Message inputMessage = update.getMessage();
 		String inputCommand = inputMessage.getText();
 		String id = inputMessage.getChatId().toString();
+		String userFirstName = inputMessage.getFrom().getFirstName();
 		SendMessage message = new SendMessage();
 
-		System.out.println(inputMessage.getFrom().getFirstName() + ": " + inputMessage.getText());
+		System.out.println(userFirstName + ": " + inputCommand);
 
-		if (Arrays.toString(Field.values()).contains(inputCommand)) {
-			Field field = Field.valueOf(inputCommand);
-			idFieldMap.put(id, field);
-			message.setReplyMarkup(getFieldsKeyboard(field));
-			message.setText("Теперь ето");
-		} else if (idFieldMap.containsKey(id) && idFieldMap.get(id) != null
-				&& Arrays.asList(idFieldMap.get(id).avaliableFields()).contains(inputCommand)) {
-			String command = idFieldMap.get(id).shortCut() + " " + inputCommand;
-			idFieldMap.put(id, null);
-			message.setReplyMarkup(getStartKeyboard());
-			String answer = "";
-			try {
-				answer = processInput(command, inputMessage.getFrom().getFirstName(), inputMessage.getChatId());
-			} catch (Exception e) {
-//				e.printStackTrace();
-			}
-			message.setText(answer);
-		} else {
-			String answer = "";
-			String command = inputMessage.getText().equals("NEXT") ? "/next" : inputMessage.getText();
-			try {
-				answer = processInput(command, inputMessage.getFrom().getFirstName(), inputMessage.getChatId());
-			} catch (Exception e) {
-//				e.printStackTrace();
-			}
-			message.setText(answer);
-			message.setReplyMarkup(getStartKeyboard());
-		}
+		String answer = getAnswer(inputCommand, id, userFirstName);
+		
+		message.setText(answer);
+		message.setReplyMarkup(answer.equals("Теперь ето") ? getFieldsKeyboard(idFieldMap.get(id)) : getStartKeyboard());	
+		
 		message.setChatId(inputMessage.getChatId());
 
 		try {
 			execute(message);
 		} catch (TelegramApiException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
-
+	}
+	
+	public String getAnswer(String inputCommand, String id, String userFirstName) {
+		String chatBotAnswer = "";		
+		if (Arrays.toString(Field.values()).contains(inputCommand)) {
+			Field field = Field.valueOf(inputCommand);
+			idFieldMap.put(id, field);
+			chatBotAnswer = "Теперь ето";
+		} else if (idFieldMap.containsKey(id) && idFieldMap.get(id) != null
+				&& Arrays.asList(idFieldMap.get(id).avaliableFields()).contains(inputCommand)) {
+			String command = idFieldMap.get(id).shortCut() + " " + inputCommand;
+			idFieldMap.put(id, null);
+			try {
+				chatBotAnswer = processInput(command, userFirstName, id);
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+		} else {
+			String command = inputCommand.equals("NEXT") ? "/next" : inputCommand;
+			try {
+				chatBotAnswer = processInput(command, userFirstName, id);
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+		}		
+		return chatBotAnswer;		
 	}
 
 	public ReplyKeyboardMarkup getFieldsKeyboard(Field field) {

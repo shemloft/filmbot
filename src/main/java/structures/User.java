@@ -9,7 +9,7 @@ public class User {
 	public String ID;
 	public String name;
 	public List<String> savedFilmsIDs;
-	public Boolean firstTime;
+	public boolean firstTime;
 	public Map<Field, String> currentOptions;
 	public Field currentField;
 
@@ -34,7 +34,7 @@ public class User {
 	}
 	
 	public void changeCurrentOption(Field field, String key) {
-		currentOptions.put(currentField, null);
+//		currentOptions.put(currentField, null);
 		currentField = field;
 		currentOptions.put(currentField, key);		
 	}

@@ -6,11 +6,11 @@ import java.util.List;
 import structures.User;
 
 public class UserDataHandler {
-	private Database database;
+	private IDatabase database;
 	private String userName;
 	private String userFileID;
 
-	public UserDataHandler(Database database, String userName, String userFileID) {
+	public UserDataHandler(IDatabase database, String userName, String userFileID) {
 		this.database = database;
 		this.userName = userName;
 		this.userFileID = userFileID;

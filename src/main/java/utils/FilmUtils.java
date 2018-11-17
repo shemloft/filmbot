@@ -69,4 +69,11 @@ public class FilmUtils {
 		filmData.put(Field.GENRE, genre);
 		return new Film(id, title, filmData);
 	}
+	
+//	public static String[] getParametersList(Field field, Map<Field, Map<String, List<Film>>> filmMapsByField) {
+//	    List<String> parameterList = new ArrayList<String>();
+//	    if (filmMapsByField != null)
+//	    	parameterList.addAll(filmMapsByField.get(field).keySet());
+//	    return parameterList.toArray(new String[parameterList.size()]);
+//	  }
 }

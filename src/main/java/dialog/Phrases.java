@@ -20,6 +20,16 @@ public class Phrases {
 
 	public static final String SAVE_USER_ERROR = "Ошибочка при сохранении пользователя";
 
+	public static final String ADDING_FILM = "Фильм был успешно добавлен в базу";
+	
+	public static final String NO_SUCH_FILM = "Нет фильмов с такими параметрами";
+
+//	public static List<String> GENRES;
+//
+//	public static List<String> YEARS;
+//
+//	public static List<String> COUNTRIES;
+
 	public static final String[] GENRES = { "аниме", "биография", "боевик", "вестерн", "военный", "детектив", "драма",
 			"комедия", "криминал", "мелодрама", "музыка", "мультфильм", "мюзикл", "приключения", "семейный", "спорт",
 			"триллер", "фантастика", "фэнтэзи" };
@@ -38,5 +48,7 @@ public class Phrases {
 
 	public static final String AVAILAIBLE_COUNTRIES = "Страны-создатели фильмов, имеющиеся в базе:\n"
 			+ String.join("\n", COUNTRIES);
+
+	public static final String AVAILAIBLE_YEARS = "Доступные года создания фильмов:\n" + String.join("\n", YEARS);
 
 }

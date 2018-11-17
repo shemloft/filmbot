@@ -7,21 +7,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import storage.FilmDatabase;
 import structures.Film;
 import structures.Field;
 import structures.User;
 import utils.FilmUtils;
 
 public class Dialog {
+	 
+	/* нужно обработать некст - для этого указания в юзере
+	 * дописать код там и здесь добавить соответсвующие команды
+	 * 
+	 * парс add
+	 * 
+	 * парс простой команды можно вынести в отдельную функцию 
+	 * 
+	 * или создать класс с утилями для парсинга, но возможно это слишком*/
 
 	private User user;
-	private List<Film> filmList;
-	private Map<Field, Map<String, List<Film>>> filmMapsByField;
+	private FilmDatabase database;
 
-	public Dialog(User user, List<Film> filmList) {
+	public Dialog(User user, FilmDatabase database) {
 		this.user = user;
-		this.filmList = filmList;
-		this.filmMapsByField = FilmUtils.getFilmMapsByField(filmList);
+		this.database = database;
 	}
 
 	public String startDialog() {
@@ -31,6 +39,9 @@ public class Dialog {
 	}
 
 	public String processInput(String input) {
+		if (input.length() < 3)
+			return Phrases.SHORT_COMMAND;
+		
 		if (input.equals("/help"))
 			return Phrases.HELP;
 
@@ -52,35 +63,64 @@ public class Dialog {
 //
 //			return getFilm(user.currentField, user.currentOptions.get(user.currentField));
 //		}
-
-		if (input.length() < 3)
-			return Phrases.SHORT_COMMAND;
-		// наверное, это не так уж и важно или был отладочный вывод
-		// System.out.println(input);
-		Scanner scan = new Scanner(System.in);
-		PrintStream printStream = new PrintStream(System.out);
-
+		
+		String[] commandArray = input.split(" ");
+		if (commandArray.length % 2 != 0)
+			return Phrases.UNKNOWN_COMMAND;
+		
 		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
-		while (true) {
-			String[] command = input.trim().split("\\s", 2);
-			for (Field field : Field.values())
-				if (commands.keySet().contains(field) && command[0].equals(field.shortCut())) {
-					commands.get(field).add(command[1]);
-				} else {
+		
+		for (int i = 0; i < commandArray.length; i += 2) {
+			
+			boolean knownField = false;
+			for (Field field : Field.values()) {
+				if (!commandArray[i].equals(field.shortCut()))
+					continue;
+				
+				if (commands.get(field) == null) 
 					commands.put(field, new ArrayList<String>());
-				}
-
-			printStream.println("Дополнительный параметр?[да/нет]");
-			String answer = scan.nextLine();
-			if (answer.equals("да"))
-				continue;
-			else if (answer.equals("нет"))
-				break;
-			else
+					
+				commands.get(field).add(commandArray[i + 1]);
+				knownField = true;
+			}		
+			if (!knownField)
 				return Phrases.UNKNOWN_COMMAND;
 		}
-		scan.close();
+		
+		
+		
+		
+		
 		return getFilm(commands);
+		
+		
+		
+//		это конечно мусор но удалять жалко
+//		Scanner scan = new Scanner(System.in);
+//		PrintStream printStream = new PrintStream(System.out);
+//
+//		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
+//		while (true) {
+//			String[] command = input.trim().split("\\s", 2);
+//			for (Field field : Field.values())
+//				if (commands.keySet().contains(field) && command[0].equals(field.shortCut())) {
+//					commands.get(field).add(command[1]);
+//				} else {
+//					commands.put(field, new ArrayList<String>());
+//				}
+//
+//			printStream.println("Дополнительный параметр?[да/нет]");
+//			String answer = scan.nextLine();
+//			if (answer.equals("да"))
+//				input = scan.nextLine();
+//
+//			else if (answer.equals("нет"))
+//				break;
+//			else
+//				return Phrases.UNKNOWN_COMMAND;
+//		}
+//		scan.close();
+//		return getFilm(commands);
 //		for (Field field : Field.values()) {
 //			if (command.equals(field.shortCut())) {
 //				return getFilm(field, request);
@@ -88,23 +128,8 @@ public class Dialog {
 //		}return Phrases.UNKNOWN_COMMAND;
 
 	}
-//эта штука должна работать как по одному параметру, так и по нескольким
-	private List<Film> getFilmsManyOptions(Map<Field, List<String>> commands) {
-		List<Film> correctFilms = new ArrayList<Film>();
-		outerloop: for (Film film : filmList) {
-			for (Field field : commands.keySet())
-				for (String parameter : commands.get(field))
-					if (film.getField(field).contains(parameter))
-						continue;
-					else
-						continue outerloop;
-			correctFilms.add(film);
-		}
-		return correctFilms;
-	}
 
 	private String getFilm(Map<Field, List<String>> commands) {
-		List<Film> filmsManyOptions = getFilmsManyOptions(commands);
 //		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
 
 //		if (!filmsDict.containsKey(key)) {
@@ -112,19 +137,18 @@ public class Dialog {
 //			return field.noFilmsAtAll();
 //		}
 //там в юзере надо будет ещё поменять что-то, но я запуталась
+		
+//	я написала в юзере что менять
 //		user.changeCurrentOption(field, key);
-
-		String film = getUnshownFilm(filmsManyOptions);
-		return film != null ? film : Phrases.NO_SUCH_FILM;
-	}
-
-	private String getUnshownFilm(List<Film> films) {
-		for (Film film : films) {
-			if (user.savedFilmsIDs.contains(film.ID))
-				continue;
+		
+		Film film = database.getFilm(commands, user.savedFilmsIDs);
+		if (film != null)
 			user.addFilm(film);
-			return film.title;
-		}
-		return null;
+		
+		
+		
+
+		return film != null ? film.title : Phrases.NO_SUCH_FILM;
 	}
+
 }

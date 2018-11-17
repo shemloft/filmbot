@@ -10,7 +10,7 @@ import java.util.List;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CSVHandler implements IDatabase {
+public class CSVHandler implements IFilmDatabaseFileHandler {
 
 	public String fileName;
 

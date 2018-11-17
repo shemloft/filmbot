@@ -1,5 +1,7 @@
 package structures;
 
+import java.util.List;
+
 import dialog.Phrases;
 
 public enum Field {

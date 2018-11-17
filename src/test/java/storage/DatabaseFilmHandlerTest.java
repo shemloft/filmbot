@@ -17,7 +17,7 @@ public class DatabaseFilmHandlerTest {
 	@Before
 	public void extractData() throws Exception {
 		DatabaseFilmHandler filmParser = new DatabaseFilmHandler(new CSVHandler("testDatabase"));
-		filmList = filmParser.getFilmList();
+		filmList = filmParser.filmList;
 	}
 
 	@Test

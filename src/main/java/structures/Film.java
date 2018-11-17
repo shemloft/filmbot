@@ -27,7 +27,7 @@ public class Film {
 
 		Film other = (Film) obj;
 
-		return ID.equals(other.ID);
+		return ID.equals(other.ID) || title.equals(other.title) && filmData.equals(other.filmData);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "Название: " + title + ", год: " + getField(Field.YEAR) + ", страна: " + getField(Field.COUNTRY)
-				+ ", жанр: " + getField(Field.GENRE);
+		return String.format("Название: %s, год: %s, страна: %s, жанр: %s", title, getField(Field.YEAR),
+				getField(Field.COUNTRY), getField(Field.GENRE));
 	}
 }

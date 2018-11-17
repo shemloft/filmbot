@@ -56,3 +56,4 @@ src/.project
 src/.classpath
 
 botAndProxySettings.txt
+target/

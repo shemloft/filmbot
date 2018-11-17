@@ -10,22 +10,28 @@ import java.util.List;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CSVHandler implements Database {
+public class CSVHandler implements IDatabase {
 
 	public String fileName;
 
 	public CSVHandler(String fileName) {
 		this.fileName = fileName;
 	}
-	
+
 	public String getFileName() {
 		return fileName;
 	}
 
 	public void saveData(List<String[]> rows) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv"), ';', '"');
-		for (String[] record : rows) 			
-			writer.writeNext(record);		
+		for (String[] record : rows)
+			writer.writeNext(record);
+		writer.close();
+	}
+
+	public void addData(String[] record) throws IOException {
+		CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv", true), ';', '"');
+		writer.writeNext(record);
 		writer.close();
 	}
 

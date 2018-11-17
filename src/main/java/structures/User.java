@@ -6,6 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 public class User {
+	
+	/* Здесь нужно заменить currentOptions с Map<Field, String> на Map<Field, List<String>>,
+	 * поменять все методы в соответсвии, убрать currentField (т.е. то какое поле текущее будет проверяться
+	 * по тому, есть ли ключ в словаре !если ключа нет возвращается null а не бросается исключение!
+	 * 
+	 *  Также нужно исправить в конструкторе добавление  fieldName,  fieldKey, т.к. теперь их несколько
+	 *  Соответсвующие изменения в UserUtils и UserDataHandler */
+	
+	
 	public String ID;
 	public String name;
 	public List<String> savedFilmsIDs;
@@ -33,14 +42,14 @@ public class User {
 		savedFilmsIDs.add(film.ID);
 	}
 	
-	public void changeCurrentOption(Field field, String key) {
-//		currentOptions.put(currentField, null);
+	public void changeCurrentOptions(Field field, String key) {
+		
 		currentField = field;
 		currentOptions.put(currentField, key);		
 	}
 	
 	public void clearCurrentField() {
-		currentOptions.put(currentField, null);
+		currentOptions.remove(currentField);
 		currentField = null;
 	}
 	

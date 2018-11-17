@@ -6,18 +6,20 @@ import java.util.List;
 import structures.User;
 
 public class UserDataHandler {
-	private IDatabase database;
+		
+	
+	private CSVHandler csvHandler;
 	private String userName;
 	private String userFileID;
 
-	public UserDataHandler(IDatabase database, String userName, String userFileID) {
-		this.database = database;
+	public UserDataHandler(CSVHandler csvHandler, String userName, String userFileID) {
+		this.csvHandler = csvHandler;
 		this.userName = userName;
 		this.userFileID = userFileID;
 	}
 	
 	public User getUser() throws Exception {
-		List<String[]> extractedList = database.extractData();
+		List<String[]> extractedList = csvHandler.extractData();
 		if (extractedList.size() == 0)
 			return new User(userName, userFileID, new ArrayList<String>(), null, null);
 		String[] lastRow = extractedList.get(extractedList.size() - 1);
@@ -55,7 +57,7 @@ public class UserDataHandler {
 			String[] row = {user.currentField.name(), user.currentOptions.get(user.currentField)};
 			rowList.add(row);
 		}			
-		database.saveData(rowList);
+		csvHandler.saveData(rowList);
 	}
 
 }

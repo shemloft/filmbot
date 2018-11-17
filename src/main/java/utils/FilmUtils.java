@@ -12,27 +12,36 @@ public class FilmUtils {
 
 	public static List<Film> stringListToFilmList(List<String[]> stringList) {
 		List<Film> filmList = new ArrayList<Film>();
-		for (String[] row : stringList) {
-			String ID = row[0];
-			String title = row[1];
-			Map<Field, String> filmData = new HashMap<Field, String>();
-			for (Field field : Field.values())
-				filmData.put(field, row[field.ordinal() + 2]);
-			Film film = new Film(ID, title, filmData);
+		for (String[] row : stringList) {			
+			Film film = stringArrayToFilm(row);
 			filmList.add(film);
 		}
 		return filmList;
 	}
+	
+	public static Film stringArrayToFilm(String[] filmString) {
+		String ID = filmString[0];
+		String title = filmString[1];
+		Map<Field, String> filmData = new HashMap<Field, String>();
+		for (Field field : Field.values())
+			filmData.put(field, filmString[field.ordinal() + 2]);
+		Film film = new Film(ID, title, filmData);
+		return film;
+	}
+	
+	public static String[] filmToStringArray(Film film) {
+		String[] filmString = new String[Field.values().length + 2];
+		filmString[0] = film.ID;
+		filmString[1] = film.title;
+		for (Field field : Field.values())
+			filmString[field.ordinal() + 2] = film.getField(field);
+		return filmString;
+	}
 
 	public static List<String[]> filmListToStringList(List<Film> filmList) {
 		List<String[]> rowList = new ArrayList<String[]>();
-		int rowLength = Field.values().length + 2;
 		for (Film film : filmList) {
-			String[] filmRow = new String[rowLength];
-			filmRow[0] = film.ID;
-			filmRow[1] = film.title;
-			for (Field field : Field.values())
-				filmRow[field.ordinal() + 2] = film.getField(field);
+			String[] filmRow = filmToStringArray(film);
 			rowList.add(filmRow);
 		}
 		return rowList;
@@ -70,10 +79,17 @@ public class FilmUtils {
 		return new Film(id, title, filmData);
 	}
 	
-//	public static String[] getParametersList(Field field, Map<Field, Map<String, List<Film>>> filmMapsByField) {
-//	    List<String> parameterList = new ArrayList<String>();
-//	    if (filmMapsByField != null)
-//	    	parameterList.addAll(filmMapsByField.get(field).keySet());
-//	    return parameterList.toArray(new String[parameterList.size()]);
-//	  }
+	public static Map<Field, String[]> getOptionValuesMap(Map<Field, Map<String, List<Film>>> filmMapsByField) {
+		Map<Field, String[]> optionsValuesMap = new HashMap<Field, String[]>(); 
+		for (Field field : Field.values())
+			optionsValuesMap.put(field, getOptionValues(field, filmMapsByField));
+		return optionsValuesMap;
+	}
+	
+	public static String[] getOptionValues(Field field, Map<Field, Map<String, List<Film>>> filmMapsByField) {
+	    List<String> parameterList = new ArrayList<String>();
+	    if (filmMapsByField != null)
+	    	parameterList.addAll(filmMapsByField.get(field).keySet());
+	    return parameterList.toArray(new String[parameterList.size()]);
+	  }
 }

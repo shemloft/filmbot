@@ -1,9 +1,10 @@
 package bot;
 
+
 import storage.CSVHandler;
-import storage.IDatabase;
-import storage.DatabaseFilmHandler;
-import storage.FilmHandler;
+import storage.FileFilmHandler;
+import storage.IFilmHandler;
+import storage.FilmDatabase;
 import structures.Field;
 import structures.Film;
 //import telegram.TelegramChatBot;
@@ -11,13 +12,13 @@ import utils.FilmUtils;
 
 public class Main {
 
-	private static IDatabase database;
+	private static FilmDatabase database;
 
 	public static void main(String[] args) throws Exception {
-		database = new CSVHandler("Database");
-//		Phrases.COUNTRIES = FilmUtils.getParametersList(Field.COUNTRY, filmMapsByField);
-//	    Phrases.GENRES = FilmUtils.getParametersList(Field.GENRE, filmMapsByField);
-//	    Phrases.YEARS = FilmUtils.getParametersList(Field.YEAR, filmMapsByField);
+		
+		CSVHandler csvHandler = new CSVHandler("Database");
+		IFilmHandler filmHandler = new FileFilmHandler(csvHandler);
+		database = new FilmDatabase(filmHandler);
 		startConsoleBot();
 	}
 

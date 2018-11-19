@@ -12,13 +12,13 @@
 //
 //public class UserDataHandlerTest extends TestCase {
 //
-//	private IDatabase database;
+//	private FilmDatabase database;
 //	private String userName;
 //	private String userFileID;
 //	private UserDataHandler userDataHandler;
 //
 //	private void initializeUserDataHandler(List<String[]> data) {
-//		database = new TestDatabase(data);
+//		database = new TestFilmDatabaseFileHandler(data);
 //		userName = "name";
 //		userFileID = "fileID";
 //		userDataHandler = new UserDataHandler(database, userName, userFileID);

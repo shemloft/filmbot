@@ -98,4 +98,34 @@ public class FilmUtilsTest {
 		assertEquals(genreMap, FilmUtils.createMap(filmList, Field.GENRE));
 		assertEquals(yearMap, FilmUtils.createMap(filmList, Field.YEAR));
 	}
+
+	@Test
+	public void testGetOptionValuesMap() {
+		Map<Field, Map<String, List<Film>>> filmsData = FilmUtils.getFilmMapsByField(filmList);
+		Map<Field, String[]> optionValuesMap = FilmUtils.getOptionValuesMap(filmsData);
+		String[] optionCountry = { "США" };
+		String[] optionYear = { "1994", "1972" };
+		String[] optionGenre = {"драма", "комедия", "триллер",  "криминал"  };
+		assertEquals(optionCountry[0], optionValuesMap.get(Field.COUNTRY)[0]);
+		assertEquals(optionYear[0], optionValuesMap.get(Field.YEAR)[0]);
+		assertEquals(optionYear[1], optionValuesMap.get(Field.YEAR)[1]);
+		for (int i = 0; i < optionValuesMap.get(Field.GENRE).length; i++)
+			assertEquals(optionGenre[i], optionValuesMap.get(Field.GENRE)[i]);
+	}
+	
+	@Test
+	public void testGetOptionValues() {
+		Map<Field, Map<String, List<Film>>> filmsData = FilmUtils.getFilmMapsByField(filmList);
+		String[] optionCountry = { "США" };
+		String[] optionYear = { "1994", "1972" };
+		String[] optionGenre = {"драма", "комедия", "триллер",  "криминал"  };
+		String[] testOptionCountry = FilmUtils.getOptionValues(Field.COUNTRY, filmsData);
+		String[] testOptionYear = FilmUtils.getOptionValues(Field.YEAR, filmsData);
+		String[] testOptionGenre = FilmUtils.getOptionValues(Field.GENRE, filmsData);
+		assertEquals(optionCountry[0], testOptionCountry[0]);
+		assertEquals(optionYear[0], testOptionYear[0]);
+		assertEquals(optionYear[1], testOptionYear[1]);
+		for (int i = 0; i < optionGenre.length; i++)
+			assertEquals(optionGenre[i], testOptionGenre[i]);
+	}
 }

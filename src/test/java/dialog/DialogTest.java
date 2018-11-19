@@ -6,6 +6,7 @@ import storage.FilmDatabase;
 import storage.TestFilmDatabaseFileHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class DialogTest extends TestCase {
 	@Before
 	protected void setUp() throws Exception {
 		List<Film> filmList = new ArrayList<Film>();
+		filmList.add(FilmUtils.getFilm("ID", "Фильм", "Страна", "Год", "Жанр"));
 		filmList.add(FilmUtils.getFilm("8", "Бойцовский клуб", "США, Германия", "1999", "триллер, драма, криминал"));
 		filmList.add(FilmUtils.getFilm("5", "Леон", "Франция", "1994", "триллер, драма, криминал"));
 		filmList.add(FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал"));
@@ -34,17 +36,15 @@ public class DialogTest extends TestCase {
 
 		List<String> userList = new ArrayList<String>();
 		userList.add("12");
-		user = new User("name", "name", userList, null, null);
+		user = new User("name", "name", userList, null);
 		database = new FilmDatabase(
-						new FileFilmHandler(
-								new TestFilmDatabaseFileHandler(
-										FilmUtils.filmListToStringList(filmList))));
+				new FileFilmHandler(new TestFilmDatabaseFileHandler(FilmUtils.filmListToStringList(filmList))));
 		dialog = new Dialog(user, database);
 	}
 
 	@Test
 	public void testStartDialogFirstTime() throws Exception {
-		user = new User("name", "name", null, null, null);
+		user = new User("name", "name", null, null);
 		dialog = new Dialog(user, database);
 		assertEquals(String.format("Добро пожаловать, name.%s", Phrases.HELP), dialog.startDialog());
 	}
@@ -125,59 +125,59 @@ public class DialogTest extends TestCase {
 	@Test
 	public void testNoNextFilmYear() {
 		assertEquals("Бойцовский клуб", dialog.processInput("/y 1999"));
-		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/next"));
+		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
 
 	@Test
 	public void testNoNextFilmCountry() {
 		assertEquals("Леон", dialog.processInput("/c Франция"));
-		assertEquals(Field.COUNTRY.noFilmsLeft(), dialog.processInput("/next"));
+		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
 
 	@Test
 	public void testNoNextFilmGenre() {
 		assertEquals("Криминальное чтиво", dialog.processInput("/g комедия"));
-		assertEquals(Field.GENRE.noFilmsLeft(), dialog.processInput("/next"));
+		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
 
 	@Test
 	public void testsUserSeenFilmYear() {
-		assertEquals(Field.YEAR.noFilmsLeft(), dialog.processInput("/y 1972"));
+		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/y 1972"));
 	}
-	
+
 	@Test
 	public void testYearAndGenre() {
 		assertEquals("Криминальное чтиво", dialog.processInput("/y 1994 /g комедия"));
 	}
-	
+
 	@Test
 	public void testYearAndCountry() {
 		assertEquals("Леон", dialog.processInput("/c Франция /y 1994"));
 	}
-	
+
 	@Test
 	public void testGenreAndCountry() {
 		assertEquals("Леон", dialog.processInput("/g триллер /c Франция"));
 	}
-	
 
 	@Test
 	public void testTwoGenres() {
 		assertEquals("Криминальное чтиво", dialog.processInput("/g криминал /g комедия"));
 	}
-	
+
 	@Test
 	public void testTwoYears() {
 		assertEquals(Phrases.NO_SUCH_FILM, dialog.processInput("/y 1999 /y 1994"));
 	}
-	
-	
 
 	@Test
 	public void testsUserNextWithCurrentField() {
 		List<String> userList = new ArrayList<String>();
 		userList.add("5");
-		user = new User("name", "name", userList, "YEAR", "1994");
+		Map<Field, List<String>> userData = new HashMap<Field, List<String>>();
+		userData.put(Field.YEAR, new ArrayList<String>());
+		userData.get(Field.YEAR).add("1994");
+		user = new User("name", "name", userList, userData);
 		dialog = new Dialog(user, database);
 		assertEquals("Криминальное чтиво", dialog.processInput("/next"));
 	}

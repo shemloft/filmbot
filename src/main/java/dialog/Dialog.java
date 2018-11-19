@@ -1,28 +1,16 @@
 package dialog;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import storage.FilmDatabase;
 import structures.Film;
 import structures.Field;
 import structures.User;
-import utils.FilmUtils;
 
 public class Dialog {
-	 
-	/* нужно обработать некст - для этого указания в юзере
-	 * дописать код там и здесь добавить соответсвующие команды
-	 * 
-	 * парс add
-	 * 
-	 * парс простой команды можно вынести в отдельную функцию 
-	 * 
-	 * или создать класс с утилями для парсинга, но возможно это слишком*/
 
 	private User user;
 	private FilmDatabase database;
@@ -41,7 +29,7 @@ public class Dialog {
 	public String processInput(String input) {
 		if (input.length() < 3)
 			return Phrases.SHORT_COMMAND;
-		
+
 		if (input.equals("/help"))
 			return Phrases.HELP;
 
@@ -55,100 +43,59 @@ public class Dialog {
 			return Phrases.AVAILAIBLE_YEARS;
 
 		if (input.equals("/add"))
-			return "";
+			return Phrases.ADDING_FILM;
 
-//		if (input.equals("/next")) {
-//			if (user.currentField == null)
-//				return Phrases.NEXT_WITHOUT_OPT;
-//
-//			return getFilm(user.currentField, user.currentOptions.get(user.currentField));
-//		}
-		
-		String[] commandArray = input.split(" ");
-		if (commandArray.length % 2 != 0)
-			return Phrases.UNKNOWN_COMMAND;
-		
+		if (input.equals("/next")) {
+			if (user.currentOptions == null)
+				return Phrases.NEXT_WITHOUT_OPT;
+			return getFilm(user.currentOptions);
+		}
+
+		String[] commandArray = input.trim().substring(1).split("/");
+
 		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
-		
-		for (int i = 0; i < commandArray.length; i += 2) {
-			
+
+		for (int i = 0; i < commandArray.length; i++) {
+			String[] options = commandArray[i].split(" ", 2);
+			String fieldShortCut = options[0].trim();
+			String requestedOption = options[1].trim();
+
 			boolean knownField = false;
+
 			for (Field field : Field.values()) {
-				if (!commandArray[i].equals(field.shortCut()))
+
+				if (!fieldShortCut.equals(field.shortCut()))
 					continue;
-				
-				if (commands.get(field) == null) 
+
+				if (!database.requestExistInDatabase(field, requestedOption)) {
+					user.clearCurrentOptions();
+					return field.noFilmsAtAll();
+				}
+
+				if (commands.get(field) == null)
 					commands.put(field, new ArrayList<String>());
-					
-				commands.get(field).add(commandArray[i + 1]);
+
+				commands.get(field).add(requestedOption);
 				knownField = true;
-			}		
+			}
+
 			if (!knownField)
 				return Phrases.UNKNOWN_COMMAND;
 		}
-		
-		
-		
-		
-		
 		return getFilm(commands);
-		
-		
-		
-//		это конечно мусор но удалять жалко
-//		Scanner scan = new Scanner(System.in);
-//		PrintStream printStream = new PrintStream(System.out);
-//
-//		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
-//		while (true) {
-//			String[] command = input.trim().split("\\s", 2);
-//			for (Field field : Field.values())
-//				if (commands.keySet().contains(field) && command[0].equals(field.shortCut())) {
-//					commands.get(field).add(command[1]);
-//				} else {
-//					commands.put(field, new ArrayList<String>());
-//				}
-//
-//			printStream.println("Дополнительный параметр?[да/нет]");
-//			String answer = scan.nextLine();
-//			if (answer.equals("да"))
-//				input = scan.nextLine();
-//
-//			else if (answer.equals("нет"))
-//				break;
-//			else
-//				return Phrases.UNKNOWN_COMMAND;
-//		}
-//		scan.close();
-//		return getFilm(commands);
-//		for (Field field : Field.values()) {
-//			if (command.equals(field.shortCut())) {
-//				return getFilm(field, request);
-//			}
-//		}return Phrases.UNKNOWN_COMMAND;
-
 	}
 
 	private String getFilm(Map<Field, List<String>> commands) {
-//		Map<String, List<Film>> filmsDict = filmMapsByField.get(field);
+		user.changeCurrentOptions(commands);
 
-//		if (!filmsDict.containsKey(key)) {
-//			user.clearCurrentField();
-//			return field.noFilmsAtAll();
-//		}
-//там в юзере надо будет ещё поменять что-то, но я запуталась
-		
-//	я написала в юзере что менять
-//		user.changeCurrentOption(field, key);
-		
 		Film film = database.getFilm(commands, user.savedFilmsIDs);
-		if (film != null)
+		if (film != null && film.ID.equals("None"))
+			return Phrases.NO_SUCH_FILM;
+		else if (film != null) // ДОДЕЛАЙ В ДАТАБАЗЕ
 			user.addFilm(film);
-		
-		
-		
-
-		return film != null ? film.title : Phrases.NO_SUCH_FILM;
+		else
+			user.clearCurrentOptions();
+		return film != null ? film.title : Phrases.NO_MORE_FILM;
 	}
 
 }

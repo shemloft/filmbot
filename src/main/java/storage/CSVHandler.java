@@ -46,4 +46,10 @@ public class CSVHandler implements IFilmDatabaseFileHandler {
 		}
 		return allRows;
 	}
+	
+	public void deleteData(int rowNumber) throws IOException{
+	    List<String[]> allRows = extractData();
+	    allRows.remove(rowNumber);
+	    saveData(allRows);
+	}
 }

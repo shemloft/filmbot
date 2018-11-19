@@ -2,4 +2,4 @@
 bin/
 src/.project
 src/.classpath
-/target/
+target/

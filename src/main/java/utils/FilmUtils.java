@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,8 @@ public class FilmUtils {
 	    List<String> parameterList = new ArrayList<String>();
 	    if (filmMapsByField != null)
 	    	parameterList.addAll(filmMapsByField.get(field).keySet());
-	    return parameterList.toArray(new String[parameterList.size()]);
+	    String[] optionValues = parameterList.toArray(new String[parameterList.size()]);
+	    Arrays.sort(optionValues);
+	    return optionValues;
 	  }
 }

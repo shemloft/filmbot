@@ -1,7 +1,5 @@
 package structures;
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +10,10 @@ import org.junit.Test;
 import structures.User;
 import utils.FilmUtils;
 
-public class UserTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class UserTest {
 
 	@Test
 	public void testCreateUserFirstEntry() {

@@ -34,13 +34,13 @@ public class Dialog {
 			return Phrases.HELP;
 
 		if (input.equals("/countries"))
-			return Phrases.AVAILAIBLE_COUNTRIES;
+			return Phrases.AVAILAIBLE_COUNTRIES + String.join("\n", database.getFieldValuesArray(Field.COUNTRY));
 
-		if (input.equals("/genres"))
-			return Phrases.AVAILAIBLE_GENRES;
+		if (input.equals("/genres"))			
+			return Phrases.AVAILAIBLE_GENRES + String.join("\n", database.getFieldValuesArray(Field.GENRE));
 
 		if (input.equals("/years"))
-			return Phrases.AVAILAIBLE_YEARS;
+			return Phrases.AVAILAIBLE_YEARS + String.join("\n", database.getFieldValuesArray(Field.YEAR));;
 
 		if (input.equals("/add"))
 			return Phrases.ADDING_FILM;

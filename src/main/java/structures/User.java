@@ -18,7 +18,7 @@ public class User {
 		this.ID = fileID;
 		firstTime = savedFilmsIDs == null;
 		this.savedFilmsIDs = firstTime ? new ArrayList<String>() : savedFilmsIDs;
-
+		
 		currentOptions = currentData;
 //		for (Field field : Field.values())
 //			currentOptions.put(field, new ArrayList<String>());

@@ -10,18 +10,19 @@ import structures.User;
 
 public class UserDataHandler {
 
-	private CSVHandler csvHandler;
+	private IFilmDatabaseFileHandler fileHandler;
 	private String userName;
 	private String userFileID;
 
-	public UserDataHandler(CSVHandler csvHandler, String userName, String userFileID) {
-		this.csvHandler = csvHandler;
+	public UserDataHandler(IFilmDatabaseFileHandler fileHandler, String userName, String userFileID) {
+		this.fileHandler = fileHandler;
 		this.userName = userName;
 		this.userFileID = userFileID;
 	}
 
 	public User getUser() throws Exception {
-		List<String[]> extractedList = csvHandler.extractData();
+		List<String[]> extractedList = fileHandler.extractData();
+		
 		Map<Field, List<String>> currentData = new HashMap<Field, List<String>>();
 		if (extractedList.size() == 0)
 			return new User(userName, userFileID, new ArrayList<String>(), null);
@@ -80,7 +81,7 @@ public class UserDataHandler {
 				}
 			rowList.add(row.toArray(new String[row.size()]));
 		}
-		csvHandler.saveData(rowList);
+		fileHandler.saveData(rowList);
 	}
 
 }

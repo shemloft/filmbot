@@ -66,12 +66,11 @@ public class Phrases {
 			"Канада", "Новая Зеландия", "ОАЭ", "Польша", "СССР", "США", "Франция", "ФРГ", "Чехословакия", "Швейцария",
 			"Япония" };
 
-	public static final String AVAILAIBLE_GENRES = "Доступные жанры фильмов:\n" + String.join("\n", GENRES);
+	public static final String AVAILAIBLE_GENRES = "Доступные жанры фильмов:\n"; 
 
-	public static final String AVAILAIBLE_COUNTRIES = "Страны-создатели фильмов, имеющиеся в базе:\n"
-			+ String.join("\n", COUNTRIES);
+	public static final String AVAILAIBLE_COUNTRIES = "Страны-создатели фильмов, имеющиеся в базе:\n";
 
-	public static final String AVAILAIBLE_YEARS = "Доступные года создания фильмов:\n" + String.join("\n", YEARS);
+	public static final String AVAILAIBLE_YEARS = "Доступные года создания фильмов:\n";
 
 	
 

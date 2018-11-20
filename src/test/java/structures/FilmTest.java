@@ -1,14 +1,16 @@
 package structures;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import structures.Film;
 import structures.Field;
 import utils.FilmUtils;
 
-public class FilmTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+
+public class FilmTest {
 
 	@Test
 	public void testGetField() {

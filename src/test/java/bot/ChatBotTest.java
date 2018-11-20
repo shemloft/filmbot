@@ -1,6 +1,5 @@
 package bot;
 
-import junit.framework.TestCase;
 import storage.CSVHandler;
 import storage.FileFilmHandler;
 import storage.FilmDatabase;
@@ -22,7 +21,7 @@ import dialog.Phrases;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class ChatBotTest extends TestCase {
+public class ChatBotTest {
 
 	protected final ByteArrayOutputStream output = new ByteArrayOutputStream();
 	protected final String name = "test_name";

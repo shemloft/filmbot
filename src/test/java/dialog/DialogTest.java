@@ -1,6 +1,5 @@
 package dialog;
 
-import junit.framework.TestCase;
 import storage.FileFilmHandler;
 import storage.FilmDatabase;
 import storage.TestFilmDatabaseFileHandler;
@@ -20,13 +19,15 @@ import structures.Film;
 import structures.Field;
 import utils.FilmUtils;
 
-public class DialogTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class DialogTest {
 	private User user;
 	private Dialog dialog;
 	private FilmDatabase database;
 
 	@Before
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		List<Film> filmList = new ArrayList<Film>();
 		filmList.add(FilmUtils.getFilm("ID", "Фильм", "Страна", "Год", "Жанр"));
 		filmList.add(FilmUtils.getFilm("8", "Бойцовский клуб", "США, Германия", "1999", "триллер, драма, криминал"));

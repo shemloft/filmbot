@@ -1,15 +1,13 @@
 package structures;
 
-import java.util.List;
-
 import dialog.Phrases;
 
 public enum Field {
-	COUNTRY("/c", "Все фильмы этой страны, имеющиеся в базе, были предоставлены",
+	COUNTRY("c", "Все фильмы этой страны, имеющиеся в базе, были предоставлены",
 			"В базе нет фильмов, снятых в этой стране :с", Phrases.COUNTRIES),
-	YEAR("/y", "Все фильмы этого года, имеющиеся в базе, были предоставлены",
-			"В базе нет фильмов, снятых в этот год :с", Phrases.YEARS),
-	GENRE("/g", "Все фильмы этого жанра, имеющиеся в базе, были предоставлены",
+	YEAR("y", "Все фильмы этого года, имеющиеся в базе, были предоставлены", "В базе нет фильмов, снятых в этот год :с",
+			Phrases.YEARS),
+	GENRE("g", "Все фильмы этого жанра, имеющиеся в базе, были предоставлены",
 			"В базе нет фильмов, снятых в этом жанре :с", Phrases.GENRES);
 
 	String shortCut;
@@ -35,7 +33,7 @@ public enum Field {
 	public String shortCut() {
 		return shortCut;
 	}
-	
+
 	public String[] avaliableFields() {
 		return avaliableFields;
 	}

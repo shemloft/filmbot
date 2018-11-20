@@ -15,7 +15,7 @@ public class UserUtils {
 			user = userData.getUser();
 		} catch (Exception e) {
 //			e.printStackTrace();
-			user = new User(name, userFileID, null, null, null);
+			user = new User(name, userFileID, null, null);
 		}
 		return user;
 	}

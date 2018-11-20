@@ -32,7 +32,19 @@ public class Phrases {
 
 	public static final String ADDING_FILM = "Фильм был успешно добавлен в базу";
 	
+	public static final String ADDING_FILM_ERROR = "Этот фильм уже есть в базе";
+	
 	public static final String NO_SUCH_FILM = "Нет фильмов с такими параметрами";
+	
+	public static final String NO_MORE_FILM = "Все фильмы с данными параметрами из базы были предоставлены";
+	
+	public static final String ADD_TITLE = "Введите название фильма";
+	
+	public static final String ADD_COUNTRY = "Введите страну-создателя фильма. Если стран несколько, то введите их через запятую с пробелом";
+	
+	public static final String ADD_YEAR = "Введите год создания фильма";
+	
+	public static final String ADD_GENRE = "Введите жанр фильма. Если жанров несколько, то введите их через запятую с пробелом";
 
 //	public static List<String> GENRES;
 //

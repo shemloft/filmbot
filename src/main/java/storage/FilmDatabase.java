@@ -1,5 +1,6 @@
 package storage;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -8,23 +9,34 @@ import structures.Film;
 import utils.FilmUtils;
 
 public class FilmDatabase {
-	
-	IFilmHandler filmHandler;	
-	
-	public FilmDatabase(IFilmHandler filmHandler) {		
+
+	IFilmHandler filmHandler;
+
+	public FilmDatabase(IFilmHandler filmHandler) {
 		this.filmHandler = filmHandler;
 	}
-	
+
 	public Film getFilm(Map<Field, List<String>> options, List<String> savedFilmsIDs) {
 		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
-		for (Film film : possibleFilms) 
+		if (possibleFilms.size() == 0)
+			return new Film("None", null, null);
+		for (Film film : possibleFilms)
 			if (!savedFilmsIDs.contains(film.ID))
 				return film;
-		return null;	
+		return null;
 	}
-	
+
 	public void addFilmToDatabase(String title, String country, String year, String genre) throws Exception {
 		Film film = FilmUtils.getFilm(filmHandler.getFilmsCount().toString(), title, country, year, genre);
 		filmHandler.addFilm(film);
 	}
+
+	public String[] getFieldValuesArray(Field field) {
+		return filmHandler.getAvaliableFieldValues(field);
+	}
+
+	public boolean requestExistInDatabase(Field field, String request) {
+		return Arrays.asList(getFieldValuesArray(field)).contains(request);
+	}
+
 }

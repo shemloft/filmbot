@@ -3,7 +3,10 @@ package structures;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import structures.User;
@@ -13,7 +16,7 @@ public class UserTest extends TestCase {
 
 	@Test
 	public void testCreateUserFirstEntry() {
-		User user = new User("Даша", "Даша", null, null, null);
+		User user = new User("Даша", "Даша", null, null);
 
 		assertEquals("Даша", user.name);
 		assertEquals(new ArrayList<String>(), user.savedFilmsIDs);
@@ -23,7 +26,7 @@ public class UserTest extends TestCase {
 	public void testCreateUserSecondEntry() {
 		List<String> IDList = new ArrayList<String>();
 		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, null, null);
+		User user = new User("Даша", "Даша", IDList, null);
 
 		assertEquals("Даша", user.name);
 		assertEquals("8", user.savedFilmsIDs.get(0));
@@ -34,13 +37,15 @@ public class UserTest extends TestCase {
 	public void testCreateUserEntryWithField() {
 		List<String> IDList = new ArrayList<String>();
 		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");
+		Map<Field, List<String>> options = new HashMap<Field, List<String>>();
+		options.put(Field.COUNTRY, new ArrayList<String>());
+		options.get(Field.COUNTRY).add("США");
+		User user = new User("Даша", "Даша", IDList, options);
 
 		assertEquals("Даша", user.name);
 		assertEquals("8", user.savedFilmsIDs.get(0));
 		assertEquals(1, user.savedFilmsIDs.size());
-		assertEquals(Field.COUNTRY, user.currentField);
-		assertEquals("США", user.currentOptions.get(Field.COUNTRY));
+		assertEquals("США", user.currentOptions.get(Field.COUNTRY).get(0));
 		assertEquals(null, user.currentOptions.get(Field.YEAR));
 	}
 
@@ -48,7 +53,7 @@ public class UserTest extends TestCase {
 	public void testAddFilm() {
 		List<String> IDList = new ArrayList<String>();
 		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, null, null);
+		User user = new User("Даша", "Даша", IDList, null);
 
 		user.addFilm(FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал"));
 
@@ -58,55 +63,26 @@ public class UserTest extends TestCase {
 	}
 
 	@Test
-	public void testChangeCurrentOption() {
-		List<String> IDList = new ArrayList<String>();
-		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");
-
-		user.changeCurrentOption(Field.YEAR, "2008");
-
-		assertEquals(Field.YEAR, user.currentField);
-		assertEquals(null, user.currentOptions.get(Field.COUNTRY));
-		assertEquals("2008", user.currentOptions.get(Field.YEAR));
-	}
-
-	@Test
 	public void testClearCurrentField() {
 		List<String> IDList = new ArrayList<String>();
 		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");
-
-		user.clearCurrentField();
-
-		assertEquals(null, user.currentField);
-		assertEquals(null, user.currentOptions.get(Field.COUNTRY));
+		Map<Field, List<String>> options = new HashMap<Field, List<String>>();
+		options.put(Field.COUNTRY, new ArrayList<String>());
+		options.get(Field.COUNTRY).add("США");
+		User user = new User("Даша", "Даша", IDList, options);
+		user.clearCurrentOptions();
+		assertEquals(null, user.currentOptions);
 	}
 
 	@Test
-	public void testGetCurrentKey() {
-		List<String> IDList = new ArrayList<String>();
-		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", "США");
-
-		assertEquals("США", user.getCurrentKey());
+	public void testChangeCurrentOptions() {
+		Map<Field, List<String>> options = new HashMap<Field, List<String>>();
+		options.put(Field.COUNTRY, new ArrayList<String>());
+		options.get(Field.COUNTRY).add("США");
+		User user = new User("Даша", "Даша", null, null);
+		user.changeCurrentOptions(options);
+		assertTrue(user.currentOptions.keySet().contains(Field.COUNTRY));
+		assertEquals("США", user.currentOptions.get(Field.COUNTRY).get(0));
 	}
-
-	@Test
-	public void testGetCurrentKeyNull1() {
-		List<String> IDList = new ArrayList<String>();
-		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, null, null);
-
-		assertEquals(null, user.getCurrentKey());
-	}
-
-	@Test
-	public void testGetCurrentKeyNull2() {
-		List<String> IDList = new ArrayList<String>();
-		IDList.add("8");
-		User user = new User("Даша", "Даша", IDList, "COUNTRY", null);
-
-		assertEquals(null, user.getCurrentKey());
-	}
-
+	
 }

@@ -22,7 +22,10 @@ public class TestFilmDatabaseFileHandler implements IFilmDatabaseFileHandler {
 
 	public void addData(String[] record) throws IOException {
 		data.add(record);
-		
 	}
 
+	public void deleteData(String[] record) throws IOException {
+		data.remove(record);
+	}
+	
 }

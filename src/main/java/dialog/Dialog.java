@@ -90,12 +90,14 @@ public class Dialog {
 			}
 			return Phrases.ADDING_FILM;
 		}
-		String[] commandArray = input.trim().substring(1).split("/");
+		String[] commandArray = input.trim().substring(1).split("/");		
 
 		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
 
 		for (int i = 0; i < commandArray.length; i++) {
 			String[] options = commandArray[i].split(" ", 2);
+			if (options.length % 2 != 0)
+			      return Phrases.UNKNOWN_COMMAND;
 			String fieldShortCut = options[0].trim();
 			String requestedOption = options[1].trim();
 

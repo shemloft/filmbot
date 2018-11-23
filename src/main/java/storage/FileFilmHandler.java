@@ -19,6 +19,11 @@ public class FileFilmHandler implements IFilmHandler {
 
 	public FileFilmHandler(IFilmDatabaseFileHandler fileHandler) throws Exception {
 		this.fileHandler = fileHandler;
+		initializeFields();
+		
+	}
+	
+	private void initializeFields() throws Exception {
 		filmList = getFilmList();
 		filmMapsByField = FilmUtils.getFilmMapsByField(filmList);
 		optionsValuesMap = FilmUtils.getOptionValuesMap(filmMapsByField);
@@ -59,7 +64,7 @@ public class FileFilmHandler implements IFilmHandler {
 			throw new Exception(Phrases.ADDING_FILM_ERROR);
 		String[] record = FilmUtils.filmToStringArray(film);
 		fileHandler.addData(record);
-		filmList = getFilmList();
+		initializeFields();
 	}
 
 }

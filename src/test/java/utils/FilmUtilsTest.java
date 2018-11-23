@@ -135,4 +135,24 @@ public class FilmUtilsTest {
 		for (int i = 0; i < optionGenre.length; i++)
 			assertEquals(optionGenre[i], testOptionGenre[i]);
 	}
+	
+	@Test
+	public void testGetCommand() {
+		Map<Field,List<String>> inputMap = new HashMap<Field, List<String>>();
+		inputMap.put(Field.COUNTRY, new ArrayList<String>());
+		inputMap.get(Field.COUNTRY).add("США");
+		inputMap.get(Field.COUNTRY).add("Великобритания");
+		inputMap.put(Field.YEAR, new ArrayList<String>());
+		inputMap.get(Field.YEAR).add("1999");
+		inputMap.put(Field.GENRE, new ArrayList<String>());
+		inputMap.get(Field.GENRE).add("комедия");
+		inputMap.get(Field.GENRE).add("криминал");
+		
+		String command = FilmUtils.getCommand(inputMap);
+		
+		assertEquals("/g комедия, криминал /c США, Великобритания /y 1999 ", command);
+		
+	}
+	
+	
 }

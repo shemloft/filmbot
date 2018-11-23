@@ -3,6 +3,7 @@ package utils;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,14 @@ import utils.FilmUtils;
 
 public class FilmUtilsTest {
 	private List<Film> filmList = new ArrayList<Film>();
-	private Film film1 = FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал");
-	private Film film2 = FilmUtils.getFilm("12", "Крестный отец", "США", "1972", "драма, криминал");
+	private Film film1 = FilmUtils.getFilm("13", "Криминальное чтиво",
+			new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+			new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
+			new ArrayList<String>(Arrays.asList(new String[] { "триллер", "комедия", "криминал" })));
+	private Film film2 = FilmUtils.getFilm("12", "Крестный отец",
+			new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+			new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
+			new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал" })));
 	private Map<String, List<Film>> genreMap = new HashMap<String, List<Film>>();
 	private Map<String, List<Film>> yearMap = new HashMap<String, List<Film>>();
 	private Map<String, List<Film>> countryMap = new HashMap<String, List<Film>>();
@@ -104,21 +111,21 @@ public class FilmUtilsTest {
 		Map<Field, Map<String, List<Film>>> filmsData = FilmUtils.getFilmMapsByField(filmList);
 		Map<Field, String[]> optionValuesMap = FilmUtils.getOptionValuesMap(filmsData);
 		String[] optionCountry = { "США" };
-		String[] optionYear = { "1994", "1972" };
-		String[] optionGenre = {"драма", "комедия", "триллер",  "криминал"  };
+		String[] optionYear = { "1972", "1994" };
+		String[] optionGenre = { "драма", "комедия", "криминал", "триллер" };
 		assertEquals(optionCountry[0], optionValuesMap.get(Field.COUNTRY)[0]);
 		assertEquals(optionYear[0], optionValuesMap.get(Field.YEAR)[0]);
 		assertEquals(optionYear[1], optionValuesMap.get(Field.YEAR)[1]);
 		for (int i = 0; i < optionValuesMap.get(Field.GENRE).length; i++)
 			assertEquals(optionGenre[i], optionValuesMap.get(Field.GENRE)[i]);
 	}
-	
+
 	@Test
 	public void testGetOptionValues() {
 		Map<Field, Map<String, List<Film>>> filmsData = FilmUtils.getFilmMapsByField(filmList);
 		String[] optionCountry = { "США" };
-		String[] optionYear = { "1994", "1972" };
-		String[] optionGenre = {"драма", "комедия", "триллер",  "криминал"  };
+		String[] optionYear = { "1972", "1994" };
+		String[] optionGenre = { "драма", "комедия", "криминал", "триллер" };
 		String[] testOptionCountry = FilmUtils.getOptionValues(Field.COUNTRY, filmsData);
 		String[] testOptionYear = FilmUtils.getOptionValues(Field.YEAR, filmsData);
 		String[] testOptionGenre = FilmUtils.getOptionValues(Field.GENRE, filmsData);

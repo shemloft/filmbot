@@ -20,16 +20,6 @@ public class User {
 		this.savedFilmsIDs = firstTime ? new ArrayList<String>() : savedFilmsIDs;
 		
 		currentOptions = currentData;
-//		for (Field field : Field.values())
-//			currentOptions.put(field, new ArrayList<String>());
-//		if (currentData != null) {
-//			for (String fieldName : currentData.keySet())
-//				for (Field field : currentOptions.keySet()) {
-//					field = fieldName == null ? null : Field.valueOf(fieldName);
-//					if (fieldName != null)
-//						currentOptions.get(field).addAll(currentData.get(fieldName));
-//				}
-//		}
 	}
 
 	public void addFilm(Film film) {
@@ -43,11 +33,5 @@ public class User {
 	public void clearCurrentOptions() {
 		currentOptions = null;
 	}
-
-//	public String getCurrentKey() {
-//		if (currentField == null || currentOptions.get(currentField) == null)
-//			return null;
-//		return currentOptions.get(currentField);
-//	}
 
 }

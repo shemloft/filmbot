@@ -9,40 +9,56 @@ import utils.FilmUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FilmTest {
 
 	@Test
 	public void testGetField() {
-		Film film = FilmUtils.getFilm("5", "Леон", "Франция", "1994", "триллер, драма, криминал");
-		assertEquals("Франция", film.getField(Field.COUNTRY));
-		assertEquals("1994", film.getField(Field.YEAR));
-		assertEquals("триллер, драма, криминал", film.getField(Field.GENRE));
+		List<String> countries = new ArrayList<String>(Arrays.asList(new String[] { "Франция" }));
+		List<String> year = new ArrayList<String>(Arrays.asList(new String[] { "1994" }));
+		List<String> genres = new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }));
+		Film film = FilmUtils.getFilm("5", "Леон", countries, year, genres);
+		assertEquals(countries, film.getField(Field.COUNTRY));
+		assertEquals(year, film.getField(Field.YEAR));
+		assertEquals(genres, film.getField(Field.GENRE));
 	}
 
 	@Test
 	public void testEquals() {
-		Film film1 = FilmUtils.getFilm("1", "Бойцовский клуб", "США", "1999", "драма");
-		Film film2 = FilmUtils.getFilm("1", "Бойцовский клуб", "США", "1999", "мама");
-		Film film3 = FilmUtils.getFilm("2", "Бойцовский клуб", "США", "1997", "рама");
-		Film film4 = FilmUtils.getFilm("2", "Бойцовский клуп", "США", "1997", "футурама");
+		List<String> countries = new ArrayList<String>(Arrays.asList(new String[] { "Франция" }));
+		List<String> year = new ArrayList<String>(Arrays.asList(new String[] { "1994" }));
+		List<String> genres = new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }));
+		List<String> year2 = new ArrayList<String>(Arrays.asList(new String[] { "1999" }));
+		List<String> genres2 = new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал", "триллер"}));
+		Film film1 = FilmUtils.getFilm("1", "Леон", countries, year, genres);
+		Film film2 = FilmUtils.getFilm("2", "Леон", countries, year, genres2);
+		Film film3 = FilmUtils.getFilm("2", "леон", countries, year2, genres);
 		assertEquals(film1, film2);
 		assertEquals(film1, film1);
 		assertFalse(film1.equals(film3));
-		assertFalse(film1.equals(film4));
+		assertEquals(film2, film3);
 		assertFalse(film1.equals(null));
 	}
 
 	@Test
 	public void testHashCode() {
-		Film film1 = FilmUtils.getFilm("1", "Бойцовский клуб", "США", "1999", "драма");
-		Film film2 = FilmUtils.getFilm("1", "Бойцовский клуб", "США", "1999", "драма");
+		List<String> countries = new ArrayList<String>(Arrays.asList(new String[] { "Франция" }));
+		List<String> year = new ArrayList<String>(Arrays.asList(new String[] { "1994" }));
+		List<String> genres = new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }));
+		Film film1 = FilmUtils.getFilm("1", "Леон", countries, year, genres);
+		Film film2 = FilmUtils.getFilm("1", "Леон", countries, year, genres);
 		assertEquals(film1.hashCode(), film2.hashCode());
 	}
 
 	@Test
 	public void testTostring() {
-		Film film = FilmUtils.getFilm("14", "Престиж", "США, Великобритания", "2006", "фантастика, триллер, драма");
+		List<String> countries = new ArrayList<String>(Arrays.asList(new String[] { "США", "Великобритания" }));
+		List<String> year = new ArrayList<String>(Arrays.asList(new String[] { "2006" }));
+		List<String> genres = new ArrayList<String>(Arrays.asList(new String[] { "фантастика", "триллер", "драма" }));
+		Film film = FilmUtils.getFilm("14", "Престиж", countries, year, genres);
 		assertEquals("Название: Престиж, год: 2006, страна: США, Великобритания, жанр: фантастика, триллер, драма",
 				film.toString());
 	}

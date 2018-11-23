@@ -95,7 +95,7 @@ public class ChatBotTest {
 
 	@Test
 	public void testAddNewFilm() throws Exception {
-		String[] commands = { name, "/add", "Большой куш", "Великобритания, США", "2000", "криминал, комедия, боевик",
+		String[] commands = { name, "/add /t Большой куш /c Великобритания, США /y 2000 /g криминал, комедия, боевик",
 				"/exit" };
 		new ChatBot(database).startChat(getInput(commands), output);
 		assertThat(output.toString(), containsString(Phrases.ADDING_FILM));
@@ -104,7 +104,7 @@ public class ChatBotTest {
 
 	@Test
 	public void testAddSameFilm() throws Exception {
-		String[] commands = { name, "/add", "Бойцовский клуб", "США, Германия", "1999", "триллер, драма, криминал",
+		String[] commands = { name, "/add /t Бойцовский клуб /c Германия, США /y 1999 /g драма, триллер, криминал",
 				"/exit" };
 		new ChatBot(database).startChat(getInput(commands), output);
 		assertThat(output.toString(), containsString(Phrases.ADDING_FILM_ERROR));

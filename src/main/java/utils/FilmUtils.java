@@ -23,9 +23,13 @@ public class FilmUtils {
 	public static Film stringArrayToFilm(String[] filmString) {
 		String ID = filmString[0];
 		String title = filmString[1];
-		Map<Field, String> filmData = new HashMap<Field, String>();
+		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();
 		for (Field field : Field.values())
-			filmData.put(field, filmString[field.ordinal() + 2]);
+			filmData.put(field, new ArrayList<String>());
+		for (Field field : Field.values()) {
+			for (String filmField : filmString[field.ordinal() + 2].split(", "))
+				filmData.get(field).add(filmField);
+		}
 		Film film = new Film(ID, title, filmData);
 		return film;
 	}
@@ -35,7 +39,7 @@ public class FilmUtils {
 		filmString[0] = film.ID;
 		filmString[1] = film.title;
 		for (Field field : Field.values())
-			filmString[field.ordinal() + 2] = film.getField(field);
+			filmString[field.ordinal() + 2] = String.join(", ", film.getField(field));
 		return filmString;
 	}
 
@@ -58,7 +62,7 @@ public class FilmUtils {
 	public static Map<String, List<Film>> createMap(List<Film> filmList, Field field) {
 		Map<String, List<Film>> filmsMap = new HashMap<String, List<Film>>();
 		for (Film film : filmList) {
-			String[] keys = film.getField(field).split(", ");
+			List<String> keys = film.getField(field);
 			for (String key : keys) {
 				if (!filmsMap.containsKey(key)) {
 					List<Film> filmListByKey = new ArrayList<Film>();
@@ -72,11 +76,11 @@ public class FilmUtils {
 		return filmsMap;
 	}
 
-	public static Film getFilm(String id, String title, String country, String year, String genre) {
-		Map<Field, String> filmData = new HashMap<Field, String>();
-		filmData.put(Field.COUNTRY, country);
+	public static Film getFilm(String id, String title, List<String> countries, List<String> year, List<String> genres) {
+		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();
+		filmData.put(Field.COUNTRY, countries);
 		filmData.put(Field.YEAR, year);
-		filmData.put(Field.GENRE, genre);
+		filmData.put(Field.GENRE, genres);
 		return new Film(id, title, filmData);
 	}
 	

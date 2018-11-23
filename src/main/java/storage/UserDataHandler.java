@@ -22,32 +22,32 @@ public class UserDataHandler {
 
 	public User getUser() throws Exception {
 		List<String[]> extractedList = fileHandler.extractData();
-		
+
 		Map<Field, List<String>> currentData = new HashMap<Field, List<String>>();
 		if (extractedList.size() == 0)
 			return new User(userName, userFileID, new ArrayList<String>(), null);
 		String[] lastRow = extractedList.get(extractedList.size() - 1);
-		
+
 		if (lastRow.length >= 2) {
 			for (int i = 0; i < lastRow.length; i += 2) {
 				String fieldString = lastRow[i];
-				String option = lastRow[i+1];
+				String option = lastRow[i + 1];
 				Field field;
 				try {
 					field = Field.valueOf(fieldString);
 				} catch (IllegalArgumentException e) {
 					continue;
 				}
-				
+
 				if (!currentData.containsKey(field))
 					currentData.put(field, new ArrayList<String>());
 				currentData.get(field).add(option);
 			}
 		}
-		
+
 		if (currentData.size() == 0)
 			currentData = null;
-		
+
 		User user = new User(userName, userFileID, getUserIdList(extractedList), currentData);
 		return user;
 	}

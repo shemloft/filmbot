@@ -1,19 +1,20 @@
 package structures;
 
+import java.util.List;
 import java.util.Map;
 
 public class Film {
 	public String title;
 	public String ID;
-	private Map<Field, String> filmData;
+	private Map<Field, List<String>> filmData;
 
-	public Film(String ID, String title, Map<Field, String> filmData) {
+	public Film(String ID, String title, Map<Field, List<String>> filmData) {
 		this.title = title;
 		this.filmData = filmData;
 		this.ID = ID;
 	}
 
-	public String getField(Field field) {
+	public List<String> getField(Field field) {
 		return filmData.get(field);
 	}
 
@@ -27,7 +28,18 @@ public class Film {
 
 		Film other = (Film) obj;
 
-		return ID.equals(other.ID) || title.equals(other.title) && filmData.equals(other.filmData);
+		return ID.equals(other.ID) || title.equals(other.title) && checkFilmData(filmData, other.filmData);
+	}
+
+	private boolean checkFilmData(Map<Field, List<String>> selfFilmData, Map<Field, List<String>> otherFilmData) {
+		for (Field field : Field.values())
+			if (selfFilmData.get(field).size() != otherFilmData.get(field).size())
+				return false;
+		for (Field field : Field.values())
+			for (String filmField : otherFilmData.get(field))
+				if (!selfFilmData.get(field).contains(filmField))
+					return false;
+		return true;
 	}
 
 	@Override
@@ -40,7 +52,7 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return String.format("Название: %s, год: %s, страна: %s, жанр: %s", title, getField(Field.YEAR),
-				getField(Field.COUNTRY), getField(Field.GENRE));
+		return String.format("Название: %s, год: %s, страна: %s, жанр: %s", title, String.join(", ", getField(Field.YEAR)),
+				String.join(", ", getField(Field.COUNTRY)), String.join(", ", getField(Field.GENRE)));
 	}
 }

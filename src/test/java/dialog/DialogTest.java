@@ -5,6 +5,7 @@ import storage.FilmDatabase;
 import storage.TestFilmDatabaseFileHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +30,24 @@ public class DialogTest {
 	@Before
 	public void setUp() throws Exception {
 		List<Film> filmList = new ArrayList<Film>();
-		filmList.add(FilmUtils.getFilm("ID", "Фильм", "Страна", "Год", "Жанр"));
-		filmList.add(FilmUtils.getFilm("8", "Бойцовский клуб", "США, Германия", "1999", "триллер, драма, криминал"));
-		filmList.add(FilmUtils.getFilm("5", "Леон", "Франция", "1994", "триллер, драма, криминал"));
-		filmList.add(FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал"));
-		filmList.add(FilmUtils.getFilm("12", "Крестный отец", "США", "1972", "драма, криминал"));
-
+		filmList.add(FilmUtils.getFilm("ID", "Фильм", new ArrayList<String>(Arrays.asList(new String[] { "Страна" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "Год" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "Жанр" }))));
+		filmList.add(FilmUtils.getFilm("8", "Бойцовский клуб",
+				new ArrayList<String>(Arrays.asList(new String[] { "США", "Германия" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "1999" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }))));
+		filmList.add(FilmUtils.getFilm("5", "Леон", new ArrayList<String>(Arrays.asList(new String[] { "Франция" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }))));
+		filmList.add(FilmUtils.getFilm("13", "Криминальное чтиво",
+				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "комедия", "криминал" }))));
+		filmList.add(FilmUtils.getFilm("12", "Крестный отец",
+				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал" }))));
 		List<String> userList = new ArrayList<String>();
 		userList.add("12");
 		user = new User("name", "name", userList, null);
@@ -140,7 +153,9 @@ public class DialogTest {
 		assertEquals("Криминальное чтиво", dialog.processInput("/g комедия"));
 		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
-
+// вообще, раз у нас обрабатываются случаи с одним параметром, когда фильмов нет в базе, 
+// то мб имеет смысл обрабатывать случаи, когда все были прдеоставлены по полю
+// или избавится в Field от этого
 	@Test
 	public void testsUserSeenFilmYear() {
 		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/y 1972"));
@@ -171,6 +186,13 @@ public class DialogTest {
 		assertEquals(Phrases.NO_SUCH_FILM, dialog.processInput("/y 1999 /y 1994"));
 	}
 
+	@Test
+	public void testAddingError()
+	{
+		assertEquals(Phrases.ADDING_PROCESS_ERROR, dialog.processInput("/add "));
+		assertEquals(Phrases.ADDING_PROCESS_ERROR, dialog.processInput("/add /g комедия /y 2018 /c Россия"));
+	}
+	
 	@Test
 	public void testsUserNextWithCurrentField() {
 		List<String> userList = new ArrayList<String>();

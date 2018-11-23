@@ -1,6 +1,7 @@
 package dialog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,21 +37,59 @@ public class Dialog {
 		if (input.equals("/countries"))
 			return Phrases.AVAILAIBLE_COUNTRIES + String.join("\n", database.getFieldValuesArray(Field.COUNTRY));
 
-		if (input.equals("/genres"))			
+		if (input.equals("/genres"))
 			return Phrases.AVAILAIBLE_GENRES + String.join("\n", database.getFieldValuesArray(Field.GENRE));
 
 		if (input.equals("/years"))
-			return Phrases.AVAILAIBLE_YEARS + String.join("\n", database.getFieldValuesArray(Field.YEAR));;
+			return Phrases.AVAILAIBLE_YEARS + String.join("\n", database.getFieldValuesArray(Field.YEAR));
 
-		if (input.equals("/add"))
-			return Phrases.ADDING_FILM;
+		if (input.equals("/adding"))
+			return Phrases.ADDING_PROCESS;
 
 		if (input.equals("/next")) {
 			if (user.currentOptions == null)
 				return Phrases.NEXT_WITHOUT_OPT;
 			return getFilm(user.currentOptions);
 		}
+		if (input.trim().startsWith("/add")) {
+			String title = "";
+			List<String> countries = new ArrayList<String>();
+			List<String> year = new ArrayList<String>();
+			List<String> genres = new ArrayList<String>();
 
+			String[] commandArray = input.trim().substring(4).split("/");
+
+			for (int i = 0; i < commandArray.length; i++) {
+				String[] options = commandArray[i].split(" ", 2);
+				if (options.length < 2)
+					return Phrases.ADDING_PROCESS_ERROR;
+				String command = options[0].trim();
+				String option = options[1].trim();
+
+				switch (command) {
+				case "t":
+					title = option;
+					break;
+				case "c":
+					countries.addAll(Arrays.asList(option.split(", ")));
+					break;
+				case "y":
+					year.add(option);
+					break;
+				case "g":
+					genres.addAll(Arrays.asList(option.split(", ")));
+					break;
+				}
+			}
+			if (title == "" || countries.size() == 0 || year.size() == 0 || genres.size() == 0)
+				return Phrases.ADDING_PROCESS_ERROR;
+			try {
+				database.addFilmToDatabase(title, countries, year, genres);
+			} catch (Exception e) {
+				return e.getMessage();
+			}
+			return Phrases.ADDING_FILM;
+		}
 		String[] commandArray = input.trim().substring(1).split("/");
 
 		Map<Field, List<String>> commands = new HashMap<Field, List<String>>();
@@ -91,7 +130,7 @@ public class Dialog {
 		Film film = database.getFilm(commands, user.savedFilmsIDs);
 		if (film != null && film.ID.equals("None"))
 			return Phrases.NO_SUCH_FILM;
-		else if (film != null) // ДОДЕЛАЙ В ДАТАБАЗЕ
+		else if (film != null)
 			user.addFilm(film);
 		else
 			user.clearCurrentOptions();

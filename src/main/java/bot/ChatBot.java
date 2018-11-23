@@ -38,21 +38,6 @@ public class ChatBot {
 					break;
 				}
 				String answer = dialog.processInput(req);
-				if ("/add".equals(req)) {
-					printStream.println(Phrases.ADD_TITLE);
-					String title = scan.nextLine();
-					printStream.println(Phrases.ADD_COUNTRY);
-					String country = scan.nextLine();
-					printStream.println(Phrases.ADD_YEAR);
-					String year = scan.nextLine();
-					printStream.println(Phrases.ADD_GENRE);
-					String genre = scan.nextLine();
-					try {
-						database.addFilmToDatabase(title, country, year, genre);
-					} catch (Exception e) {
-						answer = e.getMessage();
-					}
-				}
 				printStream.println(answer);
 			}
 		} finally {

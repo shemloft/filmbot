@@ -1,6 +1,7 @@
 package structures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,10 @@ public class UserTest {
 		IDList.add("8");
 		User user = new User("Даша", "Даша", IDList, null);
 
-		user.addFilm(FilmUtils.getFilm("13", "Криминальное чтиво", "США", "1994", "триллер, комедия, криминал"));
+		user.addFilm(FilmUtils.getFilm("13", "Криминальное чтиво",
+				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "комедия", "криминал" }))));
 
 		assertEquals("8", user.savedFilmsIDs.get(0));
 		assertEquals("13", user.savedFilmsIDs.get(1));
@@ -85,5 +89,5 @@ public class UserTest {
 		assertTrue(user.currentOptions.keySet().contains(Field.COUNTRY));
 		assertEquals("США", user.currentOptions.get(Field.COUNTRY).get(0));
 	}
-	
+
 }

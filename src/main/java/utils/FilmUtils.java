@@ -13,13 +13,13 @@ public class FilmUtils {
 
 	public static List<Film> stringListToFilmList(List<String[]> stringList) {
 		List<Film> filmList = new ArrayList<Film>();
-		for (String[] row : stringList) {			
+		for (String[] row : stringList) {
 			Film film = stringArrayToFilm(row);
 			filmList.add(film);
 		}
 		return filmList;
 	}
-	
+
 	public static Film stringArrayToFilm(String[] filmString) {
 		String ID = filmString[0];
 		String title = filmString[1];
@@ -33,7 +33,7 @@ public class FilmUtils {
 		Film film = new Film(ID, title, filmData);
 		return film;
 	}
-	
+
 	public static String[] filmToStringArray(Film film) {
 		String[] filmString = new String[Field.values().length + 2];
 		filmString[0] = film.ID;
@@ -76,31 +76,32 @@ public class FilmUtils {
 		return filmsMap;
 	}
 
-	public static Film getFilm(String id, String title, List<String> countries, List<String> year, List<String> genres) {
+	public static Film getFilm(String id, String title, List<String> countries, List<String> year,
+			List<String> genres) {
 		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();
 		filmData.put(Field.COUNTRY, countries);
 		filmData.put(Field.YEAR, year);
 		filmData.put(Field.GENRE, genres);
 		return new Film(id, title, filmData);
 	}
-	
+
 	public static Map<Field, String[]> getOptionValuesMap(Map<Field, Map<String, List<Film>>> filmMapsByField) {
-		Map<Field, String[]> optionsValuesMap = new HashMap<Field, String[]>(); 
+		Map<Field, String[]> optionsValuesMap = new HashMap<Field, String[]>();
 		for (Field field : Field.values())
 			optionsValuesMap.put(field, getOptionValues(field, filmMapsByField));
 		return optionsValuesMap;
 	}
-	
+
 	public static String[] getOptionValues(Field field, Map<Field, Map<String, List<Film>>> filmMapsByField) {
-	    List<String> parameterList = new ArrayList<String>();
-	    if (filmMapsByField != null)
-	    	parameterList.addAll(filmMapsByField.get(field).keySet());
-	    String[] optionValues = parameterList.toArray(new String[parameterList.size()]);
-	    Arrays.sort(optionValues);
-	    return optionValues;
-	  }
-	
-	public static String getCommand(Map<Field,List<String>> inputMap) {
+		List<String> parameterList = new ArrayList<String>();
+		if (filmMapsByField != null)
+			parameterList.addAll(filmMapsByField.get(field).keySet());
+		String[] optionValues = parameterList.toArray(new String[parameterList.size()]);
+		Arrays.sort(optionValues);
+		return optionValues;
+	}
+
+	public static String getCommand(Map<Field, List<String>> inputMap) {
 		String command = "";
 		for (Map.Entry<Field, List<String>> entry : inputMap.entrySet()) {
 			command += "/" + entry.getKey().shortCut() + " " + String.join(", ", entry.getValue()) + " ";

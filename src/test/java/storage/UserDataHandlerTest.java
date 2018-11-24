@@ -18,8 +18,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
-
-
 public class UserDataHandlerTest {
 
 	private IFilmDatabaseFileHandler database;
@@ -33,15 +31,15 @@ public class UserDataHandlerTest {
 		userFileID = "fileID";
 		userDataHandler = new UserDataHandler(database, userName, userFileID);
 	}
-	
-	private Map<Field, List<String>> getCurrentOptionsOne(){
+
+	private Map<Field, List<String>> getCurrentOptionsOne() {
 		Map<Field, List<String>> options = new HashMap<Field, List<String>>();
 		options.put(Field.COUNTRY, new ArrayList<String>());
 		options.get(Field.COUNTRY).add("США");
 		return options;
 	}
-	
-	private Map<Field, List<String>> getCurrentOptionsTwo(){
+
+	private Map<Field, List<String>> getCurrentOptionsTwo() {
 		Map<Field, List<String>> options = new HashMap<Field, List<String>>();
 		options.put(Field.COUNTRY, new ArrayList<String>());
 		options.get(Field.COUNTRY).add("США");
@@ -90,7 +88,7 @@ public class UserDataHandlerTest {
 		assertThat(user.currentOptions.keySet(), not(hasItem(Field.YEAR)));
 		assertThat(user.currentOptions.get(Field.COUNTRY), hasItem("США"));
 	}
-	
+
 	@Test
 	public void testSaveUserWithOneCurrentOption() throws Exception {
 		List<String> IDList = new ArrayList<String>();
@@ -110,7 +108,7 @@ public class UserDataHandlerTest {
 		assertArrayEquals(expectedIDRow, savedData.get(0));
 		assertArrayEquals(expectedOptionRow, savedData.get(1));
 	}
-	
+
 	@Test
 	public void testSaveUserWithTwoCurrentOption() throws Exception {
 		List<String> IDList = new ArrayList<String>();

@@ -44,10 +44,10 @@ public class DialogTest {
 				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
 				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
 				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "комедия", "криминал" }))));
-		filmList.add(FilmUtils.getFilm("12", "Крестный отец",
-				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
-				new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
-				new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал" }))));
+		filmList.add(
+				FilmUtils.getFilm("12", "Крестный отец", new ArrayList<String>(Arrays.asList(new String[] { "США" })),
+						new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
+						new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал" }))));
 		List<String> userList = new ArrayList<String>();
 		userList.add("12");
 		user = new User("name", "name", userList, null);
@@ -153,6 +153,7 @@ public class DialogTest {
 		assertEquals("Криминальное чтиво", dialog.processInput("/g комедия"));
 		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
+
 // вообще, раз у нас обрабатываются случаи с одним параметром, когда фильмов нет в базе, 
 // то мб имеет смысл обрабатывать случаи, когда все были прдеоставлены по полю
 // или избавится в Field от этого
@@ -187,12 +188,11 @@ public class DialogTest {
 	}
 
 	@Test
-	public void testAddingError()
-	{
+	public void testAddingError() {
 		assertEquals(Phrases.ADDING_PROCESS_ERROR, dialog.processInput("/add "));
 		assertEquals(Phrases.ADDING_PROCESS_ERROR, dialog.processInput("/add /g комедия /y 2018 /c Россия"));
 	}
-	
+
 	@Test
 	public void testsUserNextWithCurrentField() {
 		List<String> userList = new ArrayList<String>();

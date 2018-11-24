@@ -76,7 +76,7 @@ public class ChatBotTest {
 		new ChatBot(database).startChat(getInput(commands), output);
 		assertThat(output.toString(), containsString("Бойцовский клуб"));
 	}
-	
+
 	@Test
 	public void testStartDialogGetFilmManyOptions() throws Exception {
 		String[] commands = { name, "/c США /g комедия", "/exit" };
@@ -109,7 +109,7 @@ public class ChatBotTest {
 		new ChatBot(database).startChat(getInput(commands), output);
 		assertThat(output.toString(), containsString(Phrases.ADDING_FILM_ERROR));
 	}
-	
+
 	@After
 	public void tearDown() throws IOException {
 		tryToDeleteSavedFile();

@@ -17,23 +17,23 @@ public class State {
 
 	private DialogState currentState;
 	public DialogState newState;
-	private Map<Field,List<String>> currentIdFieldMap;
+	private Map<Field, List<String>> currentIdFieldMap;
 	private FilmDatabase database;
 
 	private ReplyKeyboardMarkup keyboard;
-	
+
 	public String command = null;
 	public String answerString;
 	public Field currentField;
-	
-	
-	public State(DialogState state, Map<Field,List<String>> currentIdFieldMap, FilmDatabase database, Field currentField) {
+
+	public State(DialogState state, Map<Field, List<String>> currentIdFieldMap, FilmDatabase database,
+			Field currentField) {
 		this.currentState = state;
 		this.currentIdFieldMap = currentIdFieldMap;
 		this.database = database;
 		this.currentField = currentField;
 	}
-	
+
 	public void processInput(String input) {
 		if ("NEXT".equals(input)) {
 			command = "/next";
@@ -43,8 +43,8 @@ public class State {
 			newState = DialogState.BASIC;
 			keyboard = getBasicKeyboard();
 			return;
-			}
-			
+		}
+
 		switch (currentState) {
 		case BASIC:
 			processBasicState(input);
@@ -56,9 +56,9 @@ public class State {
 			processMoreOptionsState(input);
 //			keyboard = getMoreOptionsKeyboard();
 			break;
-		}		
+		}
 	}
-	
+
 	private void processMoreOptionsState(String input) {
 		if ("ЕЩЕ ОПЦИЯ".equals(input)) {
 			keyboard = getBasicKeyboard();
@@ -78,8 +78,8 @@ public class State {
 			currentField = null;
 		}
 	}
-	
-	private void processChosingState (String input) {
+
+	private void processChosingState(String input) {
 		if (!database.requestExistInDatabase(currentField, input)) {
 			command = input;
 			keyboard = getBasicKeyboard();
@@ -90,10 +90,10 @@ public class State {
 			newState = DialogState.MORE_OPTIONS;
 			answerString = "Есть еще параметры?";
 			currentField = null;
-			keyboard = getMoreOptionsKeyboard();	
-		}		
+			keyboard = getMoreOptionsKeyboard();
+		}
 	}
-	
+
 	private void processBasicState(String input) {
 		if (!Arrays.toString(Field.values()).contains(input)) {
 			command = input;
@@ -103,14 +103,14 @@ public class State {
 		} else {
 			Field field = Field.valueOf(input);
 			if (currentIdFieldMap.get(field) == null)
-				currentIdFieldMap.put(field, new ArrayList<String>());	
+				currentIdFieldMap.put(field, new ArrayList<String>());
 			currentField = field;
 			newState = DialogState.CHOSING;
 			answerString = field.nowChoose();
 			keyboard = getChosingKeyboard(field);
-		}	
+		}
 	}
-	
+
 	public State getNewState() {
 		return new State(newState, currentIdFieldMap, database, currentField);
 	}
@@ -137,9 +137,9 @@ public class State {
 		keyboard.add(row);
 		row = new KeyboardRow();
 		row.add("ПОЛУЧИТЬ ФИЛЬМ");
-		keyboard.add(row);	
+		keyboard.add(row);
 		keyboardMarkup.setKeyboard(keyboard);
-		return keyboardMarkup;	
+		return keyboardMarkup;
 
 	}
 

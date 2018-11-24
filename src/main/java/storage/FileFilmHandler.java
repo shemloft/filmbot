@@ -20,9 +20,9 @@ public class FileFilmHandler implements IFilmHandler {
 	public FileFilmHandler(IFilmDatabaseFileHandler fileHandler) throws Exception {
 		this.fileHandler = fileHandler;
 		initializeFields();
-		
+
 	}
-	
+
 	private void initializeFields() throws Exception {
 		filmList = getFilmList();
 		filmMapsByField = FilmUtils.getFilmMapsByField(filmList);

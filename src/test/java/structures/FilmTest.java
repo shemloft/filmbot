@@ -32,7 +32,7 @@ public class FilmTest {
 		List<String> year = new ArrayList<String>(Arrays.asList(new String[] { "1994" }));
 		List<String> genres = new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }));
 		List<String> year2 = new ArrayList<String>(Arrays.asList(new String[] { "1999" }));
-		List<String> genres2 = new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал", "триллер"}));
+		List<String> genres2 = new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал", "триллер" }));
 		Film film1 = FilmUtils.getFilm("1", "Леон", countries, year, genres);
 		Film film2 = FilmUtils.getFilm("2", "Леон", countries, year, genres2);
 		Film film3 = FilmUtils.getFilm("2", "леон", countries, year2, genres);

@@ -26,7 +26,8 @@ public class FilmDatabase {
 		return null;
 	}
 
-	public void addFilmToDatabase(String title, List<String> countries, List<String> year, List<String> genres) throws Exception {
+	public void addFilmToDatabase(String title, List<String> countries, List<String> year, List<String> genres)
+			throws Exception {
 		Film film = FilmUtils.getFilm(filmHandler.getFilmsCount().toString(), title, countries, year, genres);
 		filmHandler.addFilm(film);
 	}

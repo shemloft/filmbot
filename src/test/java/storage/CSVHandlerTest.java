@@ -64,7 +64,7 @@ public class CSVHandlerTest {
 		assertEquals(true, file.isFile());
 		file.delete();
 	}
-	
+
 	@Test
 	public void testDeleteData() throws IOException {
 		CSVHandler csvHandler = new CSVHandler("a");

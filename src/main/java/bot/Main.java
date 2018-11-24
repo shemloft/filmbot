@@ -1,6 +1,5 @@
 package bot;
 
-
 import storage.CSVHandler;
 import storage.FileFilmHandler;
 import storage.IFilmHandler;
@@ -13,7 +12,7 @@ public class Main {
 	private static FilmDatabase database;
 
 	public static void main(String[] args) throws Exception {
-		
+
 		IFilmDatabaseFileHandler fileHandler = new CSVHandler("Database");
 		IFilmHandler filmHandler = new FileFilmHandler(fileHandler);
 		database = new FilmDatabase(filmHandler);

@@ -52,7 +52,8 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return String.format("Название: %s, год: %s, страна: %s, жанр: %s", title, String.join(", ", getField(Field.YEAR)),
-				String.join(", ", getField(Field.COUNTRY)), String.join(", ", getField(Field.GENRE)));
+		return String.format("Название: %s, год: %s, страна: %s, жанр: %s", title,
+				String.join(", ", getField(Field.YEAR)), String.join(", ", getField(Field.COUNTRY)),
+				String.join(", ", getField(Field.GENRE)));
 	}
 }

@@ -1,7 +1,5 @@
 package telegram;
 
 public enum DialogState {
-	BASIC,
-	CHOSING,
-	MORE_OPTIONS
+	BASIC, CHOSING, MORE_OPTIONS
 }

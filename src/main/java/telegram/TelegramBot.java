@@ -1,7 +1,5 @@
 package telegram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +9,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import dialog.Dialog;
-import dialog.Phrases;
 import storage.FilmDatabase;
 import structures.Field;
-import structures.Film;
 import structures.User;
 import utils.UserUtils;
 
@@ -27,7 +21,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	private String bot_username;
 	private String bot_token;
-	private Map<String, Map<Field,List<String>>> idTotalFieldMap;
+	private Map<String, Map<Field, List<String>>> idTotalFieldMap;
 	private Map<String, Field> idCurrentFieldMap;
 	private FilmDatabase database;
 	private DialogState state;
@@ -36,18 +30,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 		this.bot_username = username;
 		this.bot_token = token;
 		this.database = database;
-		idTotalFieldMap = new HashMap<String, Map<Field,List<String>>>();
+		idTotalFieldMap = new HashMap<String, Map<Field, List<String>>>();
 		idCurrentFieldMap = new HashMap<String, Field>();
 		state = DialogState.BASIC;
 	}
-	
-	public TelegramBot(FilmDatabase database, String username, String token,
-			DefaultBotOptions options) {
+
+	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
 		super(options);
 		this.bot_username = username;
 		this.bot_token = token;
 		this.database = database;
-		idTotalFieldMap = new HashMap<String, Map<Field,List<String>>>();
+		idTotalFieldMap = new HashMap<String, Map<Field, List<String>>>();
 		idCurrentFieldMap = new HashMap<String, Field>();
 		state = DialogState.BASIC;
 	}
@@ -78,33 +71,33 @@ public class TelegramBot extends TelegramLongPollingBot {
 		SendMessage message = new SendMessage();
 
 		System.out.println(userFirstName + ": " + inputCommand);
-		
-		State newState = getState(inputCommand, id);	
-		String answer = newState.command == null ? newState.answerString : processInput(newState.command, userFirstName, id);
-		idCurrentFieldMap.put(id, newState.currentField);		
-		state = newState.newState;		
-	
+
+		State newState = getState(inputCommand, id);
+		String answer = newState.command == null ? newState.answerString
+				: processInput(newState.command, userFirstName, id);
+		idCurrentFieldMap.put(id, newState.currentField);
+		state = newState.newState;
+
 		message.setText(answer);
-		message.setReplyMarkup(newState.getKeyboard());	
-		
+		message.setReplyMarkup(newState.getKeyboard());
+
 		message.setChatId(inputMessage.getChatId());
 
 		try {
 			execute(message);
 		} catch (TelegramApiException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
-	
+
 	public State getState(String input, String chatId) {
 		if (idTotalFieldMap.get(chatId) == null)
 			idTotalFieldMap.put(chatId, new HashMap<Field, List<String>>());
-		State currentState = new State(state, idTotalFieldMap.get(chatId), database, idCurrentFieldMap.get(chatId));		
+		State currentState = new State(state, idTotalFieldMap.get(chatId), database, idCurrentFieldMap.get(chatId));
 		currentState.processInput(input);
 		return currentState;
 	}
-	
-	
+
 //	public String getAnswer(String inputCommand, String id, String userFirstName) {
 //		String chatBotAnswer = "";		
 //		if (Arrays.toString(Field.values()).contains(inputCommand)) {

@@ -154,9 +154,6 @@ public class DialogTest {
 		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/next"));
 	}
 
-// вообще, раз у нас обрабатываются случаи с одним параметром, когда фильмов нет в базе, 
-// то мб имеет смысл обрабатывать случаи, когда все были прдеоставлены по полю
-// или избавится в Field от этого
 	@Test
 	public void testsUserSeenFilmYear() {
 		assertEquals(Phrases.NO_MORE_FILM, dialog.processInput("/y 1972"));

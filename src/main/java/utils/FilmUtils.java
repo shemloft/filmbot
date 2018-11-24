@@ -99,4 +99,12 @@ public class FilmUtils {
 	    Arrays.sort(optionValues);
 	    return optionValues;
 	  }
+	
+	public static String getCommand(Map<Field,List<String>> inputMap) {
+		String command = "";
+		for (Map.Entry<Field, List<String>> entry : inputMap.entrySet()) {
+			command += "/" + entry.getKey().shortCut() + " " + String.join(", ", entry.getValue()) + " ";
+		}
+		return command;
+	}
 }

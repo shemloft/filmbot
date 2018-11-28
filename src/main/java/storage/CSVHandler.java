@@ -30,9 +30,11 @@ public class CSVHandler implements IFilmDatabaseFileHandler {
 	}
 
 	public void addData(String[] record) throws IOException {
-		CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv", true), ';', '"');
-		writer.writeNext(record);
-		writer.close();
+		synchronized (CSVHandler.class) {
+			CSVWriter writer = new CSVWriter(new FileWriter(fileName + ".csv", true), ';', '"');
+			writer.writeNext(record);
+			writer.close();
+		}
 	}
 
 	public List<String[]> extractData() throws IOException {

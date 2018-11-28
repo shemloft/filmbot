@@ -8,6 +8,7 @@ import java.util.Map;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import dialog.Phrases;
 import storage.FilmDatabase;
 import structures.Field;
 import utils.FilmUtils;
@@ -53,6 +54,7 @@ public class State {
 			break;
 		case MORE_OPTIONS:
 			processMoreOptionsState(input);
+//			keyboard = getMoreOptionsKeyboard();
 			break;
 		}
 	}

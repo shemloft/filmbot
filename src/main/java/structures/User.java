@@ -12,7 +12,6 @@ public class User {
 	public boolean firstTime;
 	public Map<Field, List<String>> currentOptions;
 
-	// currentData вместо fieldName и fieldKey
 	public User(String name, String fileID, List<String> savedFilmsIDs, Map<Field, List<String>> currentData) {
 		this.name = name;
 		this.ID = fileID;

@@ -1,19 +1,23 @@
 package telegram;
- import static org.junit.Assert.assertEquals;
- import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
- import org.junit.After;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
- import storage.FileFilmHandler;
+
+import storage.FileFilmHandler;
 import storage.FilmDatabase;
 import storage.TestFilmDatabaseFileHandler;
 import structures.Film;
 import utils.FilmUtils;
- public class TelegramBotTest {
-	
+
+public class TelegramBotTest {	
 	private FilmDatabase getDatabase() throws Exception {
 		List<Film> filmList = new ArrayList<Film>();
 		filmList.add(FilmUtils.getFilm("ID", "Фильм", new ArrayList<String>(Arrays.asList(new String[] { "Страна" })),
@@ -85,3 +89,4 @@ import utils.FilmUtils;
 		userFile2.delete();
 	}
  }
+

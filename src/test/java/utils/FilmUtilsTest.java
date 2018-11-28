@@ -1,6 +1,9 @@
 package utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,9 +152,10 @@ public class FilmUtilsTest {
 		inputMap.get(Field.GENRE).add("криминал");
 
 		String command = FilmUtils.getCommand(inputMap);
-
-		assertEquals("/g комедия, криминал /c США, Великобритания /y 1999 ", command);
-
+		
+		assertThat(command, containsString("/g комедия, криминал "));
+		assertThat(command, containsString("/c США, Великобритания "));
+		assertThat(command, containsString("/y 1999 "));
 	}
 
 }

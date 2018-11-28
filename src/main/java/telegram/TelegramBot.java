@@ -24,7 +24,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 	private Map<String, Map<Field, List<String>>> idTotalFieldMap;
 	private Map<String, Field> idCurrentFieldMap;
 	private FilmDatabase database;
-	private DialogState state;
+	private Map<String, DialogState> userDialogState;
 
 	public TelegramBot(FilmDatabase database, String username, String token) {
 		this.bot_username = username;
@@ -32,7 +32,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 		this.database = database;
 		idTotalFieldMap = new HashMap<String, Map<Field, List<String>>>();
 		idCurrentFieldMap = new HashMap<String, Field>();
-		state = DialogState.BASIC;
+		userDialogState = new HashMap<String, DialogState>();
+		
 	}
 
 	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
@@ -42,7 +43,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		this.database = database;
 		idTotalFieldMap = new HashMap<String, Map<Field, List<String>>>();
 		idCurrentFieldMap = new HashMap<String, Field>();
-		state = DialogState.BASIC;
+		userDialogState = new HashMap<String, DialogState>();
 	}
 
 	private String processInput(String input, String username, String chatId) {
@@ -69,13 +70,19 @@ public class TelegramBot extends TelegramLongPollingBot {
 		String id = inputMessage.getChatId().toString();
 		String userFirstName = inputMessage.getFrom().getFirstName();
 		SendMessage message = new SendMessage();
+		
+		if (userDialogState.get(id) == null)
+			userDialogState.put(id,  DialogState.BASIC);
+		
+		DialogState state = userDialogState.get(id);
 
 		System.out.println(userFirstName + ": " + inputCommand);
 
-		State newState = getState(inputCommand, id);
+		State newState = getState(inputCommand, id, state);
 		String answer = getAnswer(newState, userFirstName, id);
 		idCurrentFieldMap.put(id, newState.currentField);
-		state = newState.newState;
+		
+		userDialogState.put(id, newState.newState);
 
 		message.setText(answer);
 		message.setReplyMarkup(newState.getKeyboard());
@@ -94,13 +101,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 				: processInput(state.command, username, id);
 	}
 
-	public State getState(String input, String chatId) {
+	public State getState(String input, String chatId, DialogState state) {
 		if (idTotalFieldMap.get(chatId) == null)
 			idTotalFieldMap.put(chatId, new HashMap<Field, List<String>>());
 		State currentState = new State(state, idTotalFieldMap.get(chatId), database, idCurrentFieldMap.get(chatId));
 		currentState.processInput(input);
 		return currentState;
 	}
+
 
 	@Override
 	public String getBotUsername() {

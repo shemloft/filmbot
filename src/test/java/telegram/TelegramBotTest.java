@@ -17,8 +17,7 @@ import storage.TestFilmDatabaseFileHandler;
 import structures.Film;
 import utils.FilmUtils;
 
-public class TelegramBotTest {
-	
+public class TelegramBotTest {	
 	private FilmDatabase getDatabase() throws Exception {
 		List<Film> filmList = new ArrayList<Film>();
 		filmList.add(FilmUtils.getFilm("ID", "Фильм", new ArrayList<String>(Arrays.asList(new String[] { "Страна" })),
@@ -51,9 +50,9 @@ public class TelegramBotTest {
 	public void TwoUsersTestDifferentRequest() throws Exception {
 		FilmDatabase database = getDatabase();
 		TelegramBot bot = new TelegramBot(database, null, null);
-		State state1 = bot.getState("/y 1972", "1");
+		State state1 = bot.getState("/y 1972", "1", DialogState.BASIC);
 		String ans1 = bot.getAnswer(state1, "name", "1");
-		State state2 = bot.getState("/c США", "2");
+		State state2 = bot.getState("/c США", "2", DialogState.BASIC);
 		String ans2 = bot.getAnswer(state2, "name2", "2");
 		
 		assertEquals(ans1, "Крестный отец");
@@ -64,9 +63,9 @@ public class TelegramBotTest {
 	public void TwoUsersTestSameRequest() throws Exception {
 		FilmDatabase database = getDatabase();
 		TelegramBot bot = new TelegramBot(database, null, null);
-		State state1 = bot.getState("/y 1972", "1");
+		State state1 = bot.getState("/y 1972", "1", DialogState.BASIC);
 		String ans1 = bot.getAnswer(state1, "name",  "1");
-		State state2 = bot.getState("/y 1972", "2");
+		State state2 = bot.getState("/y 1972", "2", DialogState.BASIC);
 		String ans2 = bot.getAnswer(state2, "name2", "2");		
 	
 		assertEquals(ans1, "Крестный отец");
@@ -89,5 +88,5 @@ public class TelegramBotTest {
 		userFile.delete();
 		userFile2.delete();
 	}
+ }
 
-}

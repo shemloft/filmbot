@@ -1,5 +1,6 @@
 package storage;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,8 +20,10 @@ import utils.FilmUtils;
 
 public class FilmDatabaseTest {
 
-	private static List<Film> filmList;
-	private static FilmDatabase filmDatabase;
+	private List<Film> filmList;
+	private FilmDatabase filmDatabase;
+	private IFilmDatabaseFileHandler databaseHandler;
+	private IFilmHandler fileFilmHandler;
 	private static Film film2 = FilmUtils.getFilm("2", "Крестный отец",
 			new ArrayList<String>(Arrays.asList(new String[] { "США" })),
 			new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
@@ -48,8 +51,9 @@ public class FilmDatabaseTest {
 	@Before
 	public void setUp() throws Exception {
 		createFilmList();
-		filmDatabase = new FilmDatabase(
-				new FileFilmHandler(new TestFilmDatabaseFileHandler(FilmUtils.filmListToStringList(filmList))));
+		databaseHandler = new TestFilmDatabaseFileHandler(FilmUtils.filmListToStringList(filmList));
+		fileFilmHandler = new FileFilmHandler(databaseHandler);
+		filmDatabase = new FilmDatabase(fileFilmHandler);
 	}
 
 	@Test
@@ -73,6 +77,24 @@ public class FilmDatabaseTest {
 		assertTrue(filmDatabase.requestExistInDatabase(Field.GENRE, "триллер"));
 		assertTrue(filmDatabase.requestExistInDatabase(Field.YEAR, "1972"));
 		assertTrue(filmDatabase.requestExistInDatabase(Field.YEAR, "1994"));
+	}
+
+	@Test
+	public void testAddFilmToDatabase() throws Exception {
+		databaseHandler = new CSVHandler("a");
+		databaseHandler.saveData(FilmUtils.filmListToStringList(filmList));
+		fileFilmHandler = new FileFilmHandler(databaseHandler);
+		filmDatabase = new FilmDatabase(fileFilmHandler);
+		int oldSize = fileFilmHandler.getFilmsCount();
+		filmDatabase.addFilmToDatabase("Кек",
+				new ArrayList<String>(Arrays.asList(new String[] { "Новая Зеландия", "США" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "2000" })),
+				new ArrayList<String>(Arrays.asList(new String[] { "аниме" })));
+		List<String[]> newData = databaseHandler.extractData();
+		int newSize = fileFilmHandler.getFilmsCount();
+		assertEquals(oldSize + 1, newSize);
+		String[] lastFilm = newData.get(newSize);
+		assertArrayEquals(new String[] { "4", "Кек", "Новая Зеландия, США", "2000", "аниме" }, lastFilm);
 	}
 
 }

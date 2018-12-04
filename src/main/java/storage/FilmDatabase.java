@@ -18,6 +18,9 @@ public class FilmDatabase {
 
 	public Film getFilm(Map<Field, List<String>> options, List<String> savedFilmsIDs) {
 		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
+		
+		
+		
 		if (possibleFilms.size() == 0)
 			return new Film("None", null, null);
 		for (Film film : possibleFilms)
@@ -26,11 +29,6 @@ public class FilmDatabase {
 		return null;
 	}
 
-	public void addFilmToDatabase(String title, List<String> countries, List<String> year, List<String> genres)
-			throws Exception {
-		Film film = FilmUtils.getFilm(filmHandler.getFilmsCount().toString(), title, countries, year, genres);
-		filmHandler.addFilm(film);
-	}
 
 	public String[] getFieldValuesArray(Field field) {
 		return filmHandler.getAvaliableFieldValues(field);

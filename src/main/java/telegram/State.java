@@ -115,7 +115,7 @@ public class State {
 
 	private ReplyKeyboardMarkup getChosingKeyboard(Field field) {
 		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-		List<KeyboardRow> keyboard = new ArrayList<>();
+		List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
 		String[] buttons = database.getFieldValuesArray(field);
 		for (String button : buttons) {
 			KeyboardRow row = new KeyboardRow();
@@ -129,7 +129,7 @@ public class State {
 
 	private ReplyKeyboardMarkup getMoreOptionsKeyboard() {
 		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-		List<KeyboardRow> keyboard = new ArrayList<>();
+		List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
 		KeyboardRow row = new KeyboardRow();
 		row.add("ЕЩЕ ОПЦИЯ");
 		keyboard.add(row);
@@ -143,7 +143,7 @@ public class State {
 
 	private ReplyKeyboardMarkup getBasicKeyboard() {
 		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-		List<KeyboardRow> keyboard = new ArrayList<>();
+		List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
 		KeyboardRow row = new KeyboardRow();
 		row.add("YEAR");
 		keyboard.add(row);

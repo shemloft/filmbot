@@ -52,9 +52,7 @@ public class Dialog {
 			return getFilm(user.currentOptions);
 		}
 		
-		if (input.trim().startsWith("/add")) 
-			return processAdd(input);
-		
+	
 		return processGetFilmCommand(input);
 	}
 	
@@ -94,52 +92,12 @@ public class Dialog {
 		}
 		return getFilm(commands);
 	}
-	
-	private String processAdd(String input) {
-		String title = "";
-		List<String> countries = new ArrayList<String>();
-		List<String> year = new ArrayList<String>();
-		List<String> genres = new ArrayList<String>();
-
-		String[] commandArray = input.trim().substring(4).split("/");
-
-		for (int i = 0; i < commandArray.length; i++) {
-			String[] options = commandArray[i].split(" ", 2);
-			if (options.length < 2)
-				return Phrases.ADDING_PROCESS_ERROR;
-			String command = options[0].trim();
-			String option = options[1].trim();
-
-			switch (command) {
-			case "t":
-				title = option;
-				break;
-			case "c":
-				countries.addAll(Arrays.asList(option.split(", ")));
-				break;
-			case "y":
-				year.add(option);
-				break;
-			case "g":
-				genres.addAll(Arrays.asList(option.split(", ")));
-				break;
-			}
-		}
-		if (title == "" || countries.size() == 0 || year.size() == 0 || genres.size() == 0)
-			return Phrases.ADDING_PROCESS_ERROR;
-		try {
-			database.addFilmToDatabase(title, countries, year, genres);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		return Phrases.ADDING_FILM;
-	}
 
 	private String getFilm(Map<Field, List<String>> commands) {
 		user.changeCurrentOptions(commands);
 
 		Film film = database.getFilm(commands, user.savedFilmsIDs);
-		if (film != null && film.ID.equals("None"))
+		if (film != null && film.ID.equals("None")) // !!!!!!!!!
 			return Phrases.NO_SUCH_FILM;
 		else if (film != null)
 			user.addFilm(film);

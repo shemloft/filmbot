@@ -6,7 +6,8 @@ import java.util.Map;
 
 import structures.Field;
 import structures.Film;
-import utils.FilmUtils;
+import structures.User;
+//import utils.FilmUtils;
 
 public class FilmDatabase {
 
@@ -16,16 +17,17 @@ public class FilmDatabase {
 		this.filmHandler = filmHandler;
 	}
 
-	public Film getFilm(Map<Field, List<String>> options, List<String> savedFilmsIDs) {
-		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
+	public Film getFilm(User user) {
 		
+		List<Film> possibleFilms = filmHandler.getFilmsByOptions(user.currentOptions);	
 		
 		
 		if (possibleFilms.size() == 0)
-			return new Film("None", null, null);
+			return new Film(0, null, null);
 		for (Film film : possibleFilms)
-			if (!savedFilmsIDs.contains(film.ID))
+			if (!user.savedFilmsIDs.contains(film.ID)) {
 				return film;
+			}
 		return null;
 	}
 

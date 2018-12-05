@@ -49,6 +49,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		String userFirstName = inputMessage.getFrom().getFirstName();
 		SendMessage message = new SendMessage();
 		
+		
 		User user = users.get(id);
 		
 		if (user == null) {

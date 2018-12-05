@@ -34,7 +34,7 @@ public class MovieApiHandler implements IFilmHandler {
 	private void initializeGenreIds() throws MovieDbException {
 		genreIds = new HashMap<String, Integer>();
 		List<Genre> genreList = api.getGenreMovieList("ru").getResults();
-		
+		System.out.println(genreList);
 		for (Genre g : genreList) {
 			genreIds.put(g.getName(), g.getId());
 		}
@@ -80,13 +80,41 @@ public class MovieApiHandler implements IFilmHandler {
 			MovieInfo info = null;
 			try {
 				info = api.getMovieInfo(id, "ru");
+				
 			} catch (MovieDbException e) {
 				continue;
 			}
+			if (!checkFilmInfo(id, options))
+				continue;
 			filmList.add(new Film(id, info.getTitle(), null));			
 		}	
 		
 		return filmList;
+	}
+	
+	private boolean checkFilmInfo(int id, Map<Field, List<String>> options) {
+		MovieInfo info = null;
+		try {
+			info = api.getMovieInfo(id, "ru");
+			String year = info.getReleaseDate().substring(0, 4);
+			if (options.get(Field.YEAR) != null && !options.get(Field.YEAR).get(0).equals(year))
+				return false;
+			if (options.get(Field.GENRE) == null)
+				return true;
+			for (String genre : options.get(Field.GENRE)) {
+				List<Genre> genreList = info.getGenres();
+				boolean found = false;
+				for (Genre g : genreList) {
+					if (g.getId() == genreIds.get(genre))
+							found = true;
+				}
+				if (!found)
+					return false;
+			}
+		} catch (MovieDbException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	private void processOptions(Map<Field, List<String>> options, Discover discover) {

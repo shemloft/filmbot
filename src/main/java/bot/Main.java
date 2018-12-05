@@ -16,6 +16,7 @@ public class Main {
 //		String apikey = "<apikey>";	
 
 		IFilmHandler filmHandler = new MovieApiHandler(apikey);
+		
 		database = new FilmDatabase(filmHandler);
 		startTelegramBot();
 	}

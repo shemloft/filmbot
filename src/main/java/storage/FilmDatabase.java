@@ -19,8 +19,7 @@ public class FilmDatabase {
 
 	public Film getFilm(User user) {
 		
-		List<Film> possibleFilms = filmHandler.getFilmsByOptions(user.currentOptions);	
-		
+		List<Film> possibleFilms = filmHandler.getFilmsByOptions(user.currentOptions);			
 		
 		if (possibleFilms.size() == 0)
 			return new Film(0, null, null);

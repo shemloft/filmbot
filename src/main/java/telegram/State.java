@@ -31,10 +31,11 @@ public class State {
 	}
 
 	public void processInput(String input) {
-		// обработать все исключения здесь!
 		if ("NEXT".equals(input)) {
+			
 			user.nowGettingFilm();
 			keyboard = getBasicKeyboard();
+			user.printCurOpt();
 			return;
 		}
 		if ("/help".equals(input)) {
@@ -77,6 +78,7 @@ public class State {
 			keyboard = getBasicKeyboard();
 			user.clearData();
 		}
+		user.printCurOpt();
 	}
 
 	private void processChosingState(String input) {
@@ -89,6 +91,8 @@ public class State {
 			answerString = "Есть еще параметры?";
 			keyboard = getMoreOptionsKeyboard();
 		}
+		user.printCurOpt();
+		
 	}
 
 	private void processBasicState(String input) {
@@ -97,11 +101,14 @@ public class State {
 			keyboard = getBasicKeyboard();
 			user.clearData();
 		} else {
+			if (!user.gettingMoreOptions)
+				user.clearData();
 			Field field = Field.valueOf(input);			
 			user.nowChosing(field);
 			answerString = field.nowChoose();
 			keyboard = getChosingKeyboard(field);
 		}
+		user.printCurOpt();
 	}
 
 	private ReplyKeyboardMarkup getChosingKeyboard(Field field) {

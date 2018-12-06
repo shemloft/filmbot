@@ -35,11 +35,6 @@ public class State {
 		case "NEXT":
 			user.nowGettingFilm();
 			keyboard = getBasicKeyboard();
-			if (user.currentOptions.isEmpty()) {
-				answerString = Phrases.NEXT_WITHOUT_OPT;
-				user.clearData();
-				return;
-			}
 			user.printCurOpt();
 			onCompletedRequest();
 			return;
@@ -124,8 +119,7 @@ public class State {
 	}
 	
 	private String getResponse(Film film, User user) {
-		System.out.println(film);
-		if (film != null && film.ID == 0)
+		if (film != null && film.ID == 0) // !!!!!!!!!
 			return Phrases.NO_SUCH_FILM;
 		else if (film != null)
 			user.addFilm(film);
@@ -170,9 +164,6 @@ public class State {
 		keyboard.add(row);
 		row = new KeyboardRow();
 		row.add("GENRE");
-		keyboard.add(row);
-		row = new KeyboardRow();
-		row.add("ACTOR");
 		keyboard.add(row);
 		row = new KeyboardRow();
 		row.add("NEXT");

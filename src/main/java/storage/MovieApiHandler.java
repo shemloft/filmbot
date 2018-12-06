@@ -16,6 +16,7 @@ import com.omertron.themoviedbapi.model.Genre;
 import com.omertron.themoviedbapi.model.discover.Discover;
 import com.omertron.themoviedbapi.model.movie.MovieBasic;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
+import com.omertron.themoviedbapi.model.person.PersonFind;
 import com.omertron.themoviedbapi.tools.Param;
 
 
@@ -23,12 +24,18 @@ public class MovieApiHandler implements IFilmHandler {
 	
 	private TheMovieDbApi api;
 	private Map<String, Integer> genreIds;
+	private Map<String, Integer> peopleIds;
 	private Map<Field, String[]> valueArrays;
 	
-	public MovieApiHandler(String apikey) throws MovieDbException {
-		api = new TheMovieDbApi(apikey);
-		initializeGenreIds();	
-		initializeValueArrays();
+	public MovieApiHandler(String apikey)  {
+		try {
+			api = new TheMovieDbApi(apikey);
+			initializeGenreIds();
+			initializePeopleIds();	
+			initializeValueArrays();
+		} catch (MovieDbException e) {
+//			e.printStackTrace();			
+		}		
 	}
 	
 	private void initializeGenreIds() throws MovieDbException {
@@ -40,12 +47,32 @@ public class MovieApiHandler implements IFilmHandler {
 		}
 	}
 	
+	private void initializePeopleIds() throws MovieDbException {
+		peopleIds = new HashMap<String, Integer>();
+		getFirstPopularPeople(5);
+	}
+	
+	private void getFirstPopularPeople(Integer pageCount) throws MovieDbException {
+		for (int i = 0; i < pageCount; i++) {
+			List<PersonFind> peopleList = api.getPersonPopular(i + 1).getResults();
+			
+			for (PersonFind g : peopleList) {
+				peopleIds.put(g.getName(), g.getId());
+			}
+		}
+	}
+	
 	private void initializeValueArrays() {
 		valueArrays = new HashMap<Field, String[]>();
 		Set<String> genreSet = genreIds.keySet();
 		String[] genres = genreSet.toArray(new String[genreSet.size()]);
 		Arrays.sort(genres);
 		valueArrays.put(Field.GENRE, genres);
+		
+		Set<String> peopleSet = peopleIds.keySet();
+		String[] people = peopleSet.toArray(new String[peopleSet.size()]);
+		Arrays.sort(people);
+		valueArrays.put(Field.ACTOR, people);
 		
 		int min = 1900;
 		int max = 2025;
@@ -133,8 +160,14 @@ public class MovieApiHandler implements IFilmHandler {
 					discover.year(Integer.parseInt(entry.getValue().get(0)));					
 				} catch (NumberFormatException e) {					
 				}				
-				break;			
-			}			
+				break;
+			case ACTOR:
+				String actorsString = "";
+				for (String actor : entry.getValue()) 
+					actorsString += (actorsString.length() != 0 ? "," : "") + peopleIds.get(actor);				
+				discover.withCast(actorsString);
+				break;
+			}		
 		}		
 	}
 

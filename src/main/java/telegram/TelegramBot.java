@@ -16,7 +16,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	private String bot_username;
 	private String bot_token;
-	private ConcurrentHashMap<String, User> users;
+	private ConcurrentHashMap<Long, User> users;
 	private FilmDatabase database;	
 
 
@@ -24,7 +24,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		this.bot_username = username;
 		this.bot_token = token;
 		this.database = database;
-		users = new ConcurrentHashMap<String, User>();		
+		users = new ConcurrentHashMap<Long, User>();		
 	}
 
 	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
@@ -32,7 +32,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		this.bot_username = username;
 		this.bot_token = token;
 		this.database = database;
-		users = new ConcurrentHashMap<String, User>();
+		users = new ConcurrentHashMap<Long, User>();
 	}
 
 	@Override
@@ -44,13 +44,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 		try {
 			execute(message);
 		} catch (TelegramApiException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
 	private SendMessage communicate(Message inputMessage) {
 		String inputCommand = inputMessage.getText();
-		String id = inputMessage.getChatId().toString();
+		Long id = inputMessage.getChatId();
 		String userFirstName = inputMessage.getFrom().getFirstName();
 		SendMessage message = new SendMessage();
 		

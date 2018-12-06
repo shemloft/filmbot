@@ -38,4 +38,8 @@ public class Film {
 			result ^= getField(field).hashCode();
 		return result;
 	}
+	
+	public String toString() {
+		return title;
+	}
 }

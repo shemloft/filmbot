@@ -9,7 +9,6 @@ import telegram.DialogState;
 
 public class User {
 
-	private String ID;
 	private String name;
 	public List<Integer> savedFilmsIDs;
 	public Map<Field, List<String>> currentOptions;
@@ -20,8 +19,7 @@ public class User {
 	public boolean gettingMoreOptions;
 	public boolean firstTime;
 
-	public User(String chatID, String name) {
-		this.ID = chatID;
+	public User(String name) {
 		this.savedFilmsIDs = new ArrayList<Integer>();
 		currentOptions = new HashMap<Field, List<String>>();
 		dialogState = DialogState.BASIC;

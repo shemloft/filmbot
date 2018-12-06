@@ -3,7 +3,6 @@ package telegram;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -11,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import dialog.Phrases;
 import storage.FilmDatabase;
 import structures.Field;
+import structures.Film;
 import structures.User;
 
 public class State {
@@ -31,26 +31,24 @@ public class State {
 	}
 
 	public void processInput(String input) {
-		if ("NEXT".equals(input)) {
-			
+		switch(input) {
+		case "NEXT":
 			user.nowGettingFilm();
 			keyboard = getBasicKeyboard();
 			user.printCurOpt();
+			onCompletedRequest();
 			return;
-		}
-		if ("/help".equals(input)) {
+		case "/help":
 			answerString = Phrases.HELP;
 			user.clearData();	
 			return;
-		}
-		if ("/start".equals(input)) {
-			
+		case "/start":
 			user.clearData();
 			answerString = user.firstTime 
 					? String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP) 
-					: String.format("Давно не виделись, %s.", user.getName());		
-
-		}			
+					: String.format("Давно не виделись, %s.", user.getName());
+			break;
+		}	
 
 		switch (currentState) {
 		case BASIC:
@@ -63,6 +61,15 @@ public class State {
 			processMoreOptionsState(input);
 			break;
 		}
+		
+		if (user.requestComplete) {
+			onCompletedRequest();
+		}
+	}
+	
+	private void onCompletedRequest() {
+		answerString = getResponse(database.getFilm(user), user);
+		user.requestComplete = false;
 	}
 
 	private void processMoreOptionsState(String input) {
@@ -109,6 +116,16 @@ public class State {
 			keyboard = getChosingKeyboard(field);
 		}
 		user.printCurOpt();
+	}
+	
+	private String getResponse(Film film, User user) {
+		if (film != null && film.ID == 0) // !!!!!!!!!
+			return Phrases.NO_SUCH_FILM;
+		else if (film != null)
+			user.addFilm(film);
+		else
+			user.clearData();
+		return film != null ? film.title : Phrases.NO_MORE_FILM;
 	}
 
 	private ReplyKeyboardMarkup getChosingKeyboard(Field field) {

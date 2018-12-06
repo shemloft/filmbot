@@ -1,16 +1,11 @@
 package telegram;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import storage.FilmDatabase;
-import structures.User;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -19,17 +14,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 	private UsersData usersData;
 
 
-	public TelegramBot(FilmDatabase database, String username, String token) {
+	public TelegramBot(UsersData usersData, String username, String token) {
 		this.bot_username = username;
 		this.bot_token = token;
-		usersData = new UsersData(database);
+		this.usersData = usersData;
 	}
 
-	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
+	public TelegramBot(UsersData usersData, String username, String token, DefaultBotOptions options) {
 		super(options);
 		this.bot_username = username;
 		this.bot_token = token;
-		usersData = new UsersData(database);
+		this.usersData = usersData;
 	}
 
 	@Override
@@ -45,7 +40,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		}
 	}
 	
-	private SendMessage communicate(Message inputMessage) {
+	public SendMessage communicate(Message inputMessage) {
 		String input = inputMessage.getText();
 		Long id = inputMessage.getChatId();
 		String username = inputMessage.getFrom().getFirstName();

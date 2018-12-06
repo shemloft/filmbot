@@ -51,7 +51,7 @@ public class TelegramChatBot {
 		botOptions.setProxyPort(PROXY_PORT);
 		botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS5);
 
-		TelegramBot bot = new TelegramBot(database, BOT_USERNAME, BOT_TOKEN, botOptions);
+		TelegramBot bot = new TelegramBot(new UsersData(database), BOT_USERNAME, BOT_TOKEN, botOptions);
 
 		try {
 			telegramBotsApi.registerBot(bot);

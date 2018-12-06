@@ -40,8 +40,8 @@ public class UserState {
 			currentField = null;
 			options.reset();
 			currentState = DialogState.BASIC;
-			expectedAnswers = getExpectedAnswers(currentState);			
-			return new BotMessage(Phrases.UNKNOWN_COMMAND, expectedAnswers);			
+			expectedAnswers = getExpectedAnswers(currentState);
+			return new BotMessage(processUnexpectedCommand(input), expectedAnswers);			
 		}
 		
 		DialogState oldState = currentState;
@@ -83,6 +83,19 @@ public class UserState {
 		options.print();
 		return new BotMessage(answer, expectedAnswers);
 	
+	}
+	
+	private String processUnexpectedCommand(String input) {
+		switch (input) {
+		case "/start":
+			return user.isFirstTime() 
+					? String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP) 
+					: String.format("Давно не виделись, %s.", user.getName());
+		case "/help":
+			return Phrases.HELP;
+		default:
+			return Phrases.UNKNOWN_COMMAND;
+		}
 	}
 	
 	private DialogState nextState(DialogState state) {

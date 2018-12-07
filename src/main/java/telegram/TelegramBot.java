@@ -73,6 +73,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 		message.setChatId(inputMessage.getChatId());
 		return message;
 	}
+	
+	public String getAnswerText(Message inputMessage) {
+		return communicate(inputMessage).getText();
+	}
 		
 
 	public State getState(User user) {	

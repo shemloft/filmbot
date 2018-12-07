@@ -33,7 +33,7 @@ public class FilmDatabaseTest {
 	@Before
 	public void setUp() throws Exception {
 		createFilmList();
-		String[] genres = new String[] {"anime", "hentai"};
+		String[] genres = new String[] {"anime", "memes"};
 		Map<Field, String[]> fields = new HashMap<Field, String[]>();
 		fields.put(Field.GENRE, genres);
 		filmHandler = new TestFilmHandler(filmList, fields);
@@ -74,7 +74,7 @@ public class FilmDatabaseTest {
 	
 	@Test
 	public void testFieldExistsInDatabse() {
-		assertTrue(filmDatabase.requestExistInDatabase(Field.GENRE, "hentai"));
+		assertTrue(filmDatabase.requestExistInDatabase(Field.GENRE, "memes"));
 	}
 	
 	@Test

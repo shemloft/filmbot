@@ -1,92 +1,107 @@
-//package telegram;
-//
-//import static org.junit.Assert.assertEquals;
-//
-//import java.io.File;
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//
-//import storage.FileFilmHandler;
-//import storage.FilmDatabase;
-//import storage.TestFilmDatabaseFileHandler;
-//import structures.Film;
-//import utils.FilmUtils;
-//
-//public class TelegramBotTest {	
-//	private FilmDatabase getDatabase() throws Exception {
-//		List<Film> filmList = new ArrayList<Film>();
-//		filmList.add(FilmUtils.getFilm("ID", "Фильм", new ArrayList<String>(Arrays.asList(new String[] { "Страна" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "Год" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "Жанр" }))));
-//		filmList.add(FilmUtils.getFilm("8", "Бойцовский клуб",
-//				new ArrayList<String>(Arrays.asList(new String[] { "США", "Германия" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "1999" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }))));
-//		filmList.add(FilmUtils.getFilm("5", "Леон", new ArrayList<String>(Arrays.asList(new String[] { "Франция" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "драма", "криминал" }))));
-//		filmList.add(FilmUtils.getFilm("13", "Криминальное чтиво",
-//				new ArrayList<String>(Arrays.asList(new String[] { "США" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "1994" })),
-//				new ArrayList<String>(Arrays.asList(new String[] { "триллер", "комедия", "криминал" }))));
-//		filmList.add(
-//				FilmUtils.getFilm("12", "Крестный отец", new ArrayList<String>(Arrays.asList(new String[] { "США" })),
-//						new ArrayList<String>(Arrays.asList(new String[] { "1972" })),
-//						new ArrayList<String>(Arrays.asList(new String[] { "драма", "криминал" }))));
-//		FilmDatabase database = new FilmDatabase(
-//				new FileFilmHandler(
-//						new TestFilmDatabaseFileHandler(
-//								FilmUtils.filmListToStringList(filmList))));
-//	
-//		return database;
-//	}
-//	
-//	@Test
-//	public void TwoUsersTestDifferentRequest() throws Exception {
-//		FilmDatabase database = getDatabase();
-//		TelegramBot bot = new TelegramBot(database, null, null);
-//		State state1 = bot.getState("/y 1972", "1", DialogState.BASIC);
-//		String ans1 = bot.getAnswer(state1, "name", "1");
-//		State state2 = bot.getState("/c США", "2", DialogState.BASIC);
-//		String ans2 = bot.getAnswer(state2, "name2", "2");
-//		
-//		assertEquals(ans1, "Крестный отец");
-//		assertEquals(ans2, "Бойцовский клуб");		
-//	}
-//	
-//	@Test
-//	public void TwoUsersTestSameRequest() throws Exception {
-//		FilmDatabase database = getDatabase();
-//		TelegramBot bot = new TelegramBot(database, null, null);
-//		State state1 = bot.getState("/y 1972", "1", DialogState.BASIC);
-//		String ans1 = bot.getAnswer(state1, "name",  "1");
-//		State state2 = bot.getState("/y 1972", "2", DialogState.BASIC);
-//		String ans2 = bot.getAnswer(state2, "name2", "2");		
-//	
-//		assertEquals(ans1, "Крестный отец");
-//		assertEquals(ans2, "Крестный отец");		
-//	}
-//	
-//	@After
-//	public void tearDown() {
-//		tryToDeleteSavedFile();
-//	}
-//	
-//	@Before
-//	public void setUp() {
-//		tryToDeleteSavedFile();
-//	}
-//	
-//	private void tryToDeleteSavedFile() {
-//		File userFile = new File("1" + ".csv");
-//		File userFile2 = new File("2" + ".csv");
-//		userFile.delete();
-//		userFile2.delete();
-//	}
-// }
-//
+package telegram;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
+
+import storage.FilmDatabase;
+import storage.TestFilmHandlerWithFields;
+import structures.Field;
+import structures.Film;
+
+public class TelegramBotTest {	
+	
+	Message mockMessage(String text, Long chatId, String userFirstName) {
+		Message message = mock(Message.class);
+		User user = mock(User.class);
+		when(user.getFirstName()).thenReturn(userFirstName);		
+		when(message.getFrom()).thenReturn(user);
+		when(message.getChatId()).thenReturn(chatId);
+		when(message.getText()).thenReturn(text);
+		
+		return message;
+	}
+	
+	private FilmDatabase getDatabase() throws Exception {
+		List<Film> filmList = new ArrayList<Film>();
+		
+		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();		
+		for (Field field : Field.values())
+			filmData.put(field, new ArrayList<String>());		
+		filmData.get(Field.GENRE).add("триллер");
+		filmData.get(Field.GENRE).add("драма");
+		filmData.get(Field.GENRE).add("криминал");
+		filmData.get(Field.YEAR).add("1994");
+		filmList.add(new Film(5, "Леон", filmData));
+		
+		filmData = new HashMap<Field, List<String>>();		
+		for (Field field : Field.values())
+			filmData.put(field, new ArrayList<String>());		
+		filmData.get(Field.GENRE).add("триллер");
+		filmData.get(Field.GENRE).add("комедия");
+		filmData.get(Field.GENRE).add("криминал");
+		filmData.get(Field.YEAR).add("1994");		
+		filmList.add(new Film(13, "Криминальное чтиво", filmData));	
+		
+		String[] genres = { "триллер", "комедия", "криминал", "драма"};
+		String[] years = { "1994"};
+		Map<Field, String[]> fields = new HashMap<Field, String[]>();
+		fields.put(Field.GENRE, genres);
+		fields.put(Field.YEAR, years);
+		
+		FilmDatabase database = new  FilmDatabase(new TestFilmHandlerWithFields(filmList, fields));	
+	
+		return database;
+	}
+	
+	@Test
+	public void TwoUsersTestDifferentRequest() throws Exception {
+		FilmDatabase database = getDatabase();
+		TelegramBot bot = new TelegramBot(database, null, null);		
+			
+		bot.getAnswerText(mockMessage("GENRE", (long) 1, "name1"));
+		bot.getAnswerText(mockMessage("комедия", (long) 1, "name1"));
+		String ans1 = bot.getAnswerText(mockMessage(
+				"ПОЛУЧИТЬ ФИЛЬМ", (long) 1, "name1"));
+		
+		bot.getAnswerText(mockMessage("GENRE", (long) 2, "name2"));
+		bot.getAnswerText(mockMessage("драма", (long) 2, "name2"));
+		String ans2 = bot.getAnswerText(mockMessage(
+				"ПОЛУЧИТЬ ФИЛЬМ", (long) 2, "name1"));	
+	
+		assertEquals("Криминальное чтиво", ans1);
+		assertEquals("Леон", ans2);		
+	}
+	
+	@Test
+	public void TwoUsersTestSameRequest() throws Exception {
+		FilmDatabase database = getDatabase();
+		TelegramBot bot = new TelegramBot(database, null, null);		
+			
+		bot.getAnswerText(mockMessage("GENRE", (long) 1, "name1"));
+		bot.getAnswerText(mockMessage("комедия", (long) 1, "name1"));
+		String ans1 = bot.getAnswerText(mockMessage(
+				"ПОЛУЧИТЬ ФИЛЬМ", (long) 1, "name1"));
+		
+		bot.getAnswerText(mockMessage("GENRE", (long) 2, "name2"));
+		bot.getAnswerText(mockMessage("комедия", (long) 2, "name2"));
+		String ans2 = bot.getAnswerText(mockMessage(
+				"ПОЛУЧИТЬ ФИЛЬМ", (long) 2, "name1"));	
+	
+		assertEquals("Криминальное чтиво", ans1);
+		assertEquals("Криминальное чтиво", ans2);	
+	}
+	
+
+ }
+

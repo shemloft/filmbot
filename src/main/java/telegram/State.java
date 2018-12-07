@@ -40,7 +40,7 @@ public class State{
 				user.clearData();
 				return;
 			}
-			user.printCurOpt();
+//			user.printCurOpt();
 			onCompletedRequest();
 			return;
 		case "/help":
@@ -90,7 +90,7 @@ public class State{
 			keyboard = getBasicKeyboard();
 			user.clearData();
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
 	}
 
 	private void processChosingState(String input) {
@@ -103,7 +103,7 @@ public class State{
 			answerString = "Есть еще параметры?";
 			keyboard = getMoreOptionsKeyboard();
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
 		
 	}
 
@@ -120,7 +120,7 @@ public class State{
 			answerString = field.nowChoose();
 			keyboard = getChosingKeyboard(field);
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
 	}
 	
 	private String getResponse(Film film, User user) {

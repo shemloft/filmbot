@@ -8,15 +8,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import dialog.Phrases;
-import storage.FilmDatabase;
+import storage.IFilmDatabase;
 import structures.Field;
 import structures.Film;
 import structures.User;
 
-public class State {
+public class State{
 
 	private DialogState currentState;
-	private FilmDatabase database;
+	private IFilmDatabase database;
 
 	private ReplyKeyboardMarkup keyboard;
 
@@ -24,7 +24,7 @@ public class State {
 	
 	private User user;
 
-	public State(User user, FilmDatabase database) {
+	public State(User user, IFilmDatabase database) {
 		this.user = user;
 		this.currentState = user.currentState();
 		this.database = database;

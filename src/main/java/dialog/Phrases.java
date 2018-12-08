@@ -12,5 +12,9 @@ public class Phrases {
 	public static final String NO_SUCH_FILM = "Нет фильмов с такими параметрами";
 
 	public static final String NO_MORE_FILM = "Все фильмы с данными параметрами из базы были предоставлены";
+	
+	public static final String[] BASIC_ANSWERS = {"YEAR", "GENRE", "ACTOR", "NEXT"};
+	
+	public static final String[] MORE_OPTIONS_ANSWERS = {"ЕЩЕ ОПЦИЯ", "ПОЛУЧИТЬ ФИЛЬМ"};
 
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import structures.Field;
 import structures.Film;
+import structures.Options;
 
 import com.omertron.themoviedbapi.MovieDbException;
 import com.omertron.themoviedbapi.TheMovieDbApi;
@@ -84,14 +85,14 @@ public class MovieApiHandler implements IFilmHandler {
 	}
 	
 
-	public List<Film> getFilmsByOptions(Map<Field, List<String>> options) {
+	public List<Film> getFilmsByOptions(Options options) {
 		Discover discover = new Discover();		
 		
 		List<Film> filmList = new ArrayList<Film>();
 		
 		processOptions(options, discover);
 		
-		if (!discover.getParams().has(Param.YEAR) && options.get(Field.YEAR) != null)
+		if (!discover.getParams().has(Param.YEAR) && options.getFieldValues(Field.YEAR) != null)
 			return new ArrayList<Film>();	
 		
 		List<MovieBasic> result = null;
@@ -119,16 +120,16 @@ public class MovieApiHandler implements IFilmHandler {
 		return filmList;
 	}
 	
-	private boolean checkFilmInfo(int id, Map<Field, List<String>> options) {
+	private boolean checkFilmInfo(int id, Options options) {
 		MovieInfo info = null;
 		try {
 			info = api.getMovieInfo(id, "ru");
 			String year = info.getReleaseDate().substring(0, 4);
-			if (options.get(Field.YEAR) != null && !options.get(Field.YEAR).get(0).equals(year))
+			if (options.getFieldValues(Field.YEAR) != null && !options.getFieldValues(Field.YEAR).get(0).equals(year))
 				return false;
-			if (options.get(Field.GENRE) == null)
+			if (options.getFieldValues(Field.GENRE) == null)
 				return true;
-			for (String genre : options.get(Field.GENRE)) {
+			for (String genre : options.getFieldValues(Field.GENRE)) {
 				List<Genre> genreList = info.getGenres();
 				boolean found = false;
 				for (Genre g : genreList) {
@@ -144,31 +145,36 @@ public class MovieApiHandler implements IFilmHandler {
 		return true;
 	}
 	
-	private void processOptions(Map<Field, List<String>> options, Discover discover) {
+	private void processOptions(Options options, Discover discover) {
+		for (Field field : Field.values()) {
+			List<String> fieldValues = options.getFieldValues(field);
+			if (fieldValues != null)
+				processFieldValue(field, fieldValues, discover);				
+		}	
+	}
+	
+	private void processFieldValue(Field field, List<String> fieldValues, Discover discover) {
+		switch(field) {			
+		case GENRE:
+			String genreString = "";
+			for (String genre : fieldValues) 
+				genreString += (genreString.length() != 0 ? "," : "") + genreIds.get(genre);				
+			discover.withGenres(genreString);
+			break;
+		case YEAR:
+			try {			
+				discover.year(Integer.parseInt(fieldValues.get(0)));					
+			} catch (NumberFormatException e) {					
+			}				
+			break;
+		case ACTOR:
+			String actorsString = "";
+			for (String actor : fieldValues) 
+				actorsString += (actorsString.length() != 0 ? "," : "") + peopleIds.get(actor);				
+			discover.withCast(actorsString);
+			break;
+		}	
 		
-		for (Map.Entry<Field, List<String>> entry : options.entrySet()) {
-			
-			switch(entry.getKey()) {			
-			case GENRE:
-				String genreString = "";
-				for (String genre : entry.getValue()) 
-					genreString += (genreString.length() != 0 ? "," : "") + genreIds.get(genre);				
-				discover.withGenres(genreString);
-				break;
-			case YEAR:
-				try {			
-					discover.year(Integer.parseInt(entry.getValue().get(0)));					
-				} catch (NumberFormatException e) {					
-				}				
-				break;
-			case ACTOR:
-				String actorsString = "";
-				for (String actor : entry.getValue()) 
-					actorsString += (actorsString.length() != 0 ? "," : "") + peopleIds.get(actor);				
-				discover.withCast(actorsString);
-				break;
-			}		
-		}		
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import structures.Field;
 import structures.Film;
+import structures.Options;
 import structures.User;
 
 public class FilmDatabase implements IFilmDatabase{
@@ -15,14 +16,14 @@ public class FilmDatabase implements IFilmDatabase{
 		this.filmHandler = filmHandler;
 	}
 
-	public Film getFilm(User user) {
+	public Film getFilm(List<Integer> showedFilms, Options options) {
 		
-		List<Film> possibleFilms = filmHandler.getFilmsByOptions(user.currentOptions);			
+		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);			
 		
 		if (possibleFilms.size() == 0)
 			return new Film(0, null, null);
 		for (Film film : possibleFilms)
-			if (!user.savedFilmsIDs.contains(film.ID)) {
+			if (!showedFilms.contains(film.ID)) {
 				return film;
 			}
 		return null;

@@ -16,23 +16,20 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	private String bot_username;
 	private String bot_token;
-	private ConcurrentHashMap<Long, User> users;
-	private FilmDatabase database;	
+	private UsersData usersData;
 
 
 	public TelegramBot(FilmDatabase database, String username, String token) {
 		this.bot_username = username;
 		this.bot_token = token;
-		this.database = database;
-		users = new ConcurrentHashMap<Long, User>();		
+		usersData = new UsersData(database);
 	}
 
 	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
 		super(options);
 		this.bot_username = username;
 		this.bot_token = token;
-		this.database = database;
-		users = new ConcurrentHashMap<Long, User>();
+		usersData = new UsersData(database);
 	}
 
 	@Override
@@ -49,41 +46,19 @@ public class TelegramBot extends TelegramLongPollingBot {
 	}
 	
 	private SendMessage communicate(Message inputMessage) {
-		String inputCommand = inputMessage.getText();
+		String input = inputMessage.getText();
 		Long id = inputMessage.getChatId();
-		String userFirstName = inputMessage.getFrom().getFirstName();
-		SendMessage message = new SendMessage();
+		String username = inputMessage.getFrom().getFirstName();
 		
-		users.putIfAbsent(id, new User(userFirstName));
-		User user = users.get(id);
-		
-		user.updateName(userFirstName);
-		
-
-		System.out.println(userFirstName + ": " + inputCommand);
-		
-		State state = getState(user);
-		state.processInput(inputCommand);
-		
-		String answer = state.answerString;
-
-		message.setText(answer);
-		message.setReplyMarkup(state.getKeyboard());
+		System.out.println(username + ": " + input);
+			
+		SendMessage message = usersData
+				.getAnswer(id, username, input)
+				.convertToSendMessage();
 
 		message.setChatId(inputMessage.getChatId());
 		return message;
-	}
-	
-	public String getAnswerText(Message inputMessage) {
-		return communicate(inputMessage).getText();
-	}
-		
-
-	public State getState(User user) {	
-		State currentState = new State(user, database);
-		return currentState;
-	}
-
+	}	
 
 	@Override
 	public String getBotUsername() {

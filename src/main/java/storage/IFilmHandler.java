@@ -5,10 +5,11 @@ import java.util.Map;
 
 import structures.Field;
 import structures.Film;
+import structures.Options;
 
 public interface IFilmHandler {
 
-	public List<Film> getFilmsByOptions(Map<Field, List<String>> options);
+	public List<Film> getFilmsByOptions(Options options);
 	// empty if none
 
 	public String[] getAvaliableFieldValues(Field field);

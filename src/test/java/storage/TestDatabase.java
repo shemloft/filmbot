@@ -5,7 +5,6 @@ import java.util.List;
 import structures.Field;
 import structures.Film;
 import structures.Options;
-import structures.User;
 
 public class TestDatabase implements IFilmDatabase{
 	

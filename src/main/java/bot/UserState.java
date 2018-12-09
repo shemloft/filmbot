@@ -1,15 +1,16 @@
-package telegram;
+package bot;
 
 import java.util.Arrays;
 
 import dialog.Phrases;
 import storage.IFilmDatabase;
+import structures.BotMessage;
 import structures.Field;
 import structures.Film;
 import structures.Options;
 import structures.User;
 
-public class UserState {
+public class UserState implements IState{
 	
 	private User user;
 	
@@ -137,6 +138,11 @@ public class UserState {
 		else if (film != null)
 			user.addFilm(film);
 		return film != null ? film.title : Phrases.NO_MORE_FILM;
+	}
+
+	@Override
+	public String getName() {
+		return "Получение фильмов";
 	}
 
 }

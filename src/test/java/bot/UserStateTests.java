@@ -1,4 +1,4 @@
-package telegram;
+package bot;
 
 import static org.junit.Assert.*;
 
@@ -10,11 +10,12 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import bot.UserState;
 import dialog.Phrases;
 import storage.TestDatabase;
+import structures.BotMessage;
 import structures.Field;
 import structures.Film;
-import structures.User;
 
 
 

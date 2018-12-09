@@ -16,5 +16,9 @@ public class Phrases {
 	public static final String[] BASIC_ANSWERS = {"YEAR", "GENRE", "ACTOR", "NEXT"};
 	
 	public static final String[] MORE_OPTIONS_ANSWERS = {"ЕЩЕ ОПЦИЯ", "ПОЛУЧИТЬ ФИЛЬМ"};
+	
+	public static final String GENRE_HINT = "Подсказка: Жанр: ";
+	
+	public static final String YEAR_HINT = "Подсказка: Дата релиза: ";
 
 }

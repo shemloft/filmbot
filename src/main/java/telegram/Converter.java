@@ -4,27 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-public class BotMessage {
-	
-	public String messageText;	
-	public String[] possibleAnswers;
-	
-	public BotMessage(String messageText, String[] possibleAnswers) {
-		this.messageText = messageText;
-		this.possibleAnswers = possibleAnswers;
-	}
-	
-	public SendMessage convertToSendMessage() {
+import structures.BotMessage;
+
+public class Converter {
+	public static SendMessage convertToSendMessage(BotMessage botMessage) {
 		SendMessage message = new SendMessage();
-		message.setText(messageText);
-		message.setReplyMarkup(getKeyboard(possibleAnswers));
+		message.setText(botMessage.messageText);
+		message.setReplyMarkup(getKeyboard(botMessage.possibleAnswers));
 		return message;
 	}
 	
-	private ReplyKeyboardMarkup getKeyboard(String[] buttons) {
+	private static ReplyKeyboardMarkup getKeyboard(String[] buttons) {
 		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 		List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
 		for (String button : buttons) {
@@ -36,5 +30,14 @@ public class BotMessage {
 		return keyboardMarkup;
 
 	}
-
+	
+	public static SendPhoto convertToSendPhoto(BotMessage botMessage) {
+		if (botMessage.hasImage()) {
+			SendPhoto sendPhoto = new SendPhoto();
+			sendPhoto.setPhoto(botMessage.image);
+			return sendPhoto;
+		}
+		
+		return null;
+	}
 }

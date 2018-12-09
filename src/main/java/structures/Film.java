@@ -18,26 +18,26 @@ public class Film {
 		return filmData.get(field);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this)
-			return true;
-
-		if (obj == null || obj.getClass() != this.getClass())
-			return false;
-
-		Film other = (Film) obj;
-
-		return ID == other.ID;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = title.hashCode();
-		for (Field field : Field.values())
-			result ^= getField(field).hashCode();
-		return result;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj == this)
+//			return true;
+//
+//		if (obj == null || obj.getClass() != this.getClass())
+//			return false;
+//
+//		Film other = (Film) obj;
+//
+//		return ID == other.ID;
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		int result = title.hashCode();
+//		for (Field field : Field.values())
+//			result ^= getField(field).hashCode();
+//		return result;
+//	}
 	
 	public String toString() {
 		return title;

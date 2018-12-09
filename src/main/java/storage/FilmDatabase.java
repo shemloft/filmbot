@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import structures.Field;
 import structures.Film;
 import structures.Options;
-import structures.User;
 
 public class FilmDatabase implements IFilmDatabase{
 

@@ -3,9 +3,12 @@ package telegram;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import structures.BotMessage;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -31,28 +34,41 @@ public class TelegramBot extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 
 		Message inputMessage = update.getMessage();
-		SendMessage message = communicate(inputMessage);
+		TelegramMessage message = communicate(inputMessage);
 
 		try {
-			execute(message);
+			if (message.hasSendMessage()) {
+				execute(message.getSendMessage());
+			}
+			if (message.hasSendPhoto()) {
+				execute(message.getSendPhoto());
+			}
 		} catch (TelegramApiException e) {
 //			e.printStackTrace();
 		}
 	}
 	
-	public SendMessage communicate(Message inputMessage) {
+	public TelegramMessage communicate(Message inputMessage) {
 		String input = inputMessage.getText();
 		Long id = inputMessage.getChatId();
 		String username = inputMessage.getFrom().getFirstName();
 		
 		System.out.println(username + ": " + input);
+		
+		BotMessage answer = usersData.getAnswer(id, username, input);
+		TelegramMessage result = new TelegramMessage();
 			
-		SendMessage message = usersData
-				.getAnswer(id, username, input)
-				.convertToSendMessage();
-
-		message.setChatId(inputMessage.getChatId());
-		return message;
+		SendMessage sendMessage = Converter.convertToSendMessage(answer);
+		sendMessage.setChatId(inputMessage.getChatId());
+		result.setSendMessage(sendMessage);
+		
+		SendPhoto sendPhoto = Converter.convertToSendPhoto(answer);
+		if (sendPhoto != null) {
+			sendPhoto.setChatId(inputMessage.getChatId());
+			result.setSendPhoto(sendPhoto);
+		}
+		
+		return result;
 	}	
 
 	@Override

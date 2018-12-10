@@ -2,14 +2,12 @@ package storage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import structures.Field;
 import structures.Film;
 import structures.User;
-//import utils.FilmUtils;
 
-public class FilmDatabase {
+public class FilmDatabase implements IFilmDatabase{
 
 	IFilmHandler filmHandler;
 

@@ -3,20 +3,20 @@ package telegram;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import dialog.Phrases;
-import storage.FilmDatabase;
+import storage.IFilmDatabase;
 import structures.Field;
+import structures.Film;
 import structures.User;
 
-public class State {
+public class State{
 
 	private DialogState currentState;
-	private FilmDatabase database;
+	private IFilmDatabase database;
 
 	private ReplyKeyboardMarkup keyboard;
 
@@ -24,33 +24,36 @@ public class State {
 	
 	private User user;
 
-	public State(User user, FilmDatabase database) {
+	public State(User user, IFilmDatabase database) {
 		this.user = user;
 		this.currentState = user.currentState();
 		this.database = database;
 	}
 
 	public void processInput(String input) {
-		if ("NEXT".equals(input)) {
-			
+		switch(input) {
+		case "NEXT":
 			user.nowGettingFilm();
 			keyboard = getBasicKeyboard();
-			user.printCurOpt();
+			if (user.currentOptions.isEmpty()) {
+				answerString = Phrases.NEXT_WITHOUT_OPT;
+				user.clearData();
+				return;
+			}
+//			user.printCurOpt();
+			onCompletedRequest();
 			return;
-		}
-		if ("/help".equals(input)) {
+		case "/help":
 			answerString = Phrases.HELP;
 			user.clearData();	
 			return;
-		}
-		if ("/start".equals(input)) {
-			
+		case "/start":
 			user.clearData();
 			answerString = user.firstTime 
 					? String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP) 
-					: String.format("Давно не виделись, %s.", user.getName());		
-
-		}			
+					: String.format("Давно не виделись, %s.", user.getName());
+			break;
+		}	
 
 		switch (currentState) {
 		case BASIC:
@@ -63,6 +66,15 @@ public class State {
 			processMoreOptionsState(input);
 			break;
 		}
+		
+		if (user.requestComplete) {
+			onCompletedRequest();
+		}
+	}
+	
+	private void onCompletedRequest() {
+		answerString = getResponse(database.getFilm(user), user);
+		user.requestComplete = false;
 	}
 
 	private void processMoreOptionsState(String input) {
@@ -78,7 +90,7 @@ public class State {
 			keyboard = getBasicKeyboard();
 			user.clearData();
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
 	}
 
 	private void processChosingState(String input) {
@@ -91,7 +103,7 @@ public class State {
 			answerString = "Есть еще параметры?";
 			keyboard = getMoreOptionsKeyboard();
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
 		
 	}
 
@@ -108,7 +120,18 @@ public class State {
 			answerString = field.nowChoose();
 			keyboard = getChosingKeyboard(field);
 		}
-		user.printCurOpt();
+//		user.printCurOpt();
+	}
+	
+	private String getResponse(Film film, User user) {
+		System.out.println(film);
+		if (film != null && film.ID == 0)
+			return Phrases.NO_SUCH_FILM;
+		else if (film != null)
+			user.addFilm(film);
+		else
+			user.clearData();
+		return film != null ? film.title : Phrases.NO_MORE_FILM;
 	}
 
 	private ReplyKeyboardMarkup getChosingKeyboard(Field field) {
@@ -147,6 +170,9 @@ public class State {
 		keyboard.add(row);
 		row = new KeyboardRow();
 		row.add("GENRE");
+		keyboard.add(row);
+		row = new KeyboardRow();
+		row.add("ACTOR");
 		keyboard.add(row);
 		row = new KeyboardRow();
 		row.add("NEXT");

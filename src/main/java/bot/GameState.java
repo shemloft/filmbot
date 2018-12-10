@@ -7,31 +7,51 @@ import storage.IQuestionGenerator;
 import structures.BotMessage;
 import structures.Field;
 import structures.Question;
+import structures.User;
 
 public class GameState implements IState{
 	
 	private IQuestionGenerator generator;
 	private Question currentQuestion;
+	private boolean firstTime;
+	private User user;
+	private boolean noMoreQuestions;
 	
-	public GameState(IQuestionGenerator generator) {
+	public GameState(User user, IQuestionGenerator generator) {
 		this.generator = generator;
 		this.currentQuestion = generator.getNextQuestion();
-	}
-	
-	public GameState() {
-		
+		this.firstTime = true;
+		this.user = user;
+		this.noMoreQuestions = false;
 	}
 
 	@Override
-	public BotMessage getAnswer(String input) {
+	public BotMessage[] getAnswer(String input) {
+		
+		if (noMoreQuestions) {
+			return new BotMessage[] {new BotMessage(Phrases.NO_MORE_QUESTIONS, new String[0])};
+		}
+		
+		if (firstTime) {
+			firstTime = false;
+			return new BotMessage[] {
+					new BotMessage(Phrases.GAME_HELP, currentQuestion.getOptions()),
+					new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())};
+		}
+		
 		if (input.equals("/help")) {
-			return new BotMessage(Phrases.HELP, currentQuestion.getOptions());
+			return new BotMessage[] {new BotMessage(Phrases.GAME_HELP, currentQuestion.getOptions())};
 		}
 		
 		
 		if (currentQuestion.isCorrect(input)) {
-			currentQuestion = generator.getNextQuestion();
-			return new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage());
+			getNextQuestion();
+			return new BotMessage[]{
+					new BotMessage(Phrases.CORRECT_ANSWER, currentQuestion.getOptions()),
+					new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())};
+		}
+		else {
+			currentQuestion.excludeOption(input);
 		}
 		
 		if (currentQuestion.hasHint()) {
@@ -50,16 +70,29 @@ public class GameState implements IState{
 				break;
 			}
 			
-			return new BotMessage(hintAnswer, currentQuestion.getOptions());
+			return new BotMessage[] {
+					new BotMessage(Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()),
+					new BotMessage(hintAnswer, currentQuestion.getOptions()) };
 		}
 		
-		currentQuestion = generator.getNextQuestion();
-		return new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage());
+		getNextQuestion();
+		return new BotMessage[] {
+				new BotMessage(Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()),
+				new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())
+		};
 	}
 
 	@Override
 	public String getName() {
 		return "Сыграть в игру";
+	}
+	
+	public void getNextQuestion() {
+		currentQuestion = generator.getNextQuestion();
+		if (currentQuestion == null) {
+			noMoreQuestions = true;
+			currentQuestion = new Question(Phrases.NO_MORE_QUESTIONS, new String[0]);
+		}
 	}
 
 }

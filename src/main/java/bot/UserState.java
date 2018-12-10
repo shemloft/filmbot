@@ -24,8 +24,8 @@ public class UserState implements IState{
 	
 	private boolean moreOptions;
 	
-	public UserState(String username, IFilmDatabase database) {
-		user = new User(username);
+	public UserState(User user, IFilmDatabase database) {
+		this.user = user;
 		this.database = database;
 		currentState = DialogState.BASIC;
 		expectedAnswers = getExpectedAnswers(currentState);
@@ -36,13 +36,13 @@ public class UserState implements IState{
 		user.updateName(newName);
 	}
 	
-	public BotMessage getAnswer(String input) {
+	public BotMessage[] getAnswer(String input) {
 		if (!isExpected(input)) {
 			currentField = null;
 			options.reset();
 			currentState = DialogState.BASIC;
 			expectedAnswers = getExpectedAnswers(currentState);
-			return new BotMessage(processUnexpectedCommand(input), expectedAnswers);			
+			return new BotMessage[] { new BotMessage(processUnexpectedCommand(input), expectedAnswers) };			
 		}
 		
 		DialogState oldState = currentState;
@@ -82,7 +82,7 @@ public class UserState implements IState{
 			break;
 		}
 		options.print();
-		return new BotMessage(answer, expectedAnswers);
+		return new BotMessage[] { new BotMessage(answer, expectedAnswers) };
 	
 	}
 	

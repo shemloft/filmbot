@@ -16,6 +16,7 @@ import storage.TestDatabase;
 import structures.BotMessage;
 import structures.Field;
 import structures.Film;
+import structures.User;
 
 
 
@@ -23,6 +24,7 @@ import structures.Film;
 public class UserStateTests {
 	
 	private TestDatabase filmDatabase;
+	private User user;
 	
 	private Film generateFilm(String title, String genre, String year, String actor) {
 		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();
@@ -43,75 +45,76 @@ public class UserStateTests {
 	public void setUp() throws Exception {
 		Film film1 = generateFilm("title", "thriller", "1900", "actor");
 		filmDatabase = new TestDatabase(film1);
+		user = new User("");
 	}
 
 	@Test
 	public void testIncorrectCommand() {
-		UserState state = new UserState("", filmDatabase);
-		BotMessage message = state.getAnswer("asd");
-		assertEquals(Phrases.UNKNOWN_COMMAND, message.messageText);
+		UserState state = new UserState(user, filmDatabase);
+		BotMessage[] message = state.getAnswer("asd");
+		assertEquals(Phrases.UNKNOWN_COMMAND, message[0].messageText);
 	}
 	
 	@Test
 	public void testHelpCommand() {
-		UserState state = new UserState("", filmDatabase);
-		BotMessage message = state.getAnswer("/help");
-		assertEquals(Phrases.HELP, message.messageText);
+		UserState state = new UserState(user, filmDatabase);
+		BotMessage[] message = state.getAnswer("/help");
+		assertEquals(Phrases.HELP, message[0].messageText);
 	}
 	
 	@Test
 	public void testGetFilmGenre() {
-		UserState state = new UserState("", filmDatabase);
+		UserState state = new UserState(user, filmDatabase);
 		state.getAnswer("GENRE");
 		state.getAnswer("thriller");
-		BotMessage message = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
-		assertEquals("title", message.messageText);
+		BotMessage message[] = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
+		assertEquals("title", message[0].messageText);
 	}
 	
 	@Test
 	public void testGetFilmYear() {
-		UserState state = new UserState("", filmDatabase);
+		UserState state = new UserState(user, filmDatabase);
 		state.getAnswer("YEAR");
 		state.getAnswer("1900");
-		BotMessage message = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
-		assertEquals("title", message.messageText);
+		BotMessage[] message = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
+		assertEquals("title", message[0].messageText);
 	}
 	
 	@Test
 	public void testGetFilmActor() {
-		UserState state = new UserState("", filmDatabase);
+		UserState state = new UserState(user, filmDatabase);
 		state.getAnswer("ACTOR");
 		state.getAnswer("actor");
-		BotMessage message = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
-		assertEquals("title", message.messageText);
+		BotMessage[] message = state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
+		assertEquals("title", message[0].messageText);
 	}
 	
 	@Test
 	public void testNextFilm() {
-		UserState state = new UserState("", filmDatabase);
+		UserState state = new UserState(user, filmDatabase);
 		state.getAnswer("GENRE");
 		state.getAnswer("thriller");
 		state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
-		BotMessage message = state.getAnswer("NEXT");
-		assertEquals("title", message.messageText);
+		BotMessage[] message = state.getAnswer("NEXT");
+		assertEquals("title", message[0].messageText);
 	}
 	
 	@Test
 	public void testNoMoreFilms() {
-		UserState state = new UserState("", filmDatabase);
+		UserState state = new UserState(user, filmDatabase);
 		state.getAnswer("GENRE");
 		state.getAnswer("thriller");
 		state.getAnswer("ПОЛУЧИТЬ ФИЛЬМ");
 		filmDatabase.setReturningFilm(null);
-		BotMessage message = state.getAnswer("NEXT");
-		assertEquals(Phrases.NO_MORE_FILM, message.messageText);
+		BotMessage[] message = state.getAnswer("NEXT");
+		assertEquals(Phrases.NO_MORE_FILM, message[0].messageText);
 	}
 	
 	@Test
 	public void testNextNoOptions() {
-		UserState state = new UserState("", filmDatabase);
-		BotMessage message = state.getAnswer("NEXT");
-		assertEquals(Phrases.NEXT_WITHOUT_OPT, message.messageText);
+		UserState state = new UserState(user, filmDatabase);
+		BotMessage[] message = state.getAnswer("NEXT");
+		assertEquals(Phrases.NEXT_WITHOUT_OPT, message[0].messageText);
 	}
 
 }

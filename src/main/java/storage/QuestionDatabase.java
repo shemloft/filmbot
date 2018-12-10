@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -17,52 +16,60 @@ import com.omertron.themoviedbapi.model.Genre;
 import com.omertron.themoviedbapi.model.artwork.Artwork;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
 
+import dialog.Phrases;
 import structures.Field;
 import structures.Film;
 import structures.Question;
 
-public class ApiQuestionGenerator implements IQuestionGenerator{
+public class QuestionDatabase {
 	
-	private String question = "Из какого фильма данный кадр?";
+	private static int pageCount = 6;
+	private String question = Phrases.DEFAULT_QUESTION;
 	private List<Film> films;
-	private Map<Film, String> images;
 	private TheMovieDbApi api;
-	private Random rnd = new Random(System.currentTimeMillis());
+	private List<Question> questions;
 	
-	public ApiQuestionGenerator(String apikey) {
+	public QuestionDatabase(String apikey) {
 		try {
-			images = new HashMap<Film, String>();
 			api = new TheMovieDbApi(apikey);
-			films = getFirstPopularFilms(4);
+			films = getFirstPopularFilms(pageCount);
+			initQuestions();
 		} catch (MovieDbException e) {
 //			e.printStackTrace();			
 		}		
 	}
 
-	@Override
-	public Question getNextQuestion() {
-		List<Film> questionFilms = pickRandomFromFilms(4);
-		int index = rnd.nextInt(4);
-		Film questionFilm = questionFilms.get(index);
-		String[] options = new String[questionFilms.size()];
-		for (int i = 0; i < options.length; i++) {
-			options[i] = questionFilms.get(i).title;
+	public void initQuestions() {
+		questions = new ArrayList<Question>();
+		
+		for (int i = 0; i < films.size(); i++) {
+			List<Film> copy = new ArrayList<Film>(films);
+			copy.remove(i);
+			List<Film> questionFilms = pickRandomFromList(copy, 3);
+			Film questionFilm = films.get(i);
+			questionFilms.add(questionFilm);
+			Collections.shuffle(questionFilms);
+			String[] options = new String[questionFilms.size()];
+			for (int j = 0; j < options.length; j++) {
+				options[j] = questionFilms.get(j).title;
+			}
+			
+			List<Pair<Field, String>> hintsList = new ArrayList<Pair<Field, String>>();
+			if (questionFilm.getField(Field.GENRE).size() > 0) {
+				hintsList.add(Pair.of(Field.GENRE, questionFilm.getField(Field.GENRE).get(0)));
+			}
+			hintsList.add(Pair.of(Field.YEAR, questionFilm.getField(Field.YEAR).get(0)));
+			
+			String image = getImage(questionFilm.ID);
+			
+			if (image != null) {
+				questions.add(new Question(
+						question,
+						options,
+						questionFilm.title,
+						hintsList, image));
+			}
 		}
-		
-		List<Pair<Field, String>> hintsList = new ArrayList<Pair<Field, String>>();
-		if (questionFilm.getField(Field.GENRE).size() > 0) {
-			hintsList.add(Pair.of(Field.GENRE, questionFilm.getField(Field.GENRE).get(0)));
-		}
-		hintsList.add(Pair.of(Field.YEAR, questionFilm.getField(Field.YEAR).get(0)));
-		
-		String image = getImage(questionFilm.ID);
-		images.put(questionFilm, image);
-		
-		return new Question(
-				question,
-				options,
-				options[index],
-				hintsList, image);
 	}
 	
 	private List<Film> getFirstPopularFilms(Integer pageCount) throws MovieDbException {
@@ -94,8 +101,8 @@ public class ApiQuestionGenerator implements IQuestionGenerator{
 		return filmData;
 	}
 	
-	private List<Film> pickRandomFromFilms(int count) {
-		List<Film> copy = new LinkedList<Film>(films);
+	private List<Film> pickRandomFromList(List<Film> filmList, int count) {
+		List<Film> copy = new LinkedList<Film>(filmList);
 	    Collections.shuffle(copy);
 	    return copy.subList(0, count);
 	}
@@ -111,9 +118,13 @@ public class ApiQuestionGenerator implements IQuestionGenerator{
 	      return null;
 		}
 		catch (MovieDbException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public List<Question> getAllQuestions() {
+		return questions;
 	}
 
 }

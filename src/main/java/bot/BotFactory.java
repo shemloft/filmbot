@@ -1,21 +1,26 @@
 package bot;
 
 import storage.IFilmDatabase;
-import storage.IQuestionGenerator;
+import storage.QuestionDatabase;
+import storage.RandomQuestionGenerator;
+import structures.User;
 
 public class BotFactory implements IBotFactory{
 	
 	private IFilmDatabase database;
-	private IQuestionGenerator generator;
+	private QuestionDatabase qDatabase;
 	
-	public BotFactory(IFilmDatabase database, IQuestionGenerator generator) {
+	public BotFactory(IFilmDatabase database, QuestionDatabase qDatabase) {
 		this.database = database;
-		this.generator = generator;
+		this.qDatabase = qDatabase;
 	}
 
 	@Override
 	public IBot getInstance(String username) {
-		return new Bot(username, new IState[] {new UserState(username, database), new GameState(generator)});
+		User user = new User(username);
+		return new Bot(user, new IState[] {
+				new UserState(user, database),
+				new GameState(user, new RandomQuestionGenerator(qDatabase))});
 	}
 
 }

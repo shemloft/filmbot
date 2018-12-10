@@ -20,5 +20,18 @@ public class Phrases {
 	public static final String GENRE_HINT = "Подсказка: Жанр: ";
 	
 	public static final String YEAR_HINT = "Подсказка: Дата релиза: ";
+	
+	public static final String EXIT = "Выйти";
+	
+	public static final String CORRECT_ANSWER = "Правильно!";
+	
+	public static final String INCORRECT_ANSWER = "Неправильно!";
+	
+	public static final String GAME_HELP = "\nЭтот бот задает вопросы по фильмам, отвечайте правильно и набирайте баллы.\n"
+			+ "/help справка\n";
+	
+	public static final String NO_MORE_QUESTIONS = "У нас не осталось вопросов для тебя.";
+	
+	public static final String DEFAULT_QUESTION = "Из какого фильма данный кадр?";
 
 }

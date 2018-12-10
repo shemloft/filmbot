@@ -34,38 +34,43 @@ public class TelegramBot extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 
 		Message inputMessage = update.getMessage();
-		TelegramMessage message = communicate(inputMessage);
+		TelegramMessage[] messages = communicate(inputMessage);
 
 		try {
-			if (message.hasSendMessage()) {
-				execute(message.getSendMessage());
-			}
-			if (message.hasSendPhoto()) {
-				execute(message.getSendPhoto());
+			for (TelegramMessage message : messages) {
+				if (message.hasSendMessage()) {
+					execute(message.getSendMessage());
+				}
+				if (message.hasSendPhoto()) {
+					execute(message.getSendPhoto());
+				}
 			}
 		} catch (TelegramApiException e) {
 //			e.printStackTrace();
 		}
 	}
 	
-	public TelegramMessage communicate(Message inputMessage) {
+	public TelegramMessage[] communicate(Message inputMessage) {
 		String input = inputMessage.getText();
 		Long id = inputMessage.getChatId();
 		String username = inputMessage.getFrom().getFirstName();
 		
 		System.out.println(username + ": " + input);
 		
-		BotMessage answer = usersData.getAnswer(id, username, input);
-		TelegramMessage result = new TelegramMessage();
-			
-		SendMessage sendMessage = Converter.convertToSendMessage(answer);
-		sendMessage.setChatId(inputMessage.getChatId());
-		result.setSendMessage(sendMessage);
+		BotMessage[] answers = usersData.getAnswer(id, username, input);
+		TelegramMessage[] result = new TelegramMessage[answers.length];
 		
-		SendPhoto sendPhoto = Converter.convertToSendPhoto(answer);
-		if (sendPhoto != null) {
-			sendPhoto.setChatId(inputMessage.getChatId());
-			result.setSendPhoto(sendPhoto);
+		for (int i = 0; i < answers.length; i++) {	
+			result[i] = new TelegramMessage();
+			SendMessage sendMessage = Converter.convertToSendMessage(answers[i]);
+			sendMessage.setChatId(inputMessage.getChatId());
+			result[i].setSendMessage(sendMessage);
+			
+			SendPhoto sendPhoto = Converter.convertToSendPhoto(answers[i]);
+			if (sendPhoto != null) {
+				sendPhoto.setChatId(inputMessage.getChatId());
+				result[i].setSendPhoto(sendPhoto);
+			}
 		}
 		
 		return result;

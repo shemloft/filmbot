@@ -15,7 +15,7 @@ public class UsersData {
 		this.factory = factory;
 	}
 	
-	public BotMessage getAnswer(Long id, String username, String input) {
+	public BotMessage[] getAnswer(Long id, String username, String input) {
 		userStates.putIfAbsent(id, factory.getInstance(username));
 		IBot currentState = userStates.get(id);
 		currentState.updateName(username);

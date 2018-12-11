@@ -56,6 +56,8 @@ public class FilmDatabase implements IFilmDatabase{
 	
 	private List<Film> tryToGetCashedFilms(Options options) {
 		List<Film> filmsByOptions = new ArrayList<Film>();
+		if (options.isEmpty())
+			return null;
 		Field firstField = options.optionsFields().get(0);
 		String firstFieldFirstValue = options.getFieldValues(firstField).get(0);
 		

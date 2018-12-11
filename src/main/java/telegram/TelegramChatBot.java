@@ -10,7 +10,9 @@ import org.telegram.telegrambots.meta.ApiContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import bot.BotFactory;
 import storage.FilmDatabase;
+import storage.QuestionDatabase;
 
 public class TelegramChatBot {
 
@@ -21,8 +23,9 @@ public class TelegramChatBot {
 	private static String BOT_TOKEN;
 	private static String BOT_USERNAME;
 	private FilmDatabase database;
+	private QuestionDatabase qDatabase;
 
-	public TelegramChatBot(FilmDatabase database) {
+	public TelegramChatBot(FilmDatabase database, QuestionDatabase qDatabase) {
 		Map<String, String> env = System.getenv();
 		PROXY_HOST = env.get("PROXY_HOST");
 		PROXY_PORT = Integer.parseInt(env.get("PROXY_PORT"));
@@ -31,6 +34,7 @@ public class TelegramChatBot {
 		BOT_TOKEN = env.get("BOT_TOKEN");
 		BOT_USERNAME = env.get("BOT_USERNAME");
 		this.database = database;
+		this.qDatabase = qDatabase;
 	}
 
 	public void startTelegramChatBot() {
@@ -51,7 +55,7 @@ public class TelegramChatBot {
 		botOptions.setProxyPort(PROXY_PORT);
 		botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS5);
 
-		TelegramBot bot = new TelegramBot(database, BOT_USERNAME, BOT_TOKEN, botOptions);
+		TelegramBot bot = new TelegramBot(new UsersData(new BotFactory(database, qDatabase)), BOT_USERNAME, BOT_TOKEN, botOptions);
 
 		try {
 			telegramBotsApi.registerBot(bot);

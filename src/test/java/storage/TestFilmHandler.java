@@ -5,6 +5,7 @@ import java.util.Map;
 
 import structures.Field;
 import structures.Film;
+import structures.Options;
 
 public class TestFilmHandler implements IFilmHandler{
 	
@@ -17,13 +18,13 @@ public class TestFilmHandler implements IFilmHandler{
 	}
 
 	@Override
-	public List<Film> getFilmsByOptions(Map<Field, List<String>> options) {
-		return films;
+	public String[] getAvaliableFieldValues(Field field) {
+		return fields.get(field);
 	}
 
 	@Override
-	public String[] getAvaliableFieldValues(Field field) {
-		return fields.get(field);
+	public List<Film> getFilmsByOptions(Options options) {
+		return films;
 	}
 
 }

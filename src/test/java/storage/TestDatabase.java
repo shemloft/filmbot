@@ -4,7 +4,7 @@ import java.util.List;
 
 import structures.Field;
 import structures.Film;
-import structures.User;
+import structures.Options;
 
 public class TestDatabase implements IFilmDatabase{
 	
@@ -19,11 +19,6 @@ public class TestDatabase implements IFilmDatabase{
 	}
 
 	@Override
-	public Film getFilm(User user) {
-		return film;
-	}
-
-	@Override
 	public String[] getFieldValuesArray(Field field) {
 		List<String> fieldValues = film.getField(field);
 		String[] result = new String[fieldValues.size()];
@@ -33,6 +28,11 @@ public class TestDatabase implements IFilmDatabase{
 	@Override
 	public boolean requestExistInDatabase(Field field, String request) {
 		return film.getField(field).contains(request);
+	}
+
+	@Override
+	public Film getFilm(List<Integer> showedFilms, Options options) {
+		return film;
 	}
 
 }

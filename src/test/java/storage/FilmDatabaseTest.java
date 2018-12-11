@@ -15,6 +15,7 @@ import org.junit.Test;
 import storage.FilmDatabase;
 import structures.Field;
 import structures.Film;
+import structures.Options;
 import structures.User;
 
 public class FilmDatabaseTest {
@@ -42,33 +43,36 @@ public class FilmDatabaseTest {
 
 	@Test
 	public void testGetFilmCleanUser() {
-		User user = new User("");
-		Film film = filmDatabase.getFilm(user);
+		Options options = new Options();
+		Film film = filmDatabase.getFilm(new ArrayList<Integer>(), options);
 		assertEquals("title1", film.title);
 	}
 	
 	@Test
 	public void testGetFilmSecondTime() {
+		Options options = new Options();
 		User user = new User("");
 		user.addFilm(filmList.get(0));
-		Film film = filmDatabase.getFilm(user);
+		Film film = filmDatabase.getFilm(user.savedFilmsIDs, options);
 		assertEquals("title2", film.title);
 	}
 	
 	@Test
 	public void noFilmsLeft() {
+		Options options = new Options(); 
 		User user = new User("");
 		user.addFilm(filmList.get(0));
 		user.addFilm(filmList.get(1));
-		assertEquals(null, filmDatabase.getFilm(user));
+		assertEquals(null, filmDatabase.getFilm(user.savedFilmsIDs, options));
 	}
 	
 	@Test
 	public void noFilmsAtAll() {
+		Options options = new Options();
 		filmHandler = new TestFilmHandler(new ArrayList<Film>(), null);
 		filmDatabase = new FilmDatabase(filmHandler);
 		User user = new User("");
-		Film film = filmDatabase.getFilm(user);
+		Film film = filmDatabase.getFilm(user.savedFilmsIDs, options);
 		assertEquals(null, film.title);
 	}
 	

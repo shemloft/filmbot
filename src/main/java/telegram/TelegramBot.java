@@ -1,89 +1,80 @@
 package telegram;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import storage.FilmDatabase;
-import structures.User;
+import structures.BotMessage;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
 	private String bot_username;
 	private String bot_token;
-	private ConcurrentHashMap<Long, User> users;
-	private FilmDatabase database;	
+	private UsersData usersData;
 
 
-	public TelegramBot(FilmDatabase database, String username, String token) {
+	public TelegramBot(UsersData usersData, String username, String token) {
 		this.bot_username = username;
 		this.bot_token = token;
-		this.database = database;
-		users = new ConcurrentHashMap<Long, User>();		
+		this.usersData = usersData;
 	}
 
-	public TelegramBot(FilmDatabase database, String username, String token, DefaultBotOptions options) {
+	public TelegramBot(UsersData usersData, String username, String token, DefaultBotOptions options) {
 		super(options);
 		this.bot_username = username;
 		this.bot_token = token;
-		this.database = database;
-		users = new ConcurrentHashMap<Long, User>();
+		this.usersData = usersData;
 	}
 
 	@Override
 	public void onUpdateReceived(Update update) {
 
 		Message inputMessage = update.getMessage();
-		SendMessage message = communicate(inputMessage);
+		TelegramMessage[] messages = communicate(inputMessage);
 
 		try {
-			execute(message);
+			for (TelegramMessage message : messages) {
+				if (message.hasSendMessage()) {
+					execute(message.getSendMessage());
+				}
+				if (message.hasSendPhoto()) {
+					execute(message.getSendPhoto());
+				}
+			}
 		} catch (TelegramApiException e) {
 //			e.printStackTrace();
 		}
 	}
 	
-	private SendMessage communicate(Message inputMessage) {
-		String inputCommand = inputMessage.getText();
+	public TelegramMessage[] communicate(Message inputMessage) {
+		String input = inputMessage.getText();
 		Long id = inputMessage.getChatId();
-		String userFirstName = inputMessage.getFrom().getFirstName();
-		SendMessage message = new SendMessage();
+		String username = inputMessage.getFrom().getFirstName();
 		
-		users.putIfAbsent(id, new User(userFirstName));
-		User user = users.get(id);
+		System.out.println(username + ": " + input);
 		
-		user.updateName(userFirstName);
+		BotMessage[] answers = usersData.getAnswer(id, username, input);
+		TelegramMessage[] result = new TelegramMessage[answers.length];
 		
-
-		System.out.println(userFirstName + ": " + inputCommand);
+		for (int i = 0; i < answers.length; i++) {	
+			result[i] = new TelegramMessage();
+			SendMessage sendMessage = Converter.convertToSendMessage(answers[i]);
+			sendMessage.setChatId(inputMessage.getChatId());
+			result[i].setSendMessage(sendMessage);
+			
+			SendPhoto sendPhoto = Converter.convertToSendPhoto(answers[i]);
+			if (sendPhoto != null) {
+				sendPhoto.setChatId(inputMessage.getChatId());
+				result[i].setSendPhoto(sendPhoto);
+			}
+		}
 		
-		State state = getState(user);
-		state.processInput(inputCommand);
-		
-		String answer = state.answerString;
-
-		message.setText(answer);
-		message.setReplyMarkup(state.getKeyboard());
-
-		message.setChatId(inputMessage.getChatId());
-		return message;
-	}
-	
-	public String getAnswerText(Message inputMessage) {
-		return communicate(inputMessage).getText();
-	}
-		
-
-	public State getState(User user) {	
-		State currentState = new State(user, database);
-		return currentState;
-	}
-
+		return result;
+	}	
 
 	@Override
 	public String getBotUsername() {

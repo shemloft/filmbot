@@ -7,6 +7,7 @@ import java.util.Map;
 
 import structures.Field;
 import structures.Film;
+import structures.Options;
 
 public class TestFilmHandlerWithFields implements IFilmHandler{
 	
@@ -38,14 +39,17 @@ public class TestFilmHandlerWithFields implements IFilmHandler{
 	}
 
 	@Override
-	public List<Film> getFilmsByOptions(Map<Field, List<String>> options) {
+	public List<Film> getFilmsByOptions(Options options) {
 		List<Film> currentFilms = new ArrayList<Film>();
 		
 		for (Film film : films) {
 			boolean allOptionsFound = true;
-			for (Map.Entry<Field, List<String>> entry : options.entrySet()) {
-				for (String fieldValue : entry.getValue()) {
-					if (!film.getField(entry.getKey()).contains(fieldValue))
+			for(Field field : Field.values()) {
+				List<String> fieldValues = options.getFieldValues(field);
+				if (fieldValues == null)
+					continue;
+				for (String fieldValue : fieldValues) {
+					if (!film.getField(field).contains(fieldValue))
 						allOptionsFound = false;
 				}
 			}

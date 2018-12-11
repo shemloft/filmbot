@@ -1,31 +1,26 @@
 package structures;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import telegram.DialogState;
 
 public class User {
 
 	private String name;
 	public List<Integer> savedFilmsIDs;
-	public Map<Field, List<String>> currentOptions;
-	private Field currentField;
-	private DialogState dialogState;
-	
-	public boolean requestComplete; 
-	public boolean gettingMoreOptions;
-	public boolean firstTime;
+	private boolean firstTime;
+	private int points;
 
 	public User(String name) {
 		this.savedFilmsIDs = new ArrayList<Integer>();
-		currentOptions = new HashMap<Field, List<String>>();
-		dialogState = DialogState.BASIC;
-		currentField = null;
-		requestComplete = false;
 		firstTime = true;
+		this.name = name;
+	}
+	
+	public boolean isFirstTime() {
+		if (!firstTime)
+			return firstTime;
+		firstTime = false;
+		return true;			
 	}
 	
 	
@@ -41,58 +36,12 @@ public class User {
 		savedFilmsIDs.add(film.ID);
 	}
 	
-	public Field currentField() {
-		return currentField;
+	public void addPoints(int earnedPoints) {
+		points += earnedPoints;
 	}
 	
-	public DialogState currentState() {
-		return dialogState;
+	public int getPoints() {
+		return  points;
 	}
 	
-	public void clearData() {
-		currentOptions = new HashMap<Field, List<String>>();
-		dialogState = DialogState.BASIC;
-		currentField = null;
-		requestComplete = false;
-		gettingMoreOptions = false;
-	}
-	
-	public void nowChosing(Field field) {
-		currentField = field;
-		dialogState = DialogState.CHOSING;
-		requestComplete = false;	
-		gettingMoreOptions = false;
-		if (currentOptions.get(field) == null)
-			currentOptions.put(field, new ArrayList<String>());		
-	}
-	
-	public void nowChosingMore() {		
-		dialogState = DialogState.BASIC;		
-		currentField = null;
-		requestComplete = false;
-		gettingMoreOptions = true;
-	}
-	
-	public void nowAdding(String input) {
-		dialogState = DialogState.MORE_OPTIONS;
-		currentOptions.get(currentField).add(input);
-		currentField = null;
-		requestComplete = false;
-		gettingMoreOptions = false;
-	}
-	
-	public void nowGettingFilm() {
-		dialogState = DialogState.BASIC;
-		currentField = null;
-		requestComplete = true;
-		gettingMoreOptions = false;
-	}
-	
-	public void printCurOpt() {
-		for (Map.Entry<Field, List<String>> entry : currentOptions.entrySet()) {
-			System.out.println(entry.getKey());
-			for (String g : entry.getValue())
-				System.out.println(g);
-		}
-	}
 }

@@ -1,6 +1,7 @@
 package bot;
 
 import storage.IFilmHandler;
+
 import storage.FilmDatabase;
 import storage.MovieApiHandler;
 import storage.QuestionDatabase;
@@ -12,6 +13,7 @@ public class Main {
 	private static QuestionDatabase qDatabase;
 
 	public static void main(String[] args) throws Exception {
+
 		
 		String apikey = "ab2ffab6977110905d92c5979e9ae9fa";
 //		String apikey = "<apikey>";	
@@ -20,6 +22,7 @@ public class Main {
 		
 		database = new FilmDatabase(filmHandler);
 		qDatabase = new QuestionDatabase(apikey);
+		System.out.println("Starting bot");
 		startTelegramBot();
 	}
 

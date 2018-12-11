@@ -1,11 +1,11 @@
 package bot;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.ArrayList;
 
 import dialog.Phrases;
 import storage.IQuestionGenerator;
 import structures.BotMessage;
-import structures.Field;
+import structures.Hint;
 import structures.Question;
 import structures.User;
 
@@ -16,6 +16,10 @@ public class GameState implements IState{
 	private boolean firstTime;
 	private User user;
 	private boolean noMoreQuestions;
+	private final int noHintPoints = 7;
+	private final int oneHintPoints = 3;
+	private final int twoHintPoints = 1;
+	private int currentPoints;
 	
 	public GameState(User user, IQuestionGenerator generator) {
 		this.generator = generator;
@@ -26,7 +30,7 @@ public class GameState implements IState{
 	}
 
 	@Override
-	public BotMessage[] getAnswer(String input) {
+	public BotMessage[] getAnswer(String input) {		 
 		
 		if (noMoreQuestions) {
 			return new BotMessage[] {new BotMessage(Phrases.NO_MORE_QUESTIONS, new String[0])};
@@ -34,6 +38,7 @@ public class GameState implements IState{
 		
 		if (firstTime) {
 			firstTime = false;
+			currentPoints = noHintPoints;
 			return new BotMessage[] {
 					new BotMessage(Phrases.GAME_HELP, currentQuestion.getOptions()),
 					new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())};
@@ -45,39 +50,32 @@ public class GameState implements IState{
 		
 		
 		if (currentQuestion.isCorrect(input)) {
+			int earnedPoints = currentPoints;
+			user.addPoints(earnedPoints);
 			getNextQuestion();
 			return new BotMessage[]{
-					new BotMessage(Phrases.CORRECT_ANSWER, currentQuestion.getOptions()),
+					new BotMessage(
+							Phrases.CORRECT_ANSWER + Phrases.earnedPointsText(earnedPoints, user.getPoints()), 
+							currentQuestion.getOptions()),
 					new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())};
 		}
 		else {
 			currentQuestion.excludeOption(input);
+			currentPoints = currentPoints == oneHintPoints ? twoHintPoints : oneHintPoints;
 		}
 		
 		if (currentQuestion.hasHint()) {
-			Pair<Field, String> hint = currentQuestion.getHint();
-			String hintAnswer = "";
 			
-			switch(hint.getKey()) {
-			case GENRE:
-				hintAnswer = Phrases.GENRE_HINT + hint.getValue();
-				break;
-			case YEAR:
-				hintAnswer = Phrases.YEAR_HINT + hint.getValue();
-				break;
-			default:
-				hintAnswer = hint.getValue();
-				break;
-			}
+			Hint hint = currentQuestion.getHint();			
 			
 			return new BotMessage[] {
 					new BotMessage(Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()),
-					new BotMessage(hintAnswer, currentQuestion.getOptions()) };
+					new BotMessage(hint.getStringValue(), currentQuestion.getOptions()) };
 		}
 		
 		getNextQuestion();
 		return new BotMessage[] {
-				new BotMessage(Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()),
+				new BotMessage(Phrases.INCORRECT_ANSWER + Phrases.earnedPointsText(0, user.getPoints()), currentQuestion.getOptions()),
 				new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage())
 		};
 	}
@@ -88,10 +86,11 @@ public class GameState implements IState{
 	}
 	
 	public void getNextQuestion() {
+		currentPoints = noHintPoints;
 		currentQuestion = generator.getNextQuestion();
 		if (currentQuestion == null) {
 			noMoreQuestions = true;
-			currentQuestion = new Question(Phrases.NO_MORE_QUESTIONS, new String[0]);
+			currentQuestion = new Question(Phrases.NO_MORE_QUESTIONS, new ArrayList<String>());
 		}
 	}
 

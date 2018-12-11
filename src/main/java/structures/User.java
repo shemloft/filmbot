@@ -8,10 +8,12 @@ public class User {
 	private String name;
 	public List<Integer> savedFilmsIDs;
 	private boolean firstTime;
+	private int points;
 
 	public User(String name) {
 		this.savedFilmsIDs = new ArrayList<Integer>();
 		firstTime = true;
+		this.name = name;
 	}
 	
 	public boolean isFirstTime() {
@@ -32,6 +34,14 @@ public class User {
 
 	public void addFilm(Film film) {
 		savedFilmsIDs.add(film.ID);
+	}
+	
+	public void addPoints(int earnedPoints) {
+		points += earnedPoints;
+	}
+	
+	public int getPoints() {
+		return  points;
 	}
 	
 }

@@ -20,7 +20,13 @@ public class Options {
 	public void add(Field currentField, String input) {
 		if (optionsMap.get(currentField) == null)
 			optionsMap.put(currentField, new ArrayList<String>());
-		optionsMap.get(currentField).add(input);	
+		// чтобы год добавился ровно один раз
+		if (currentField != Field.YEAR || optionsMap.get(currentField).size() < 1) 
+			optionsMap.get(currentField).add(input);	
+	}
+	
+	public List<Field> optionsFields() {
+		return new ArrayList<Field>(optionsMap.keySet());
 	}
 	
 	public List<String> getFieldValues(Field field) {

@@ -34,6 +34,8 @@ public class Bot implements IBot {
 	}
 	
 	private BotMessage[] chooseState(String input) {
+		
+		
 		for (IState state : states) {
 			if (state.getName().equals(input)) {
 				currentState = state;
@@ -43,6 +45,8 @@ public class Bot implements IBot {
 		
 		
 		switch(input) {
+		case Phrases.RESULT_TABLE:
+			return new BotMessage[] { new BotMessage(Phrases.RESULT_TABLE, getDefaultPossibleAnswers()) };
 		case "/start":
 			return new BotMessage[] {new BotMessage(
 					String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP),
@@ -56,15 +60,19 @@ public class Bot implements IBot {
 
 	@Override
 	public void updateName(String username) {
-		this.user.updateName(username);
-		
+		this.user.updateName(username);		
+	}
+	
+	public User getUser() {
+		return user;
 	}
 	
 	private String[] getDefaultPossibleAnswers() {
-		String[] possibleAnswers = new String[states.length];
+		String[] possibleAnswers = new String[states.length + 1];
 		for (int i = 0; i < states.length; i++) {
 			possibleAnswers[i] = states[i].getName();
 		}
+		possibleAnswers[states.length] = Phrases.RESULT_TABLE;
 		return possibleAnswers;
 	}
 	

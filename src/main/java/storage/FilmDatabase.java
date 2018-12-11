@@ -16,12 +16,22 @@ public class FilmDatabase implements IFilmDatabase{
 
 	public FilmDatabase(IFilmHandler filmHandler) {
 		this.filmHandler = filmHandler;
+		cachedFilms = new ConcurrentHashMap<Field, ConcurrentHashMap<String, List<Film>>>();
 	}
 
 	public Film getFilm(List<Integer> showedFilms, Options options) {
+		List<Film> cachedFilms = tryToGetCashedFilms(options);
+		Film cachedFilm = cachedFilms == null ? null : getUnshowedFilm(showedFilms, tryToGetCashedFilms(options));
+		if (cachedFilm != null && cachedFilm.ID != 0)
+			return cachedFilm;
 		
-		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);			
+		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
+		cacheFilms(options, possibleFilms);
 		
+		return getUnshowedFilm(showedFilms, possibleFilms);
+	}
+	
+	private Film getUnshowedFilm(List<Integer> showedFilms, List<Film> possibleFilms) {
 		if (possibleFilms.size() == 0)
 			return new Film(0, null, null);
 		for (Film film : possibleFilms)
@@ -32,36 +42,48 @@ public class FilmDatabase implements IFilmDatabase{
 	}
 	
 	private void cacheFilms(Options options, List<Film> filmList) {
-		for(Field field : Field.values()) {
-			List<String> fieldValues = options.getFieldValues(field);
-			if (fieldValues == null)
-				continue;
-			for (String fieldValue : fieldValues) {
+		for(Field field : options.optionsFields()) {
+			for (String fieldValue : options.getFieldValues(field)) {
 				for (Film film : filmList) {
 					cachedFilms.putIfAbsent(field, new ConcurrentHashMap<String, List<Film>>());
 					cachedFilms.get(field).putIfAbsent(fieldValue, new ArrayList<Film>());
-					cachedFilms.get(field).get(fieldValue).add(film); // может добавиться несколько раз
+					if (!cachedFilms.get(field).get(fieldValue).contains(film))
+						cachedFilms.get(field).get(fieldValue).add(film);
 				}
 			}
 		}
 	}
 	
-//	private List<Film> tryToGetCashedFilms(List<Integer> showedFilms, Options options) {
-//		List<Film> filmsByOptions = new ArrayList<Film>();
-//		outerloop: for (Film film : filmList) {
-//			for (Entry<Field, List<String>> entry : options.entrySet()) {
-//				Field field = entry.getKey();
-//				List<String> fieldOptions = entry.getValue();
-//				for (String option : fieldOptions) {
-//					if (!film.getField(field).contains(option))
-//						continue outerloop;
-//				}
-//			}
-//			filmsByOptions.add(film);
-//		}
-//		return filmsByOptions;
-//		
-//	}
+	private List<Film> tryToGetCashedFilms(Options options) {
+		List<Film> filmsByOptions = new ArrayList<Film>();
+		Field firstField = options.optionsFields().get(0);
+		String firstFieldFirstValue = options.getFieldValues(firstField).get(0);
+		
+		if (cachedFilms.get(firstField) == null ||
+			cachedFilms.get(firstField).get(firstFieldFirstValue) == null)
+			return null;
+		
+		filmsByOptions = cachedFilms.get(firstField).get(firstFieldFirstValue);
+		
+		for (Field field : options.optionsFields()) {			
+			if (cachedFilms.get(field) == null)
+				return null;
+			List<String> fieldValues = options.getFieldValues(field);			
+			for (String fieldValue : fieldValues) {
+				List<Film> filmsByValue = cachedFilms.get(field).get(fieldValue);				
+				if (filmsByValue == null)
+					return null;
+				List<Film> filmsWithoutField = new ArrayList<Film>();
+				for (Film film : filmsByOptions) {
+					if (!filmsByValue.contains(film))
+						filmsWithoutField.add(film);															
+				}
+				filmsByOptions.removeAll(filmsWithoutField);
+			}
+		}
+		return filmsByOptions;
+		
+	}
 
 
 	public String[] getFieldValuesArray(Field field) {

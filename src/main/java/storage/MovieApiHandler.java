@@ -42,7 +42,6 @@ public class MovieApiHandler implements IFilmHandler {
 	private void initializeGenreIds() throws MovieDbException {
 		genreIds = new HashMap<String, Integer>();
 		List<Genre> genreList = api.getGenreMovieList("ru").getResults();
-		System.out.println(genreList);
 		for (Genre g : genreList) {
 			genreIds.put(g.getName(), g.getId());
 		}

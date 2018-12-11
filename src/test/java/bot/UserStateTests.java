@@ -18,9 +18,6 @@ import structures.Field;
 import structures.Film;
 import structures.User;
 
-
-
-
 public class UserStateTests {
 	
 	private TestDatabase filmDatabase;

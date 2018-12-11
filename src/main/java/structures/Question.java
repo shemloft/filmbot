@@ -1,23 +1,19 @@
 package structures;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
 public class Question {
 	
 	private String question;
-	private String[] options;
+	private List<String> options;
 	private String correctAnswer;
-	private Queue<Pair<Field, String>> hints;
+	private Queue<Hint> hints;
 	private String image;
 	
-	public Question(String question, String[] options, String correctAnswer, List<Pair<Field, String>> hints, String image) {
+	public Question(String question, List<String> options, String correctAnswer, List<Hint> hints, String image) {
 		this.question = question;
 		this.options = options;
 		this.correctAnswer = correctAnswer;
@@ -25,8 +21,8 @@ public class Question {
 		this.image = image;
 	}
 	
-	public Question(String question, String[] options) {
-		this(question, options, null, new ArrayList<Pair<Field, String>>(), null);
+	public Question(String question, List<String> options) {
+		this(question, options, null, new ArrayList<Hint>(), null);
 	}
 	
 	public boolean isCorrect(String answer) {
@@ -38,14 +34,14 @@ public class Question {
 	}
 	
 	public String[] getOptions() {
-		return options;
+		return options.toArray(new String[options.size()]);
 	}
 	
 	public boolean hasHint() {
 		return !hints.isEmpty();
 	}
 	
-	public Pair<Field, String> getHint() {
+	public Hint getHint() {
 		return hints.poll();
 	}
 	
@@ -54,12 +50,12 @@ public class Question {
 	}
 	
 	public boolean isOption(String answer) {
-		return Arrays.stream(options).anyMatch(answer::equals);
+		return options.contains(answer);
 	}
 	
 	public void excludeOption(String option) {
 		if (isOption(option)) {
-			options = ArrayUtils.removeElement(options, option);
+			options.remove(option);
 		}
 	}
 	

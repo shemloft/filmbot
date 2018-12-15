@@ -24,8 +24,10 @@ public class TestFilmHandlerWithFields implements IFilmHandler{
 	
 	private void processFilms() {
 		for (Film film : films) {
-			for (Field field : Field.values()) {
-				List<String> filmFieldValues = film.getField(field);
+			System.out.println(films);
+			Options options = film.getOptions();
+			for (Field field : options.optionsFields()) {
+				List<String> filmFieldValues = options.getFieldValues(field);
 				if (filmsByOptionsByField.get(field) == null)
 					filmsByOptionsByField.put(field, new HashMap<String, List<Film>>());
 				for (String fieldValue : filmFieldValues) {
@@ -33,8 +35,8 @@ public class TestFilmHandlerWithFields implements IFilmHandler{
 						filmsByOptionsByField.get(field).put(fieldValue, new ArrayList<Film>());
 					filmsByOptionsByField.get(field).get(fieldValue).add(film);
 				}
-			}
-			
+				
+			}		
 		}
 	}
 
@@ -44,12 +46,10 @@ public class TestFilmHandlerWithFields implements IFilmHandler{
 		
 		for (Film film : films) {
 			boolean allOptionsFound = true;
-			for(Field field : Field.values()) {
-				List<String> fieldValues = options.getFieldValues(field);
-				if (fieldValues == null)
-					continue;
+			for(Field field : options.optionsFields()) {
+				List<String> fieldValues = options.getFieldValues(field);				
 				for (String fieldValue : fieldValues) {
-					if (!film.getField(field).contains(fieldValue))
+					if (!film.getOptions().getFieldValues(field).contains(fieldValue))
 						allOptionsFound = false;
 				}
 			}

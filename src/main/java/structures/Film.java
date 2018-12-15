@@ -1,21 +1,45 @@
 package structures;
 
 import java.util.List;
-import java.util.Map;
 
 public class Film {
-	public String title;
-	public int ID;
-	private Map<Field, List<String>> filmData;
+	private String title;
+	private int ID;
+	private String overview;
+	private String image;
+	private Options options;
+	
 
-	public Film(int ID, String title, Map<Field, List<String>> filmData) {
+	public Film(int ID, String title, Options options, String overview, String image) {
 		this.title = title;
-		this.filmData = filmData;
+		this.options = options;
 		this.ID = ID;
+		this.overview = overview;
+		this.image = image;
 	}
 
+	public Options getOptions() {
+		return options;
+	}
+	
 	public List<String> getField(Field field) {
-		return filmData.get(field);
+		return options.getFieldValues(field);
+	}
+	
+	public int getID() {
+		return ID;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	public String getOverview() {
+		return overview;
+	}
+	
+	public String getImage() {
+		return image;
 	}
 
 	@Override
@@ -33,10 +57,7 @@ public class Film {
 
 	@Override
 	public int hashCode() {
-		int result = title.hashCode();
-		for (Field field : Field.values())
-			result ^= getField(field).hashCode();
-		return result;
+		return ID;
 	}
 	
 	public String toString() {

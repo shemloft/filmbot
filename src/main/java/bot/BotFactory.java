@@ -1,26 +1,28 @@
 package bot;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import storage.IFilmDatabase;
-import storage.QuestionDatabase;
-import storage.RandomQuestionGenerator;
+import storage.IQuestionGenerator;
 import structures.User;
 
 public class BotFactory implements IBotFactory{
 	
-	private IFilmDatabase database;
-	private QuestionDatabase qDatabase;
+	private IFilmDatabase filmDatabase;
+	private IQuestionGenerator questionGenerator;
 	
-	public BotFactory(IFilmDatabase database, QuestionDatabase qDatabase) {
-		this.database = database;
-		this.qDatabase = qDatabase;
+	public BotFactory(IFilmDatabase filmDatabase, IQuestionGenerator questionGenerator) {
+		this.filmDatabase = filmDatabase;
+		this.questionGenerator = questionGenerator;
 	}
 
 	@Override
-	public IBot getInstance(String username) {
+	public IBot getInstance(String username, ConcurrentHashMap<Long, User> users) {
 		User user = new User(username);
 		return new Bot(user, new IState[] {
-				new UserState(user, database),
-				new GameState(user, new RandomQuestionGenerator(qDatabase))});
+				new DialogState(user, filmDatabase),
+				new GameState(user, questionGenerator),
+				new ResultTableState(users)});
 	}
 
 }

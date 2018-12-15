@@ -2,13 +2,11 @@ package telegram;
 
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import structures.BotMessage;
+import structures.Messages;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -25,6 +23,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	public TelegramBot(UsersData usersData, String username, String token, DefaultBotOptions options) {
 		super(options);
+		System.out.println("Starting bot");
 		this.bot_username = username;
 		this.bot_token = token;
 		this.usersData = usersData;
@@ -32,7 +31,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	@Override
 	public void onUpdateReceived(Update update) {
-
 		Message inputMessage = update.getMessage();
 		TelegramMessage[] messages = communicate(inputMessage);
 
@@ -46,7 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 				}
 			}
 		} catch (TelegramApiException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -57,23 +55,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 		
 		System.out.println(username + ": " + input);
 		
-		BotMessage[] answers = usersData.getAnswer(id, username, input);
-		TelegramMessage[] result = new TelegramMessage[answers.length];
+		Messages messages = usersData.getAnswer(id, username, input);
 		
-		for (int i = 0; i < answers.length; i++) {	
-			result[i] = new TelegramMessage();
-			SendMessage sendMessage = Converter.convertToSendMessage(answers[i]);
-			sendMessage.setChatId(inputMessage.getChatId());
-			result[i].setSendMessage(sendMessage);
-			
-			SendPhoto sendPhoto = Converter.convertToSendPhoto(answers[i]);
-			if (sendPhoto != null) {
-				sendPhoto.setChatId(inputMessage.getChatId());
-				result[i].setSendPhoto(sendPhoto);
-			}
-		}
-		
-		return result;
+		return Converter.convertToTelegramMessageArray(messages, id);
 	}	
 
 	@Override

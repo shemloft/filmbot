@@ -113,7 +113,7 @@ public class MovieApiHandler implements IFilmHandler {
 			}
 			if (!checkFilmInfo(id, options))
 				continue;
-			filmList.add(new Film(id, info.getTitle(), null));			
+			filmList.add(new Film(id, info.getTitle(), null, null, null));			
 		}	
 		
 		return filmList;

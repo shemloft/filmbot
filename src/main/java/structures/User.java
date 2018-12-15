@@ -33,7 +33,7 @@ public class User {
 	}
 
 	public void addFilm(Film film) {
-		savedFilmsIDs.add(film.ID);
+		savedFilmsIDs.add(film.getID());
 	}
 	
 	public void addPoints(int earnedPoints) {

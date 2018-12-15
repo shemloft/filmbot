@@ -1,6 +1,5 @@
 package structures;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -22,7 +21,7 @@ public class Question {
 	}
 	
 	public Question(String question, List<String> options) {
-		this(question, options, null, new ArrayList<Hint>(), null);
+		this(question, options, null, new LinkedList<Hint>(), null);
 	}
 	
 	public boolean isCorrect(String answer) {

@@ -22,7 +22,7 @@ public class FilmDatabase implements IFilmDatabase{
 	public Film getFilm(List<Integer> showedFilms, Options options) {
 		List<Film> cachedFilms = tryToGetCashedFilms(options);
 		Film cachedFilm = cachedFilms == null ? null : getUnshowedFilm(showedFilms, tryToGetCashedFilms(options));
-		if (cachedFilm != null && cachedFilm.ID != 0)
+		if (cachedFilm != null && cachedFilm.getID() != 0)
 			return cachedFilm;
 		
 		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
@@ -33,9 +33,9 @@ public class FilmDatabase implements IFilmDatabase{
 	
 	private Film getUnshowedFilm(List<Integer> showedFilms, List<Film> possibleFilms) {
 		if (possibleFilms.size() == 0)
-			return new Film(0, null, null);
+			return new Film(0, null, null, null, null);
 		for (Film film : possibleFilms)
-			if (!showedFilms.contains(film.ID)) {
+			if (!showedFilms.contains(film.getID())) {
 				return film;
 			}
 		return null;

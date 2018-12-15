@@ -1,10 +1,10 @@
 package bot;
 
-import structures.BotMessage;
+import structures.Messages;
 import structures.User;
 
 public interface IBot {
-	public BotMessage[] getAnswer(String input);
+	public Messages getAnswer(String input);
 	
 	public void updateName(String username);
 	

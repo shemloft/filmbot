@@ -26,9 +26,8 @@ public class FilmDatabaseTest {
 
 	private void createFilmList() {
 		filmList = new ArrayList<Film>();
-		Map<Field, List<String>> filmData = new HashMap<Field, List<String>>();
-		filmList.add(new Film(1, "title1", filmData));
-		filmList.add(new Film(2, "title2", filmData));
+		filmList.add(new Film(1, "title1", new Options(), null, null));
+		filmList.add(new Film(2, "title2", new Options(), null, null));
 	}
 
 	@Before
@@ -45,7 +44,7 @@ public class FilmDatabaseTest {
 	public void testGetFilmCleanUser() {
 		Options options = new Options();
 		Film film = filmDatabase.getFilm(new ArrayList<Integer>(), options);
-		assertEquals("title1", film.title);
+		assertEquals("title1", film.getTitle());
 	}
 	
 	@Test
@@ -54,7 +53,7 @@ public class FilmDatabaseTest {
 		User user = new User("");
 		user.addFilm(filmList.get(0));
 		Film film = filmDatabase.getFilm(user.savedFilmsIDs, options);
-		assertEquals("title2", film.title);
+		assertEquals("title2", film.getTitle());
 	}
 	
 	@Test
@@ -73,7 +72,7 @@ public class FilmDatabaseTest {
 		filmDatabase = new FilmDatabase(filmHandler);
 		User user = new User("");
 		Film film = filmDatabase.getFilm(user.savedFilmsIDs, options);
-		assertEquals(null, film.title);
+		assertEquals(null, film.getTitle());
 	}
 	
 	@Test

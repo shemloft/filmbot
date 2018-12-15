@@ -1,7 +1,10 @@
 package bot;
 
+import java.util.Arrays;
+
 import dialog.Phrases;
 import structures.BotMessage;
+import structures.Messages;
 import structures.User;
 
 public class Bot implements IBot {
@@ -15,7 +18,7 @@ public class Bot implements IBot {
 		this.states = states;
 	}
 	
-	public BotMessage[] getAnswer(String input) {
+	public Messages getAnswer(String input) {
 		if (currentState == null) {
 			return chooseState(input);
 		}
@@ -25,34 +28,38 @@ public class Bot implements IBot {
 			return getMainMenu();
 		}
 		
-		BotMessage[] answer = currentState.getAnswer(input);
+		Messages answer = currentState.getAnswer(input);
 		return addBackOption(answer);
 	}
 	
-	private BotMessage[] getMainMenu() {
-		return new BotMessage[] { new BotMessage("Выберите опцию", getDefaultPossibleAnswers()) };
+	private Messages getMainMenu() {
+		return new Messages (new BotMessage("Выберите опцию", getDefaultPossibleAnswers()));
 	}
 	
-	private BotMessage[] chooseState(String input) {
-		
+	private Messages chooseState(String input) {	
 		
 		for (IState state : states) {
 			if (state.getName().equals(input)) {
 				currentState = state;
-				return addBackOption(currentState.getAnswer("/help"));
+				switch (state.getType()) {
+				case DIALOG:					
+					return addBackOption(currentState.getAnswer("/help"));
+				case ANSWER:
+					Messages messages = currentState.getAnswer(null);
+					currentState = null;
+					messages.getFirstMessage().setPossibleAnswers(getDefaultPossibleAnswers());
+					return messages;
+				}	
 			}
-		}
+		}		
 		
-		
-		switch(input) {
-		case Phrases.RESULT_TABLE:
-			return new BotMessage[] { new BotMessage(Phrases.RESULT_TABLE, getDefaultPossibleAnswers()) };
+		switch(input) {		
 		case "/start":
-			return new BotMessage[] {new BotMessage(
+			return new Messages(new BotMessage(
 					String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP),
-					getDefaultPossibleAnswers())};
+					getDefaultPossibleAnswers()));
 		case "/help":
-			return new BotMessage[] { new BotMessage(Phrases.HELP, getDefaultPossibleAnswers()) };
+			return new Messages(new BotMessage(Phrases.HELP, getDefaultPossibleAnswers()));
 		default:
 			return getMainMenu();
 		}
@@ -60,32 +67,21 @@ public class Bot implements IBot {
 
 	@Override
 	public void updateName(String username) {
-		this.user.updateName(username);		
+		user.updateName(username);		
 	}
 	
 	public User getUser() {
 		return user;
 	}
 	
-	private String[] getDefaultPossibleAnswers() {
-		String[] possibleAnswers = new String[states.length + 1];
-		for (int i = 0; i < states.length; i++) {
-			possibleAnswers[i] = states[i].getName();
-		}
-		possibleAnswers[states.length] = Phrases.RESULT_TABLE;
-		return possibleAnswers;
+	private String[] getDefaultPossibleAnswers() {		
+		return Arrays.stream(states).map((s) -> s.getName()).toArray(String[]::new);
 	}
 	
-	private BotMessage[] addBackOption(BotMessage[] answer) {
-		if (answer.length > 0) {
-			BotMessage lastAnswer = answer[answer.length - 1];
-			String[] options = new String[lastAnswer.possibleAnswers.length + 1];
-			for (int i = 0; i < lastAnswer.possibleAnswers.length; i++) {
-				options[i] = lastAnswer.possibleAnswers[i];
-			}
-			options[options.length - 1] = Phrases.EXIT;
-			lastAnswer.possibleAnswers = options;
-		}
+	private Messages addBackOption(Messages answer) {
+		if (answer.count() > 0) {
+			answer.getLastMessage().addPossibleAnswer(Phrases.EXIT);
+		}		
 		return answer;
 	}
 }

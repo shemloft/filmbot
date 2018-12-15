@@ -1,9 +1,11 @@
 package bot;
 
-import structures.BotMessage;
+import structures.Messages;
 
 public interface IState {
-	public BotMessage[] getAnswer(String input);
+	public Messages getAnswer(String input);
 	
 	public String getName();
+	
+	public StateType getType();
 }

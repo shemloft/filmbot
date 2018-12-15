@@ -18,7 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import bot.BotFactory;
-import bot.TestQuestionGenrator;
+import bot.TestQuestionGenerator;
 import storage.FilmDatabase;
 import storage.TestFilmHandlerWithFields;
 import structures.Field;
@@ -67,12 +67,12 @@ public class TelegramBotTest {
 	@Before
 	public void setUp() throws Exception {
 		FilmDatabase database = getDatabase();
-		TestQuestionGenrator questionGenerator = new TestQuestionGenrator();		
+		TestQuestionGenerator questionGenerator = new TestQuestionGenerator();		
 		bot = new TelegramBot(new UsersData(new BotFactory(database, questionGenerator)), null, null);	
 	}
 	
-	public TestQuestionGenrator getQuestionGenerator() {
-		TestQuestionGenrator questionGenerator = new TestQuestionGenrator();
+	public TestQuestionGenerator getQuestionGenerator() {
+		TestQuestionGenerator questionGenerator = new TestQuestionGenerator();
 		return questionGenerator;
 	}
 	
@@ -113,4 +113,3 @@ public class TelegramBotTest {
 	}
 	
  }
-

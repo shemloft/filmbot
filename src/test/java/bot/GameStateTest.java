@@ -19,13 +19,13 @@ import structures.User;
 public class GameStateTest {
 	
 	User user;
-	TestQuestionGenrator questionGenerator;
+	TestQuestionGenerator questionGenerator;
 	GameState state;
 	
 	@Before
 	public void setUp() {
 		user = new User("name");
-		questionGenerator = new TestQuestionGenrator();
+		questionGenerator = new TestQuestionGenerator();
 		addQuestions();
 		state = new GameState(user, questionGenerator);
 	}

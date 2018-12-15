@@ -45,5 +45,7 @@ public class Phrases {
 		return String.format("Заработанные очки: %s. Всего очков: %s", earnedPoints, totalPoints);
 		
 	}
+	
+	public static final String CHOOSE_OPTION = "Выберите опцию";
 
 }

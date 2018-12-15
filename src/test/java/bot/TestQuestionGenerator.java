@@ -6,12 +6,12 @@ import java.util.List;
 import storage.IQuestionGenerator;
 import structures.Question;
 
-public class TestQuestionGenrator implements IQuestionGenerator {
+public class TestQuestionGenerator implements IQuestionGenerator {
 
 	private List<Question> questionList;
 	private int counter;
 	
-	public TestQuestionGenrator() {
+	public TestQuestionGenerator() {
 		questionList = new ArrayList<Question>();
 	}
 	

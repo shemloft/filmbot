@@ -33,7 +33,7 @@ public class Bot implements IBot {
 	}
 	
 	private Messages getMainMenu() {
-		return new Messages (new BotMessage("Выберите опцию", getDefaultPossibleAnswers()));
+		return new Messages (new BotMessage(Phrases.CHOOSE_OPTION, getDefaultPossibleAnswers()));
 	}
 	
 	private Messages chooseState(String input) {	

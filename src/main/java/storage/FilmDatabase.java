@@ -24,6 +24,7 @@ public class FilmDatabase implements IFilmDatabase{
 		Film cachedFilm = cachedFilms == null ? null : getUnshowedFilm(showedFilms, tryToGetCashedFilms(options));
 		if (cachedFilm != null && cachedFilm.getID() != 0)
 			return cachedFilm;
+		System.out.println("kek");
 		
 		List<Film> possibleFilms = filmHandler.getFilmsByOptions(options);
 		cacheFilms(options, possibleFilms);

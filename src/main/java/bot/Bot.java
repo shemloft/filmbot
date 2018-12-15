@@ -24,8 +24,12 @@ public class Bot implements IBot {
 		}
 		
 		if (input.equals(Phrases.EXIT)) {
+			Messages messages = getMainMenu();
+			String exitText = currentState.processExit();
+			if (exitText != null)
+				messages.addMessageInBegining(new BotMessage(user.getID(), exitText, getDefaultPossibleAnswers()) );
 			currentState = null;
-			return getMainMenu();
+			return messages;
 		}
 		
 		Messages answer = currentState.getAnswer(input);
@@ -33,7 +37,7 @@ public class Bot implements IBot {
 	}
 	
 	private Messages getMainMenu() {
-		return new Messages (new BotMessage(Phrases.CHOOSE_OPTION, getDefaultPossibleAnswers()));
+		return new Messages (new BotMessage(user.getID(), Phrases.CHOOSE_OPTION, getDefaultPossibleAnswers()));
 	}
 	
 	private Messages chooseState(String input) {	
@@ -56,10 +60,11 @@ public class Bot implements IBot {
 		switch(input) {		
 		case "/start":
 			return new Messages(new BotMessage(
+					user.getID(),
 					String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP),
 					getDefaultPossibleAnswers()));
 		case "/help":
-			return new Messages(new BotMessage(Phrases.HELP, getDefaultPossibleAnswers()));
+			return new Messages(new BotMessage(user.getID(), Phrases.HELP, getDefaultPossibleAnswers()));
 		default:
 			return getMainMenu();
 		}
@@ -79,9 +84,18 @@ public class Bot implements IBot {
 	}
 	
 	private Messages addBackOption(Messages answer) {
-		if (answer.count() > 0) {
-			answer.getLastMessage().addPossibleAnswer(Phrases.EXIT);
-		}		
+		// это нужно т.к. сейчас в messages лежат сообщения для двух пользователей и одному просто не достается кнопки выхода
+		for (BotMessage message : answer)
+			message.addPossibleAnswer(Phrases.EXIT);				
 		return answer;
+	}
+
+	@Override
+	public void setState(IState newState) {		
+		for (int i = 0; i < states.length; i++) {
+			if (states[i].getName().equals(newState.getName()))
+				states[i] = newState;
+		}
+		
 	}
 }

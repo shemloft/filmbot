@@ -35,20 +35,20 @@ public class GameState implements IState{
 		Messages messages = new Messages();
 			
 		if (noMoreQuestions) {
-			messages.addMessage(new BotMessage(Phrases.NO_MORE_QUESTIONS, new String[0]));
+			messages.addMessage(new BotMessage(user.getID(), Phrases.NO_MORE_QUESTIONS, new String[0]));
 			return messages;
 		}
 		
 		if (firstTime) {
 			firstTime = false;
 			currentPoints = noHintPoints;
-			messages.addMessage(new BotMessage(Phrases.GAME_HELP, currentQuestion.getOptions()));
-			messages.addMessage(new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
+			messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP, currentQuestion.getOptions()));
+			messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
 			return messages;
 		}
 		
 		if (input.equals("/help")) {
-			messages.addMessage(new BotMessage(Phrases.GAME_HELP,  currentQuestion.getOptions()));
+			messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP,  currentQuestion.getOptions()));
 			return messages;			
 		}
 		
@@ -57,10 +57,10 @@ public class GameState implements IState{
 			int earnedPoints = currentPoints;
 			user.addPoints(earnedPoints);
 			getNextQuestion();
-			messages.addMessage(new BotMessage(
+			messages.addMessage(new BotMessage(user.getID(), 					
 							Phrases.CORRECT_ANSWER + Phrases.earnedPointsText(earnedPoints, user.getPoints()), 
 							currentQuestion.getOptions()));
-			messages.addMessage(new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
+			messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
 			return messages;
 		}
 		else {
@@ -70,16 +70,16 @@ public class GameState implements IState{
 		
 		if (currentQuestion.hasHint()) {			
 			Hint hint = currentQuestion.getHint();
-			messages.addMessage(new BotMessage(Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()));
-			messages.addMessage(new BotMessage(hint.getStringValue(), currentQuestion.getOptions()));
+			messages.addMessage(new BotMessage(user.getID(), Phrases.INCORRECT_ANSWER, currentQuestion.getOptions()));
+			messages.addMessage(new BotMessage(user.getID(), hint.getStringValue(), currentQuestion.getOptions()));
 			return messages;
 		}
 		
 		getNextQuestion();
-		messages.addMessage(new BotMessage(
+		messages.addMessage(new BotMessage(user.getID(), 
 				Phrases.INCORRECT_ANSWER + Phrases.earnedPointsText(0, user.getPoints()), 
 				currentQuestion.getOptions()));
-		messages.addMessage(new BotMessage(currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
+		messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
 		return messages;
 	}
 
@@ -100,6 +100,11 @@ public class GameState implements IState{
 	@Override
 	public StateType getType() {
 		return StateType.DIALOG;
+	}
+
+	@Override
+	public String processExit() {
+		return null;
 	}
 
 }

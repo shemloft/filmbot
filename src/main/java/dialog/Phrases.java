@@ -42,10 +42,28 @@ public class Phrases {
 	public static final String DEFAULT_QUESTION = "Из какого фильма данный кадр?";
 	
 	public static String earnedPointsText(int earnedPoints, int totalPoints) {
-		return String.format("Заработанные очки: %s. Всего очков: %s", earnedPoints, totalPoints);
-		
+		return String.format("Заработанные очки: %s. Всего очков: %s", earnedPoints, totalPoints);		
 	}
 	
+	public static String winOrLose(int yourPoints, int opponentPoints) {
+		return String.format("%sВаши очки: %s. Очки опонента: %s", 
+				(yourPoints >= opponentPoints ? (yourPoints == opponentPoints ? Phrases.DRAFT : Phrases.WIN) : Phrases.FAIL),
+				yourPoints, opponentPoints);						
+	}
+	
+	
+	public static final String REFRESH = "Обновить";
+	
 	public static final String CHOOSE_OPTION = "Выберите опцию";
+	
+	public static final String DUEL_HELP = "Добро пожаловать в дуэль!\n"
+			+ "Вам и Вашему оппоненту предстоит соревноваться в угадывании фильмов на скорость.\n"
+			+ "Победа в раунде присуждается тому, кто ответил первым.\n"
+			+ "Для начала дуэли Ваш оппонент должен зайти в данную вкладку. Его имя должно появиться внизу, "
+			+ "если его там нет нажмите кнопку обновить. Нажмите имя оппонента и начинайте игру!";
+	
+	public static final String WIN = "Вы победили! ";
+	public static final String FAIL = "Вы проиграли :с. ";
+	public static final String DRAFT = "Ничья. ";
 
 }

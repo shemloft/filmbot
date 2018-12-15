@@ -9,4 +9,6 @@ public interface IBot {
 	public void updateName(String username);
 	
 	public User getUser();
+	
+	public void setState(IState state);
 }

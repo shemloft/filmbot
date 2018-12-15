@@ -12,19 +12,19 @@ import structures.BotMessage;
 import structures.Messages;
 
 public class Converter {
-	public static TelegramMessage[] convertToTelegramMessageArray(Messages messages, Long id) {
+	public static TelegramMessage[] convertToTelegramMessageArray(Messages messages) {
 		List<TelegramMessage> result = new ArrayList<TelegramMessage>();
 		
 		for (BotMessage message : messages) {
 			TelegramMessage telegramMessage = new TelegramMessage();			
 			
 			SendMessage sendMessage = Converter.convertToSendMessage(message);			
-			sendMessage.setChatId(id);
+			sendMessage.setChatId(message.getId());
 			telegramMessage.setSendMessage(sendMessage);			
 			
 			SendPhoto sendPhoto = Converter.convertToSendPhoto(message);
 			if (sendPhoto != null) {
-				sendPhoto.setChatId(id);
+				sendPhoto.setChatId(message.getId());
 				telegramMessage.setSendPhoto(sendPhoto);
 			}
 			

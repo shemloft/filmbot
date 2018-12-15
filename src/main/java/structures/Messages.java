@@ -21,6 +21,10 @@ public class Messages implements Iterable<BotMessage>{
 		messageList.add(message);
 	}
 	
+	public void addMessageInBegining(BotMessage message) {
+		messageList.add(0, message);
+	}
+	
 	public int count() {
 		return messageList.size();
 	}

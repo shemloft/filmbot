@@ -88,12 +88,12 @@ public class MovieApiHandler implements IFilmHandler {
 		Discover discover = new Discover();		
 		
 		List<Film> filmList = new ArrayList<Film>();
-		
 		processOptions(options, discover);
 		
 		if (!discover.getParams().has(Param.YEAR) && options.getFieldValues(Field.YEAR) != null)
 			return new ArrayList<Film>();	
 		
+
 		List<MovieBasic> result = null;
 		
 		try {
@@ -115,6 +115,7 @@ public class MovieApiHandler implements IFilmHandler {
 				continue;
 			filmList.add(new Film(id, info.getTitle(), null, null, null));			
 		}	
+		
 		
 		return filmList;
 	}

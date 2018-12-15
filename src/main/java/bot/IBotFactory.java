@@ -1,9 +1,8 @@
 package bot;
 
-import java.util.concurrent.ConcurrentHashMap;
 
-import structures.User;
+import storage.UserDatabase;
 
 public interface IBotFactory {
-	public IBot getInstance(String username, ConcurrentHashMap<Long, User> users);
+	public IBot getInstance(Long id, String username, UserDatabase userDatabase);
 }

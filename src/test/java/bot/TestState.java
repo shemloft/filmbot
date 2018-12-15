@@ -29,4 +29,9 @@ public class TestState implements IState {
 		return type;
 	}
 
+	@Override
+	public String processExit() {
+		return null;
+	}
+
 }

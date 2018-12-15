@@ -8,19 +8,25 @@ public class BotMessage {
 	private String messageText;	
 	private String[] possibleAnswers;
 	private String image;
+	private Long addresserID;
 	
-	public BotMessage(String messageText) {
-		this(messageText, null, null);
+	public BotMessage(Long addresserID, String messageText) {
+		this(addresserID, messageText, null, null);
 	}
 	
-	public BotMessage(String messageText, String[] possibleAnswers) {
-		this(messageText, possibleAnswers, null);
+	public BotMessage(Long addresserID, String messageText, String[] possibleAnswers) {
+		this(addresserID, messageText, possibleAnswers, null);
 	}
 	
-	public BotMessage(String messageText, String[] possibleAnswers, String image) {
+	public BotMessage(Long addresserID, String messageText, String[] possibleAnswers, String image) {
 		this.messageText = messageText;
 		this.possibleAnswers = possibleAnswers;
 		this.image = image;
+		this.addresserID = addresserID;
+	}
+	
+	public Long getId() {
+		return addresserID;
 	}
 	
 	public String getText() {

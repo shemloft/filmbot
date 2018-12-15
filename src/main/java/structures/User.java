@@ -9,11 +9,19 @@ public class User {
 	public List<Integer> savedFilmsIDs;
 	private boolean firstTime;
 	private int points;
+	public boolean inDuel;
+	public boolean answeredInDuel;
+	public boolean correctAnsweredInDuel;
+	private User opponent;
+	private Long ID;
+	private int duelPoints;
+	
 
-	public User(String name) {
+	public User(String name, Long ID) {
 		this.savedFilmsIDs = new ArrayList<Integer>();
 		firstTime = true;
 		this.name = name;
+		this.ID =ID;
 	}
 	
 	public boolean isFirstTime() {
@@ -21,6 +29,10 @@ public class User {
 			return firstTime;
 		firstTime = false;
 		return true;			
+	}
+	
+	public Long getID() {
+		return ID;
 	}
 	
 	
@@ -42,6 +54,22 @@ public class User {
 	
 	public int getPoints() {
 		return  points;
+	}
+	
+	public void addDuelPoints(int earnedPoints) {
+		duelPoints += earnedPoints;
+	}
+	
+	public int getDuelPoints() {
+		return  duelPoints;
+	}
+	
+	public void setOpponent(User opponent) {
+		this.opponent = opponent;
+	}
+	
+	public User getOpponent() {
+		return opponent;
 	}
 	
 }

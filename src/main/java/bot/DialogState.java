@@ -43,7 +43,7 @@ public class DialogState implements IState{
 			options.reset();
 			currentState = DialogStateType.BASIC;
 			expectedAnswers = getExpectedAnswers(currentState);
-			return new Messages(new BotMessage(processUnexpectedCommand(input), expectedAnswers));			
+			return new Messages(new BotMessage(user.getID(), processUnexpectedCommand(input), expectedAnswers));			
 		}
 		
 		DialogStateType oldState = currentState;
@@ -83,7 +83,7 @@ public class DialogState implements IState{
 			break;
 		}
 		options.print();
-		return new Messages(new BotMessage(answer, expectedAnswers));	
+		return new Messages(new BotMessage(user.getID(), answer, expectedAnswers));	
 	
 	}
 	
@@ -149,6 +149,11 @@ public class DialogState implements IState{
 	@Override
 	public StateType getType() {
 		return StateType.DIALOG;
+	}
+
+	@Override
+	public String processExit() {
+		return null;
 	}
 
 }

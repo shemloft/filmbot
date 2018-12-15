@@ -50,8 +50,8 @@ public class Options {
 	
 	public List<String> getFieldValues(Field field) {
 		switch(field) {
-		case YEAR:
-			return Stream.of(year).collect(Collectors.toList());
+		case YEAR:			
+			return year != null ? Stream.of(year).collect(Collectors.toList()) : null;
 		default:
 			return optionsMap.get(field);
 		}		

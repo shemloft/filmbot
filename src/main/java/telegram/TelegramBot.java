@@ -57,7 +57,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		
 		Messages messages = usersData.getAnswer(id, username, input);
 		
-		return Converter.convertToTelegramMessageArray(messages, id);
+		return Converter.convertToTelegramMessageArray(messages);
 	}	
 
 	@Override

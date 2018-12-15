@@ -1,5 +1,6 @@
 package bot;
 
+import storage.DuelQuestionGenerator;
 import storage.FilmDatabase;
 import storage.MovieApiHandler;
 import storage.QuestionDatabase;
@@ -14,9 +15,11 @@ public class Main {
 	public static void main(String[] args) throws Exception {		
 		String apikey = "ab2ffab6977110905d92c5979e9ae9fa";
 //		String apikey = "<apikey>";	
+		QuestionDatabase questionDatabase = new QuestionDatabase(apikey);
 		usersData = new UsersData(new BotFactory(
 				new FilmDatabase(new MovieApiHandler(apikey)), 
-				new RandomQuestionGenerator(new QuestionDatabase(apikey))));
+				new RandomQuestionGenerator(questionDatabase),
+				new DuelQuestionGenerator(questionDatabase, 20)));
 		System.out.println("Starting bot");
 		startTelegramBot();
 	}

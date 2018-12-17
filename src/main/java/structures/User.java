@@ -15,6 +15,7 @@ public class User {
 	private User opponent;
 	private Long ID;
 	private int duelPoints;
+	private Request request;
 	
 
 	public User(String name, Long ID) {
@@ -84,12 +85,29 @@ public class User {
 		resetDuelPoints();
 		prepareForNewAnswerInDuel();
 		inDuel = false;
+		request = null;
 		resetOpponent();
 	}
 	
 	public void prepareForNewAnswerInDuel() {
 		answeredInDuel = false;
 		correctAnsweredInDuel = false;
+	}
+	
+	public void sendRequest(Request request) {
+		this.request = request;
+	}
+	
+	public boolean hasRequest() {
+		return request != null;
+	}
+	
+	public Request getRequest() {
+		return request;
+	}
+	
+	public void resetRequest() {
+		request = null;
 	}
 	
 }

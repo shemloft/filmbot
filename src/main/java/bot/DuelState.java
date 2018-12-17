@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import dialog.Phrases;
-import storage.IQuestionGenerator;
 import storage.UserDatabase;
 import structures.BotMessage;
 import structures.Messages;
+import structures.Request;
 import structures.User;
 
 public class DuelState implements IState {
@@ -18,29 +18,35 @@ public class DuelState implements IState {
 	private User[] currentUsers;
 	private DuelStateType type;
 	private Duel duel;
-	private IQuestionGenerator generator;
+	private Request sendedRequest;
 
-	public DuelState(User user, UserDatabase userDatabase, IQuestionGenerator generator) {
-		this(user, userDatabase, generator, DuelStateType.WAITING);
+	public DuelState(User user, UserDatabase userDatabase, Duel duel) {
+		this(user, userDatabase, duel, DuelStateType.WAITING);
 	}
 	
-	public DuelState(User user, UserDatabase userDatabase, IQuestionGenerator generator, DuelStateType type) {
+	public DuelState(User user, UserDatabase userDatabase, Duel duel, DuelStateType type) {
 		this.userDatabase = userDatabase;	
 		this.user = user;
-		this.generator = generator;
+		this.duel = duel;
 		this.type = type;
 	}
 
 	@Override
 	public Messages getAnswer(String input) {
 		
-		if (duel != null && duel.isOver && type == DuelStateType.GAME) {
+		if (duel.isOver && type == DuelStateType.GAME) {
 			clear();
+		}
+		
+		if (user.hasRequest()) {
+			return processRequest(input);
 		}
 
 		switch (type) {
 		case WAITING:
 			return processWaitingState(input);
+		case REQUEST:
+			return processOutgoingRequest(input);
 		case GAME:
 			return processGameState(input);
 		default:
@@ -58,7 +64,7 @@ public class DuelState implements IState {
 	public User[] usersInDuel() {
 		return userDatabase.getUserCollection()
 				.stream()
-				.filter((u) -> u.inDuel && u != user)
+				.filter((u) -> u.inDuel && u != user && u.getOpponent() == null)
 				.toArray(User[]::new);
 	}
 	
@@ -81,8 +87,12 @@ public class DuelState implements IState {
 	@Override
 	public Messages processExit() {
 		
-		if (duel != null && duel.isOver && type == DuelStateType.GAME) {
+		if (user.getOpponent() == null || (duel.isOver && type == DuelStateType.GAME)) {
 			clear();
+		}
+		
+		if (user.hasRequest()) {
+			processRequest("Нет");
 		}
 		
 		user.inDuel = false;
@@ -90,7 +100,17 @@ public class DuelState implements IState {
 		switch (type) {
 		case WAITING:
 			return null;
+		case REQUEST:
+			type = DuelStateType.WAITING;
+			if (sendedRequest.isAccepted) {
+				Messages answer = duel.processOpponentLeave(user.getOpponent(), user);
+				clear();
+				return answer;
+			}
+			
+			return null;
 		case GAME:
+			type = DuelStateType.WAITING;
 			return duel.processOpponentLeave(user.getOpponent(), user);
 		}
 		return null;
@@ -124,16 +144,10 @@ public class DuelState implements IState {
 		if (getUsersNames(currentUsers).contains(input)) {
 			User opponent = currentUsers[getUsersNames(currentUsers).indexOf(input)];
 			user.setOpponent(opponent);
-			if (opponent.getOpponent() == user) {
-				type = DuelStateType.GAME;
-				DuelState opponentState = new DuelState(opponent, userDatabase, generator, DuelStateType.GAME);
-				duel = new Duel(generator);
-				opponentState.setDuel(duel);
-				userDatabase.setUserState(opponent, opponentState);
-				return duel.getFirstQuestion(user);
-				
-			}
-			messages.addMessage(new BotMessage(user.getID(), Phrases.WAITING_FOR_OPPONENT, getUserChosingAnswers(currentUsers)));
+			sendedRequest = new Request(user, duel);
+			opponent.sendRequest(sendedRequest);
+			type = DuelStateType.REQUEST;
+			messages.addMessage(new BotMessage(opponent.getID(), "Присоединиться к игроку" + user.getName(), new String[] { "Да", "Нет"}));
 			return messages;
 		}
 		messages.addMessage(new BotMessage(user.getID(), Phrases.DUEL_HELP, getUserChosingAnswers(currentUsers)));
@@ -144,14 +158,38 @@ public class DuelState implements IState {
 		return duel.processGameState(input, user);
 	}
 	
-	private void clear() {
-		type = DuelStateType.WAITING;
-		generator.reset();
-		//start();
+	private Messages processRequest(String input) {
+		if ("Да".equals(input)) {
+			user.setOpponent(user.getRequest().user);
+			duel = user.getRequest().duel;
+			type = DuelStateType.GAME;
+			user.getRequest().accept();
+			user.resetRequest();
+			return duel.getFirstQuestion(user);
+		}
+		user.getRequest().user.resetOpponent();
+		user.resetRequest();
+		Messages messages = new Messages();
+		messages.addMessage(new BotMessage(user.getID(), "Вы отказались от дуэли", getUserChosingAnswers(currentUsers)));
+		return messages;
 	}
 	
-	public void setDuel(Duel duel) {
-		this.duel = duel;
+	private Messages processOutgoingRequest(String input) {
+		if (sendedRequest.isAccepted) {
+			type = DuelStateType.GAME;
+			return duel.processGameState(input, user);
+		}
+		
+		user.resetOpponent();
+		clear();
+		return processWaitingState(input);
+	}
+	
+	private void clear() {
+		type = DuelStateType.WAITING;
+		duel.questionGenerator.reset();
+		duel.isOver = false;
+		//start();
 	}
 
 }

@@ -32,7 +32,8 @@ public class TestQuestionGenerator implements IQuestionGenerator {
 
 	@Override
 	public Question getCurrentQuestion() {
-		// TODO Auto-generated method stub
+		if (counter != 0)
+			return questionList.get(counter - 1);
 		return null;
 	}
 

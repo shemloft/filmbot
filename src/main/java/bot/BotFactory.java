@@ -26,7 +26,7 @@ public class BotFactory implements IBotFactory{
 				new DialogState(user, filmDatabase),
 				new GameState(user, new RandomQuestionGenerator(database)),
 				new ResultTableState(userDatabase, user),
-				new DuelState(user, userDatabase, new DuelQuestionGenerator(database, duelQuestionCount))});
+				new DuelState(user, userDatabase, new Duel(new DuelQuestionGenerator(database, duelQuestionCount)))});
 	}
 
 }

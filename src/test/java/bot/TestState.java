@@ -36,8 +36,7 @@ public class TestState implements IState {
 
 	@Override
 	public Messages start() {
-		// TODO Auto-generated method stub
-		return null;
+		return answer;
 	}
 
 }

@@ -10,7 +10,7 @@ import structures.User;
 public class Duel {
 	
 	public boolean isOver;
-	private IQuestionGenerator questionGenerator;
+	public IQuestionGenerator questionGenerator;
 	
 	public Duel(IQuestionGenerator questionGenerator) {
 		isOver = false;

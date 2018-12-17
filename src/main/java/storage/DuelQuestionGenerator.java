@@ -1,6 +1,7 @@
 package storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import structures.Question;
@@ -8,10 +9,13 @@ import structures.Question;
 public class DuelQuestionGenerator implements IQuestionGenerator{
 	private List<Question> questions;
 	private int counter;
+	private QuestionDatabase database;
+	private int count;
 	
 	public DuelQuestionGenerator(QuestionDatabase database, int questionsCount) {
-		this.questions = new ArrayList<Question>(database.getAllQuestions().subList(0, questionsCount));
-		System.out.println(questions.size());
+		this.database = database;
+		this.count = questionsCount;
+		setQuestions();
 		this.counter = 0;
 	}
 	
@@ -35,6 +39,20 @@ public class DuelQuestionGenerator implements IQuestionGenerator{
 		}
 		
 		return null;
+	}
+	
+	private void setQuestions() {
+		List<Question> allQuestions = new ArrayList<Question>(database.getAllQuestions());
+		Collections.shuffle(allQuestions);
+		this.questions = new ArrayList<Question>(allQuestions.subList(0, count));
+		Collections.shuffle(this.questions);
+		System.out.println(questions.size());
+	}
+
+	@Override
+	public void reset() {
+		counter = 0;
+		setQuestions();
 	}
 
 }

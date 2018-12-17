@@ -38,6 +38,8 @@ public class Phrases {
 	public static final String NO_MORE_QUESTIONS = "У нас не осталось вопросов для тебя.";
 	
 	public static final String RESULT_TABLE = "Рейтинг игроков";
+	public static final String DUEL = "Дуэль";
+	public static final String DIALOG = "Получение фильмов";
 	
 	public static final String DEFAULT_QUESTION = "Из какого фильма данный кадр?";
 	
@@ -65,5 +67,11 @@ public class Phrases {
 	public static final String WIN = "Вы победили! ";
 	public static final String FAIL = "Вы проиграли :с. ";
 	public static final String DRAFT = "Ничья. ";
+	
+	public static final String WAITING_FOR_OPPONENT = "Ждём опонента";
+	
+	public static final String YOUR_OPPONENT = "Ваш опонент: ";
+	
+	public static final String OPPONENT_LEAVE = "Опонент вышел. ";
 
 }

@@ -25,9 +25,11 @@ public class Bot implements IBot {
 		
 		if (input.equals(Phrases.EXIT)) {
 			Messages messages = getMainMenu();
-			String exitText = currentState.processExit();
-			if (exitText != null)
-				messages.addMessageInBegining(new BotMessage(user.getID(), exitText, getDefaultPossibleAnswers()) );
+			Messages exitText = currentState.processExit();
+			if (exitText != null) {
+				exitText = addBackOption(exitText);
+				messages.addMessagesInBegining(exitText);
+			}
 			currentState = null;
 			return messages;
 		}
@@ -47,7 +49,7 @@ public class Bot implements IBot {
 				currentState = state;
 				switch (state.getType()) {
 				case DIALOG:					
-					return addBackOption(currentState.getAnswer("/help"));
+					return addBackOption(currentState.start());
 				case ANSWER:
 					Messages messages = currentState.getAnswer(null);
 					currentState = null;
@@ -85,8 +87,9 @@ public class Bot implements IBot {
 	
 	private Messages addBackOption(Messages answer) {
 		// это нужно т.к. сейчас в messages лежат сообщения для двух пользователей и одному просто не достается кнопки выхода
-		for (BotMessage message : answer)
-			message.addPossibleAnswer(Phrases.EXIT);				
+		for (BotMessage message : answer) {
+			message.addPossibleAnswer(Phrases.EXIT);
+		}
 		return answer;
 	}
 
@@ -96,6 +99,7 @@ public class Bot implements IBot {
 			if (states[i].getName().equals(newState.getName()))
 				states[i] = newState;
 		}
+		currentState = newState;
 		
 	}
 }

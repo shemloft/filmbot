@@ -29,4 +29,18 @@ public class TestQuestionGenerator implements IQuestionGenerator {
 		questionList.add(question);
 	}
 
+
+	@Override
+	public Question getCurrentQuestion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

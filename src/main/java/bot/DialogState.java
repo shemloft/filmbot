@@ -143,7 +143,7 @@ public class DialogState implements IState{
 
 	@Override
 	public String getName() {
-		return "Получение фильмов";
+		return Phrases.DIALOG;
 	}
 
 	@Override
@@ -152,8 +152,13 @@ public class DialogState implements IState{
 	}
 
 	@Override
-	public String processExit() {
+	public Messages processExit() {
 		return null;
+	}
+
+	@Override
+	public Messages start() {
+		return getAnswer("/help");
 	}
 
 }

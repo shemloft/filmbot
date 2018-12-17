@@ -1,10 +1,8 @@
 package bot;
 
-import storage.DuelQuestionGenerator;
 import storage.FilmDatabase;
 import storage.MovieApiHandler;
 import storage.QuestionDatabase;
-import storage.RandomQuestionGenerator;
 import telegram.TelegramChatBot;
 import telegram.UsersData;
 
@@ -18,8 +16,7 @@ public class Main {
 		QuestionDatabase questionDatabase = new QuestionDatabase(apikey);
 		usersData = new UsersData(new BotFactory(
 				new FilmDatabase(new MovieApiHandler(apikey)), 
-				new RandomQuestionGenerator(questionDatabase),
-				new DuelQuestionGenerator(questionDatabase, 20)));
+				questionDatabase, 2));
 		System.out.println("Starting bot");
 		startTelegramBot();
 	}

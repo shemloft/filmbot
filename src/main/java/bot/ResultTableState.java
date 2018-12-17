@@ -39,7 +39,13 @@ public class ResultTableState implements IState {
 	}
 
 	@Override
-	public String processExit() {
+	public Messages processExit() {
+		return null;
+	}
+
+	@Override
+	public Messages start() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

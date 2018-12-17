@@ -72,4 +72,24 @@ public class User {
 		return opponent;
 	}
 	
+	public void resetOpponent() {
+		opponent = null;
+	}
+	
+	public void resetDuelPoints() {
+		duelPoints = 0;
+	}
+	
+	public void onDuelFinished() {
+		resetDuelPoints();
+		prepareForNewAnswerInDuel();
+		inDuel = false;
+		resetOpponent();
+	}
+	
+	public void prepareForNewAnswerInDuel() {
+		answeredInDuel = false;
+		correctAnsweredInDuel = false;
+	}
+	
 }

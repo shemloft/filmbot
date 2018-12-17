@@ -1,20 +1,22 @@
 package bot;
 
+import storage.DuelQuestionGenerator;
 import storage.IFilmDatabase;
-import storage.IQuestionGenerator;
+import storage.QuestionDatabase;
+import storage.RandomQuestionGenerator;
 import storage.UserDatabase;
 import structures.User;
 
 public class BotFactory implements IBotFactory{
 	
 	private IFilmDatabase filmDatabase;
-	private IQuestionGenerator gameGenerator;
-	private IQuestionGenerator duelGenerator;
+	private QuestionDatabase database;
+	private int duelQuestionCount;
 	
-	public BotFactory(IFilmDatabase filmDatabase, IQuestionGenerator gameGenerator, IQuestionGenerator duelGenerator) {
+	public BotFactory(IFilmDatabase filmDatabase, QuestionDatabase database, int duelQuestionCount) {
 		this.filmDatabase = filmDatabase;
-		this.gameGenerator = gameGenerator;
-		this.duelGenerator = duelGenerator;
+		this.database = database;
+		this.duelQuestionCount = duelQuestionCount;
 	}
 
 	@Override
@@ -22,9 +24,9 @@ public class BotFactory implements IBotFactory{
 		User user = new User(username, id);
 		return new Bot(user, new IState[] {
 				new DialogState(user, filmDatabase),
-				new GameState(user, gameGenerator),
+				new GameState(user, new RandomQuestionGenerator(database)),
 				new ResultTableState(userDatabase, user),
-				new DuelState(user, userDatabase, duelGenerator)});
+				new DuelState(user, userDatabase, new DuelQuestionGenerator(database, duelQuestionCount))});
 	}
 
 }

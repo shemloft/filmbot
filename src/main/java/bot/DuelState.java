@@ -6,122 +6,52 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import dialog.Phrases;
-import storage.DuelQuestionGenerator;
 import storage.IQuestionGenerator;
 import storage.UserDatabase;
 import structures.BotMessage;
 import structures.Messages;
-import structures.Question;
 import structures.User;
 
 public class DuelState implements IState {
 	private UserDatabase userDatabase;
 	private User user;
-//	private boolean firstTime;
 	private User[] currentUsers;
-	private User opponent;
-	private boolean gameInProgress;
-	private IQuestionGenerator questionGenerator;
+	private DuelStateType type;
+	private Duel duel;
+	private IQuestionGenerator generator;
 
-	public DuelState(User user, UserDatabase userDatabase, IQuestionGenerator questionGenerator) {
+	public DuelState(User user, UserDatabase userDatabase, IQuestionGenerator generator) {
+		this(user, userDatabase, generator, DuelStateType.WAITING);
+	}
+	
+	public DuelState(User user, UserDatabase userDatabase, IQuestionGenerator generator, DuelStateType type) {
 		this.userDatabase = userDatabase;	
 		this.user = user;
-		this.questionGenerator = questionGenerator;
-//		firstTime = true;
+		this.generator = generator;
+		this.type = type;
 	}
 
 	@Override
 	public Messages getAnswer(String input) {
-		Messages messages = new Messages();
-		//null если еще не было вопроса
-		Question question = ((DuelQuestionGenerator)questionGenerator).getCurrentQuestion();
 		
-		if (opponent != null && !opponent.inDuel) {
-			messages.addMessage(new BotMessage(
-					user.getID(), 
-					"Опонент вышел. " + Phrases.winOrLose(user.getDuelPoints(), opponent.getDuelPoints()), 
-					new String[0]));
-			return messages;
+		if (duel != null && duel.isOver && type == DuelStateType.GAME) {
+			clear();
 		}
-		
-		if (question != null && question.isOption(input)) {
-			user.answeredInDuel = true;
-			if (question.isCorrect(input))
-				user.correctAnsweredInDuel = true;
-			if (opponent.answeredInDuel) {
-				Question nextQuestion = questionGenerator.getNextQuestion();
-				String userMessage;
-				String opponentMessage;
-				if (opponent.correctAnsweredInDuel) {
-					opponent.addDuelPoints(1);
-					userMessage = Phrases.FAIL + Phrases.earnedPointsText(0, user.getDuelPoints());
-					opponentMessage = Phrases.WIN + Phrases.earnedPointsText(1, opponent.getDuelPoints());				
-				} else if (user.correctAnsweredInDuel) {
-					user.addDuelPoints(1);
-					opponentMessage = Phrases.FAIL + Phrases.earnedPointsText(0, user.getDuelPoints());
-					userMessage = Phrases.WIN + Phrases.earnedPointsText(1, opponent.getDuelPoints());	
-				} else {
-					opponentMessage = Phrases.DRAFT + Phrases.earnedPointsText(0, user.getDuelPoints());
-					userMessage = Phrases.DRAFT + Phrases.earnedPointsText(0, opponent.getDuelPoints());	
-				}
-				user.answeredInDuel = false;
-				user.correctAnsweredInDuel = false;
-				opponent.answeredInDuel = false;
-				opponent.correctAnsweredInDuel = false;
-				messages.addMessage(new BotMessage(user.getID(), userMessage, nextQuestion.getOptions()));
-				messages.addMessage(new BotMessage(opponent.getID(), opponentMessage, nextQuestion.getOptions()));
-				
-				messages.addMessage(new BotMessage(user.getID(), question.getQuestion(), nextQuestion.getOptions(), nextQuestion.getImage()));				
-				messages.addMessage(new BotMessage(opponent.getID(), question.getQuestion(), nextQuestion.getOptions(), nextQuestion.getImage()));
-				return messages;
-				
-			} else {
-				messages.addMessage(new BotMessage(user.getID(), "Ждём опонента", question.getOptions()));
-				return messages;
-			}			
-		}
-		
-		if (input.equals("/help")) {
-			user.inDuel = true;
-			User[] users = usersInDuel();
-			currentUsers = users;			
-			messages.addMessage(new BotMessage(user.getID(), Phrases.DUEL_HELP, getUserChosingAnswers(users)));
-			return messages;
-		}
-		
-		if (input.equals(Phrases.REFRESH)) {
-			User[] users = usersInDuel();
-			currentUsers = users;
-			messages.addMessage(new BotMessage(user.getID(), Phrases.REFRESH, getUserChosingAnswers(users)));
-			return messages;
-		}
-		
-		if (getUsersNames(currentUsers).contains(input) && !gameInProgress) {
-			opponent = currentUsers[getUsersNames(currentUsers).indexOf(input)];
-			user.setOpponent(opponent);
-			if (opponent.getOpponent() != null) {
-				gameInProgress = true;
-				userDatabase.setUserState(opponent, new DuelState(opponent, userDatabase, questionGenerator));
-				Question firstQuestion = questionGenerator.getNextQuestion();
-				messages.addMessage(new BotMessage(user.getID(), "Ваш опонент: " + opponent.getName(), firstQuestion.getOptions()));
-				messages.addMessage(new BotMessage(user.getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));
-				messages.addMessage(new BotMessage(opponent.getID(), "Ваш опонент: " + user.getName(), firstQuestion.getOptions()));
-				messages.addMessage(new BotMessage(opponent.getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));
-				return messages;
-				
-			}
-			messages.addMessage(new BotMessage(user.getID(), "Ждём опонента", getUserChosingAnswers(currentUsers)));
-			return messages;
-		}	
 
-		messages.addMessage(new BotMessage(user.getID(), "Hmmmmmmm.", new String[0])); // дописать побела или поравжение
-		return messages;
+		switch (type) {
+		case WAITING:
+			return processWaitingState(input);
+		case GAME:
+			return processGameState(input);
+		default:
+			return processWaitingState(input);
+		}
 
 	}
 
 	@Override
 	public String getName() {
-		return "Дуэль";
+		return Phrases.DUEL;
 	}	
 	
 	
@@ -149,12 +79,79 @@ public class DuelState implements IState {
 	}
 
 	@Override
-	public String processExit() {
-		user.inDuel = false;		
-		int opponentPoints = opponent.getDuelPoints();
-		opponent = null;
-		gameInProgress = false;
-		return "Вы вышли. " + Phrases.winOrLose(user.getDuelPoints(), opponentPoints);// написать победил или проиград
+	public Messages processExit() {
+		
+		if (duel != null && duel.isOver && type == DuelStateType.GAME) {
+			clear();
+		}
+		
+		user.inDuel = false;
+		
+		switch (type) {
+		case WAITING:
+			return null;
+		case GAME:
+			return duel.processOpponentLeave(user.getOpponent(), user);
+		}
+		return null;
+	}
+
+	@Override
+	public Messages start() {
+		Messages messages = new Messages();
+		user.inDuel = true;
+		User[] users = usersInDuel();
+		currentUsers = users;			
+		messages.addMessage(new BotMessage(user.getID(), Phrases.DUEL_HELP, getUserChosingAnswers(users)));
+		return messages;
+	}
+	
+	private Messages processWaitingState(String input) {
+		Messages messages = new Messages();
+		if (input.equals("/help")) {	
+			User[] users = usersInDuel();
+			messages.addMessage(new BotMessage(user.getID(), Phrases.DUEL_HELP, getUserChosingAnswers(users)));
+			return messages;
+		}
+		
+		if (input.equals(Phrases.REFRESH)) {
+			User[] users = usersInDuel();
+			currentUsers = users;
+			messages.addMessage(new BotMessage(user.getID(), Phrases.REFRESH, getUserChosingAnswers(users)));
+			return messages;
+		}
+		
+		if (getUsersNames(currentUsers).contains(input)) {
+			User opponent = currentUsers[getUsersNames(currentUsers).indexOf(input)];
+			user.setOpponent(opponent);
+			if (opponent.getOpponent() == user) {
+				type = DuelStateType.GAME;
+				DuelState opponentState = new DuelState(opponent, userDatabase, generator, DuelStateType.GAME);
+				duel = new Duel(generator);
+				opponentState.setDuel(duel);
+				userDatabase.setUserState(opponent, opponentState);
+				return duel.getFirstQuestion(user);
+				
+			}
+			messages.addMessage(new BotMessage(user.getID(), Phrases.WAITING_FOR_OPPONENT, getUserChosingAnswers(currentUsers)));
+			return messages;
+		}
+		messages.addMessage(new BotMessage(user.getID(), Phrases.DUEL_HELP, getUserChosingAnswers(currentUsers)));
+		return messages;
+	}
+	
+	private Messages processGameState(String input) {
+		return duel.processGameState(input, user);
+	}
+	
+	private void clear() {
+		type = DuelStateType.WAITING;
+		generator.reset();
+		//start();
+	}
+	
+	public void setDuel(Duel duel) {
+		this.duel = duel;
 	}
 
 }

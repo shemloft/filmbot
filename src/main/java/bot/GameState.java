@@ -14,7 +14,6 @@ public class GameState implements IState{
 	
 	private IQuestionGenerator generator;
 	private Question currentQuestion;
-	private boolean firstTime;
 	private User user;
 	private boolean noMoreQuestions;
 	public static final int noHintPoints = 7;
@@ -25,7 +24,6 @@ public class GameState implements IState{
 	public GameState(User user, IQuestionGenerator generator) {
 		this.generator = generator;
 		this.currentQuestion = generator.getNextQuestion();
-		this.firstTime = true;
 		this.user = user;
 		this.noMoreQuestions = false;
 	}
@@ -36,14 +34,6 @@ public class GameState implements IState{
 			
 		if (noMoreQuestions) {
 			messages.addMessage(new BotMessage(user.getID(), Phrases.NO_MORE_QUESTIONS, new String[0]));
-			return messages;
-		}
-		
-		if (firstTime) {
-			firstTime = false;
-			currentPoints = noHintPoints;
-			messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP, currentQuestion.getOptions()));
-			messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
 			return messages;
 		}
 		
@@ -103,8 +93,18 @@ public class GameState implements IState{
 	}
 
 	@Override
-	public String processExit() {
+	public Messages processExit() {
 		return null;
+	}
+
+	@Override
+	public Messages start() {
+		Messages messages = new Messages();
+
+		currentPoints = noHintPoints;
+		messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP, currentQuestion.getOptions()));
+		messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
+		return messages;
 	}
 
 }

@@ -2,9 +2,9 @@ package bot;
 
 import java.util.Arrays;
 
-import dialog.Phrases;
 import structures.BotMessage;
 import structures.Messages;
+import structures.Phrases;
 import structures.User;
 
 public class Bot implements IBot {
@@ -19,21 +19,12 @@ public class Bot implements IBot {
 	}
 	
 	public Messages getAnswer(String input) {
-		if (currentState == null) {
-			return chooseState(input);
-		}
+		if (Arrays.asList(Phrases.CONTROL_TEXT).contains(input))
+			return proccesControlText(input);
 		
-		if (input.equals(Phrases.EXIT)) {
-			Messages messages = getMainMenu();
-			Messages exitText = currentState.processExit();
-			if (exitText != null) {
-				exitText = addBackOption(exitText);
-				messages.addMessagesInBegining(exitText);
-			}
-			currentState = null;
-			return messages;
-		}
-		
+		if (currentState == null) 
+			return chooseState(input);		
+
 		Messages answer = currentState.getAnswer(input);
 		return addBackOption(answer);
 	}
@@ -42,34 +33,53 @@ public class Bot implements IBot {
 		return new Messages (new BotMessage(user.getID(), Phrases.CHOOSE_OPTION, getDefaultPossibleAnswers()));
 	}
 	
-	private Messages chooseState(String input) {	
+	private Messages proccesControlText(String input) {
+		switch(input) {				
 		
-		for (IState state : states) {
-			if (state.getName().equals(input)) {
-				currentState = state;
-				switch (state.getType()) {
-				case DIALOG:					
-					return addBackOption(currentState.start());
-				case ANSWER:
-					Messages messages = currentState.getAnswer(null);
-					currentState = null;
-					messages.getFirstMessage().setPossibleAnswers(getDefaultPossibleAnswers());
-					return messages;
-				}	
-			}
-		}		
-		
-		switch(input) {		
-		case "/start":
-			return new Messages(new BotMessage(
-					user.getID(),
-					String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP),
-					getDefaultPossibleAnswers()));
 		case "/help":
+			if (currentState != null)
+				return currentState.processHelp();
 			return new Messages(new BotMessage(user.getID(), Phrases.HELP, getDefaultPossibleAnswers()));
+		
+		case "/start":
+		case Phrases.EXIT:			
+			Messages messages = getMainMenu();
+			if (input.equals("/start")) {				
+				messages.addMessageInBegining(new BotMessage(
+						user.getID(), 
+						Phrases.userWelcome(user.isFirstTime(), user.getName()), 
+						getDefaultPossibleAnswers()));
+			}			
+			Messages exitText = currentState == null ? null : currentState.processExit();
+			if (exitText != null) {
+				exitText = addBackOption(exitText);
+				messages.addMessagesInBegining(exitText);
+			}
+			currentState = null;
+		
+ 			return messages;			
+		
 		default:
 			return getMainMenu();
 		}
+	}
+	
+	private Messages chooseState(String input) {
+		if (!Arrays.asList(getDefaultPossibleAnswers()).contains(input))
+			return getMainMenu();
+		
+		currentState = getStateByName(input);
+		switch (currentState.getType()) {
+		case DIALOG:					
+			return addBackOption(currentState.start());
+		case ANSWER:
+			Messages messages = currentState.getAnswer(null);
+			currentState = null;
+			messages.getFirstMessage().setPossibleAnswers(getDefaultPossibleAnswers());
+			return messages;		
+		default:
+			return getMainMenu();
+		}		
 	}
 
 	@Override
@@ -85,11 +95,13 @@ public class Bot implements IBot {
 		return Arrays.stream(states).map((s) -> s.getName()).toArray(String[]::new);
 	}
 	
+	private IState getStateByName(String name) {
+		return Arrays.stream(states).filter((s) -> s.getName().equals(name)).findFirst().get();		
+	}
+	
 	private Messages addBackOption(Messages answer) {
-		// это нужно т.к. сейчас в messages лежат сообщения для двух пользователей и одному просто не достается кнопки выхода
-		for (BotMessage message : answer) {
+		for (BotMessage message : answer) 
 			message.addPossibleAnswer(Phrases.EXIT);
-		}
 		return answer;
 	}
 

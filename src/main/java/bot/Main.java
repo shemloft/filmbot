@@ -1,8 +1,9 @@
 package bot;
 
-import storage.FilmDatabase;
-import storage.MovieApiHandler;
-import storage.QuestionDatabase;
+import dialog.FilmDatabase;
+import dialog.MovieApiHandler;
+import game.ApiQuestionDatabase;
+import game.IQuestionDatabase;
 import telegram.TelegramChatBot;
 import telegram.UsersData;
 
@@ -13,7 +14,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {		
 		String apikey = "ab2ffab6977110905d92c5979e9ae9fa";
 //		String apikey = "<apikey>";	
-		QuestionDatabase questionDatabase = new QuestionDatabase(apikey);
+		IQuestionDatabase questionDatabase = new ApiQuestionDatabase(apikey);
 		usersData = new UsersData(new BotFactory(
 				new FilmDatabase(new MovieApiHandler(apikey)), 
 				questionDatabase, 2));

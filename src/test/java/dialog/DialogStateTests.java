@@ -1,17 +1,15 @@
-package bot;
+package dialog;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import bot.DialogState;
-import dialog.Phrases;
-import storage.TestDatabase;
 import structures.Field;
 import structures.Film;
 import structures.Messages;
 import structures.Options;
+import structures.Phrases;
 import structures.User;
 
 public class DialogStateTests {
@@ -41,12 +39,6 @@ public class DialogStateTests {
 	public void testIncorrectCommand() {		
 		Messages message = state.getAnswer("asd");
 		assertEquals(Phrases.UNKNOWN_COMMAND, message.getFirstMessage().getText());
-	}
-	
-	@Test
-	public void testHelpCommand() {
-		Messages message = state.getAnswer("/help");
-		assertEquals(Phrases.HELP, message.getFirstMessage().getText());
 	}
 	
 	@Test

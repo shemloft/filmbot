@@ -38,7 +38,8 @@ public class Converter {
 	public static SendMessage convertToSendMessage(BotMessage botMessage) {
 		SendMessage message = new SendMessage();
 		message.setText(botMessage.getText());
-		message.setReplyMarkup(getKeyboard(botMessage.getPossibleAnswers()));
+		if (!botMessage.needToKeepPreviousAnswers())
+			message.setReplyMarkup(getKeyboard(botMessage.getPossibleAnswers()));
 		return message;
 	}
 	

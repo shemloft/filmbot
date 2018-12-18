@@ -7,7 +7,7 @@ import bot.IBot;
 import bot.IState;
 import structures.User;
 
-public class UserDatabase {
+public class UserDatabase implements IUserDatabase {
 	
 	private ConcurrentHashMap<Long, IBot> userBotState;
 	private ConcurrentHashMap<Long, User> users;

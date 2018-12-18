@@ -1,4 +1,4 @@
-package storage;
+package dialog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,7 +12,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import storage.FilmDatabase;
+import dialog.FilmDatabase;
+import dialog.IFilmHandler;
 import structures.Field;
 import structures.Film;
 import structures.Options;

@@ -3,6 +3,8 @@ package structures;
 import java.util.ArrayList;
 import java.util.List;
 
+import duel.Request;
+
 public class User {
 
 	private String name;

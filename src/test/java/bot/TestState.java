@@ -39,4 +39,10 @@ public class TestState implements IState {
 		return answer;
 	}
 
+	@Override
+	public Messages processHelp() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

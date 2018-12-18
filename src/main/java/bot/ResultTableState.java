@@ -2,10 +2,10 @@ package bot;
 
 import java.util.stream.Collectors;
 
-import dialog.Phrases;
 import storage.UserDatabase;
 import structures.BotMessage;
 import structures.Messages;
+import structures.Phrases;
 import structures.User;
 
 public class ResultTableState implements IState {
@@ -45,6 +45,12 @@ public class ResultTableState implements IState {
 
 	@Override
 	public Messages start() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Messages processHelp() {
 		// TODO Auto-generated method stub
 		return null;
 	}

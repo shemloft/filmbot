@@ -1,4 +1,4 @@
-package structures;
+package game;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class Question {
 	
 	public Question(String question, List<String> options, String correctAnswer, List<Hint> hints, String image) {
 		this.question = question;
-		this.options = options;
+		this.options = new LinkedList<>(options);
 		this.correctAnswer = correctAnswer;
 		this.hints = new LinkedList<>(hints);
 		this.image = image;

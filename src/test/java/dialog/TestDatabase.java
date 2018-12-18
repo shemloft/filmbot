@@ -1,4 +1,4 @@
-package storage;
+package dialog;
 
 import java.util.List;
 

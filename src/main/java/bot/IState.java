@@ -12,4 +12,6 @@ public interface IState {
 	public StateType getType();
 	
 	public Messages start();
+	
+	public Messages processHelp();	
 }

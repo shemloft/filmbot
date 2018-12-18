@@ -1,4 +1,4 @@
-package bot;
+package duel;
 
 public enum DuelStateType {
 	WAITING,

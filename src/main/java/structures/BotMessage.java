@@ -9,6 +9,7 @@ public class BotMessage {
 	private String[] possibleAnswers;
 	private String image;
 	private Long addresserID;
+	private boolean needToKeepPreviousAnswers;
 	
 	public BotMessage(Long addresserID, String messageText) {
 		this(addresserID, messageText, null, null);
@@ -55,6 +56,14 @@ public class BotMessage {
 	
 	public void setPossibleAnswers(String[] answers) {
 		possibleAnswers = answers;
+	}
+	
+	public boolean needToKeepPreviousAnswers() {
+		return needToKeepPreviousAnswers;
+	}
+	
+	public void keepPreviousAnswers() {
+		needToKeepPreviousAnswers = true;
 	}
 
 }

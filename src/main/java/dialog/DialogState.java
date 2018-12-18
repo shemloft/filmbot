@@ -1,14 +1,15 @@
-package bot;
+package dialog;
 
 import java.util.Arrays;
 
-import dialog.Phrases;
-import storage.IFilmDatabase;
+import bot.IState;
+import bot.StateType;
 import structures.BotMessage;
 import structures.Field;
 import structures.Film;
 import structures.Messages;
 import structures.Options;
+import structures.Phrases;
 import structures.User;
 
 public class DialogState implements IState{
@@ -43,7 +44,7 @@ public class DialogState implements IState{
 			options.reset();
 			currentState = DialogStateType.BASIC;
 			expectedAnswers = getExpectedAnswers(currentState);
-			return new Messages(new BotMessage(user.getID(), processUnexpectedCommand(input), expectedAnswers));			
+			return new Messages(new BotMessage(user.getID(), Phrases.UNKNOWN_COMMAND, expectedAnswers));			
 		}
 		
 		DialogStateType oldState = currentState;
@@ -86,19 +87,7 @@ public class DialogState implements IState{
 		return new Messages(new BotMessage(user.getID(), answer, expectedAnswers));	
 	
 	}
-	
-	private String processUnexpectedCommand(String input) {
-		switch (input) {
-		case "/start":
-			return user.isFirstTime() 
-					? String.format("Добро пожаловать, %s.%s", user.getName(), Phrases.HELP) 
-					: String.format("Давно не виделись, %s.", user.getName());
-		case "/help":
-			return Phrases.HELP;
-		default:
-			return Phrases.UNKNOWN_COMMAND;
-		}
-	}
+
 	
 	private DialogStateType nextState(DialogStateType state) {
 		switch(state) {
@@ -158,7 +147,18 @@ public class DialogState implements IState{
 
 	@Override
 	public Messages start() {
-		return getAnswer("/help");
+		currentField = null;
+		options.reset();
+		currentState = DialogStateType.BASIC;
+		expectedAnswers = getExpectedAnswers(currentState);
+		return new Messages(new BotMessage(user.getID(), Phrases.UNKNOWN_COMMAND, expectedAnswers));
+	}
+
+	@Override
+	public Messages processHelp() {
+		BotMessage helpMessage = new BotMessage(user.getID(), Phrases.DIALOG_HELP, new String[0]);
+		helpMessage.keepPreviousAnswers();
+		return new Messages(helpMessage);
 	}
 
 }

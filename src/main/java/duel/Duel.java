@@ -1,10 +1,10 @@
-package bot;
+package duel;
 
-import dialog.Phrases;
+import game.Question;
 import storage.IQuestionGenerator;
 import structures.BotMessage;
 import structures.Messages;
-import structures.Question;
+import structures.Phrases;
 import structures.User;
 
 public class Duel {
@@ -20,7 +20,9 @@ public class Duel {
 	public Messages getFirstQuestion(User user) {
 		Messages messages = new Messages();
 		Question firstQuestion = questionGenerator.getNextQuestion();
-		messages.addMessage(new BotMessage(user.getID(), Phrases.YOUR_OPPONENT + user.getOpponent().getName(), firstQuestion.getOptions()));
+		messages.addMessage(new BotMessage(user.getID(), 
+				Phrases.YOUR_OPPONENT + user.getOpponent().getName(), 
+				firstQuestion.getOptions()));
 		messages.addMessage(new BotMessage(user.getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));
 		messages.addMessage(new BotMessage(user.getOpponent().getID(), Phrases.YOUR_OPPONENT + user.getName(), firstQuestion.getOptions()));
 		messages.addMessage(new BotMessage(user.getOpponent().getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));
@@ -81,7 +83,7 @@ public class Duel {
 		Messages messages = new Messages();
 		messages.addMessage(new BotMessage(
 				user.getID(), 
-				Phrases.OPPONENT_LEAVE + Phrases.winOrLose(user.getDuelPoints(), opponent.getDuelPoints()), 
+				Phrases.OPPONENT_LEAVE + Phrases.comparePointsText(user.getDuelPoints(), opponent.getDuelPoints()), 
 				new String[0]));
 		duelFinished(user, opponent);
 		return messages;
@@ -98,23 +100,23 @@ public class Duel {
 		isOver = true;
 	}
 	
-	private DuelMessage scorePoints(User user, User opponent) {
-		String userMessage;
-		String opponentMessage;
+	private DuelMessage scorePoints(User user, User opponent) {		
 		
-		if (opponent.correctAnsweredInDuel) {
-			opponent.addDuelPoints(1);
-			userMessage = Phrases.FAIL + Phrases.earnedPointsText(0, user.getDuelPoints());
-			opponentMessage = Phrases.WIN + Phrases.earnedPointsText(1, opponent.getDuelPoints());				
-		} else if (user.correctAnsweredInDuel) {
-			user.addDuelPoints(1);
-			opponentMessage = Phrases.FAIL + Phrases.earnedPointsText(0, user.getDuelPoints());
-			userMessage = Phrases.WIN + Phrases.earnedPointsText(1, opponent.getDuelPoints());	
-		} else {
-			opponentMessage = Phrases.DRAFT + Phrases.earnedPointsText(0, user.getDuelPoints());
-			userMessage = Phrases.DRAFT + Phrases.earnedPointsText(0, opponent.getDuelPoints());	
-		}
+		boolean opponentWin = opponent.correctAnsweredInDuel;
+		boolean userWin = !opponentWin && user.correctAnsweredInDuel;
 		
+		String userStatusText = opponentWin ? Phrases.OPPONENT_FAST : (userWin ? Phrases.YOU_CORRECT : Phrases.BOTH_INCORRECT);
+		String opponentStatusText = opponentWin ? Phrases.YOU_FAST : (userWin ? Phrases.OPPONENT_CORRECT : Phrases.BOTH_INCORRECT);
+		
+		int userPoints = userWin ? 1 : 0;
+		int opponentPoints = opponentWin ? 1 : 0;
+		
+		opponent.addDuelPoints(opponentPoints);
+		user.addDuelPoints(userPoints);
+		
+		String userMessage = Phrases.getDuelMessage(userStatusText, userPoints, user.getDuelPoints());
+		String opponentMessage = Phrases.getDuelMessage(opponentStatusText, opponentPoints, opponent.getDuelPoints());;
+					
 		return new DuelMessage(userMessage, opponentMessage);
 	}
 }

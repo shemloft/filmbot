@@ -1,4 +1,4 @@
-package storage;
+package game;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,14 +10,12 @@ import com.omertron.themoviedbapi.MovieDbException;
 import com.omertron.themoviedbapi.TheMovieDbApi;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
 
-import dialog.Phrases;
 import structures.Field;
 import structures.Film;
-import structures.Hint;
 import structures.Options;
-import structures.Question;
+import structures.Phrases;
 
-public class QuestionDatabase {
+public class ApiQuestionDatabase implements IQuestionDatabase {
 	
 	private static int pageCount = 6;
 	private String question = Phrases.DEFAULT_QUESTION;
@@ -25,7 +23,7 @@ public class QuestionDatabase {
 	private TheMovieDbApi api;
 	private List<Question> questions;
 	
-	public QuestionDatabase(String apikey) {
+	public ApiQuestionDatabase(String apikey) {
 		try {
 			api = new TheMovieDbApi(apikey);
 			films = getFirstPopularFilms(pageCount);

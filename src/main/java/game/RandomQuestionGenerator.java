@@ -1,17 +1,17 @@
-package storage;
+package game;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import structures.Question;
+import storage.IQuestionGenerator;
 
 public class RandomQuestionGenerator implements IQuestionGenerator{
 	
 	private List<Question> questions;
 	private int counter;
 	
-	public RandomQuestionGenerator(QuestionDatabase database) {
+	public RandomQuestionGenerator(IQuestionDatabase database) {
 		this.questions = new ArrayList<Question>(database.getAllQuestions());
 		this.counter = 0;
 	}

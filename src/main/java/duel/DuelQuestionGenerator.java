@@ -1,18 +1,20 @@
-package storage;
+package duel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import structures.Question;
+import game.IQuestionDatabase;
+import game.Question;
+import storage.IQuestionGenerator;
 
 public class DuelQuestionGenerator implements IQuestionGenerator{
 	private List<Question> questions;
 	private int counter;
-	private QuestionDatabase database;
+	private IQuestionDatabase database;
 	private int count;
 	
-	public DuelQuestionGenerator(QuestionDatabase database, int questionsCount) {
+	public DuelQuestionGenerator(IQuestionDatabase database, int questionsCount) {
 		this.database = database;
 		this.count = questionsCount;
 		setQuestions();

@@ -1,13 +1,13 @@
-package bot;
+package game;
 
 import java.util.ArrayList;
 
-import dialog.Phrases;
+import bot.IState;
+import bot.StateType;
 import storage.IQuestionGenerator;
 import structures.BotMessage;
-import structures.Hint;
 import structures.Messages;
-import structures.Question;
+import structures.Phrases;
 import structures.User;
 
 public class GameState implements IState{
@@ -35,13 +35,7 @@ public class GameState implements IState{
 		if (noMoreQuestions) {
 			messages.addMessage(new BotMessage(user.getID(), Phrases.NO_MORE_QUESTIONS, new String[0]));
 			return messages;
-		}
-		
-		if (input.equals("/help")) {
-			messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP,  currentQuestion.getOptions()));
-			return messages;			
-		}
-		
+		}	
 		
 		if (currentQuestion.isCorrect(input)) {
 			int earnedPoints = currentPoints;
@@ -105,6 +99,13 @@ public class GameState implements IState{
 		messages.addMessage(new BotMessage(user.getID(), Phrases.GAME_HELP, currentQuestion.getOptions()));
 		messages.addMessage(new BotMessage(user.getID(), currentQuestion.getQuestion(), currentQuestion.getOptions(), currentQuestion.getImage()));
 		return messages;
+	}
+
+	@Override
+	public Messages processHelp() {
+		BotMessage helpMessage = new BotMessage(user.getID(), Phrases.GAME_HELP, new String[0]);
+		helpMessage.keepPreviousAnswers();
+		return new Messages(helpMessage);
 	}
 
 }

@@ -1,6 +1,6 @@
 package storage;
 
-import structures.Question;
+import game.Question;
 
 public interface IQuestionGenerator {
 	public Question getNextQuestion();

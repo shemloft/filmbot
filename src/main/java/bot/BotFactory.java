@@ -1,19 +1,23 @@
 package bot;
 
-import storage.DuelQuestionGenerator;
-import storage.IFilmDatabase;
-import storage.QuestionDatabase;
-import storage.RandomQuestionGenerator;
+import dialog.DialogState;
+import dialog.IFilmDatabase;
+import duel.Duel;
+import duel.DuelQuestionGenerator;
+import duel.DuelState;
+import game.GameState;
+import game.IQuestionDatabase;
+import game.RandomQuestionGenerator;
 import storage.UserDatabase;
 import structures.User;
 
 public class BotFactory implements IBotFactory{
 	
 	private IFilmDatabase filmDatabase;
-	private QuestionDatabase database;
+	private IQuestionDatabase database;
 	private int duelQuestionCount;
 	
-	public BotFactory(IFilmDatabase filmDatabase, QuestionDatabase database, int duelQuestionCount) {
+	public BotFactory(IFilmDatabase filmDatabase, IQuestionDatabase database, int duelQuestionCount) {
 		this.filmDatabase = filmDatabase;
 		this.database = database;
 		this.duelQuestionCount = duelQuestionCount;

@@ -20,9 +20,7 @@ public class Duel {
 	public Messages getFirstQuestion(User user) {
 		Messages messages = new Messages();
 		Question firstQuestion = questionGenerator.getNextQuestion();
-		messages.addMessage(new BotMessage(user.getID(), 
-				Phrases.YOUR_OPPONENT + user.getOpponent().getName(), 
-				firstQuestion.getOptions()));
+		messages.addMessage(new BotMessage(user.getID(), Phrases.YOUR_OPPONENT + user.getOpponent().getName(), firstQuestion.getOptions()));
 		messages.addMessage(new BotMessage(user.getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));
 		messages.addMessage(new BotMessage(user.getOpponent().getID(), Phrases.YOUR_OPPONENT + user.getName(), firstQuestion.getOptions()));
 		messages.addMessage(new BotMessage(user.getOpponent().getID(), firstQuestion.getQuestion(), firstQuestion.getOptions(), firstQuestion.getImage()));

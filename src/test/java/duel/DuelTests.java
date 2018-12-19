@@ -40,30 +40,39 @@ public class DuelTests {
 	public void testCorrectAnswerBoth() {
 		duel.getFirstQuestion(user1);
 		duel.processGameState("a1", user1);
-		duel.processGameState("a1", user2);
+		Messages messages = duel.processGameState("a1", user2);
 		
 		assertEquals(1, user1.getDuelPoints());
 		assertEquals(0, user2.getDuelPoints());
+		
+		assertThat(messages.getIndexMessage(0).getText(), containsString(Phrases.OPPONENT_FAST));
+		assertThat(messages.getIndexMessage(1).getText(), containsString(Phrases.YOU_FAST));
 	}
 	
 	@Test
 	public void testFirstIncorrectSecondCorrect() {
 		duel.getFirstQuestion(user1);
 		duel.processGameState("a2", user1);
-		duel.processGameState("a1", user2);
+		Messages messages = duel.processGameState("a1", user2);
 		
 		assertEquals(0, user1.getDuelPoints());
 		assertEquals(1, user2.getDuelPoints());
+		
+		assertThat(messages.getIndexMessage(0).getText(), containsString(Phrases.YOU_CORRECT));
+		assertThat(messages.getIndexMessage(1).getText(), containsString(Phrases.OPPONENT_CORRECT));
 	}
 	
 	@Test
 	public void testBothIncorrect() {
 		duel.getFirstQuestion(user1);
 		duel.processGameState("a2", user1);
-		duel.processGameState("a2", user2);
+		Messages messages = duel.processGameState("a2", user2);
 		
 		assertEquals(0, user1.getDuelPoints());
 		assertEquals(0, user2.getDuelPoints());
+		
+		assertThat(messages.getIndexMessage(0).getText(), containsString(Phrases.BOTH_INCORRECT));
+		assertThat(messages.getIndexMessage(1).getText(), containsString(Phrases.BOTH_INCORRECT));
 	}
 	
 	@Test

@@ -17,7 +17,7 @@ public class Main {
 		IQuestionDatabase questionDatabase = new ApiQuestionDatabase(apikey);
 		usersData = new UsersData(new BotFactory(
 				new FilmDatabase(new MovieApiHandler(apikey)), 
-				questionDatabase, 2));
+				questionDatabase, 10));
 		System.out.println("Starting bot");
 		startTelegramBot();
 	}
